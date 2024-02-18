@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Form, FormGroup, Button } from "reactstrap";
 import { Link, useNavigate } from "react-router-dom";
-
+import "../styles/Login.css";
 const Login = () => {
   const [credentials, setCredentials] = useState({
     username: "",
@@ -51,9 +51,10 @@ const Login = () => {
           <Col lg="8" className="m-auto">
             <div className="login__container d-flex justify-content-between">
               <div className="login__form">
-                <h2>Login</h2>
+                
                 <Form onSubmit={handleLogin}>
                   <FormGroup>
+                    <label>username</label>
                     <input
                       type="text"
                       placeholder="Enter Your name"
@@ -63,7 +64,7 @@ const Login = () => {
                     />
                   </FormGroup>
                   <FormGroup>
-                    <input
+                    <label>password</label><input
                       type="password"
                       placeholder="Password"
                       required

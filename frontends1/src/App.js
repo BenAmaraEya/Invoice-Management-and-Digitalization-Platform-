@@ -1,22 +1,13 @@
-// App.js
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Layout from './components/Layout/Layout';
 
-import Login from './pages/Login';
-
-import Profil from './pages/ProfilTT';
 const App = () => {
-  return (
-    <Router>
-      
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
-          <Route path='/profilTT' element={<Profil/>}/>
-        </Routes>
-      
-    </Router>
-  );
+    return (
+        <Router>
+            <Layout />
+        </Router>
+    );
 };
 
 export default App;
