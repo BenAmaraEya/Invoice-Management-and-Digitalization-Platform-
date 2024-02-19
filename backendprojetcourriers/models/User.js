@@ -32,6 +32,7 @@ const User = sequelize.define('User', {
     },
     isactive:{
         type:DataTypes.BOOLEAN,
+        defaultValue: false
     },
     phone:{
         type:DataTypes.STRING

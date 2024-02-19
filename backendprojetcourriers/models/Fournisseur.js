@@ -23,6 +23,6 @@ const Fournisseur = sequelize.define('Fournisseur', {
     }
 });
 Fournisseur.hasMany(Facture, { as: 'Factures', foreignKey: 'iderp',onDelete: 'CASCADE' });
-Fournisseur.belongsTo(User);
+Fournisseur.belongsTo(User, { onDelete: 'CASCADE' });
 
 module.exports = Fournisseur;

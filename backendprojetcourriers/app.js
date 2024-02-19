@@ -7,8 +7,8 @@ const userRoute=require('./routes/userRoute');
 connectDB();
 app.use(express.json());
 
-//const Facture = require('./models/Facture');
-//const Fournisseur = require('./models/Fournisseur');
+/*const Facture = require('./models/Facture');
+const Fournisseur = require('./models/Fournisseur');*/
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:3000');

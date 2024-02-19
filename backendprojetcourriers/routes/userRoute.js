@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controller/userController');
-
+router.get('/',UserController.getUser);
 // Route ajout utilisateur
 router.post('/adduser',UserController.adduser);
 // Route mettre a jour utilisateur

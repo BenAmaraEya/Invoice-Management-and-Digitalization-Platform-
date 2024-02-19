@@ -5,15 +5,11 @@ const User = require("../models/User");
 const UserController = {
     login: async (req, res, next) => {
         const { username, password } = req.body;
-
         try {
             const user = await User.findOne({ where: { username } });
-
             if (!user) {
                 return res.status(401).json({ error: 'Invalid username' });
             }
-
-            
             if (password !== user.password) {
                 return res.status(401).json({ error: 'Invalid password' });
             }
@@ -24,6 +20,15 @@ const UserController = {
             console.error('Error logging in:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
+    },
+    getUser: async (req, res , next) =>{
+        try {
+            const users = await User.findAll();
+            res.json(users);
+          } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
+          }
     },
 
 
@@ -42,7 +47,7 @@ const UserController = {
             phone,
             profil,
             password,
-            isactive:true
+            
 
           });
           res.status(201).json({ message: 'User added successfully', user: newUser });
