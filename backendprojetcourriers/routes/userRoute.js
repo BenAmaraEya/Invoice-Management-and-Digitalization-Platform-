@@ -2,7 +2,10 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controller/userController');
 
-// Route for user login
-router.post('/login', UserController.login);
+// Route ajout utilisateur
 router.post('/adduser',UserController.adduser);
+// Route mettre a jour utilisateur
+router.put('/update/:id',UserController.updateUser);
+// Route supprime utilisateur
+router.delete('/:id',UserController.deleteUser);
 module.exports = router;
