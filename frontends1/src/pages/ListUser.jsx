@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import { Link } from "react-router-dom";
+import "../styles/ListUser.css";
 function ListUser() {
     const [user, setUser] = useState([]);
     const [error, setError] = useState(null);
@@ -18,7 +19,8 @@ function ListUser() {
 
     return (
         <div>
-<Link to="/addUser">Add User</Link>            <table>
+<Link to="/addUser" className="add-user-link">Add User</Link>       
+     <table>
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -28,6 +30,7 @@ function ListUser() {
                         <th>Profil</th>
                         <th>Isactive</th>
                         <th>Phone</th>
+                        <th>actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,6 +43,9 @@ function ListUser() {
                             <td>{data.profil}</td>
                             <td>{data.isactive}</td>
                             <td>{data.phone}</td>
+                        <td>
+                            <Link to={`../updateUser/${data.id}`} className="update-link">update</Link>
+                        </td>
                         </tr>
                     ))}
                 </tbody>

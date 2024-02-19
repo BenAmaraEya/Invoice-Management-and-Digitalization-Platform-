@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from 'axios';
-
+import "../styles/AddUser.css";
 function AddUser() {
     const [formData, setFormData] = useState({
         name: "",
@@ -30,7 +30,7 @@ function AddUser() {
                     username: "",
                     email: "",
                     profil: "fournisseur",
-                    telephone: ""
+                    phone: ""
                 });
             })
             .catch(error => {
@@ -39,7 +39,7 @@ function AddUser() {
     };
 
     return (
-        <form onSubmit={addUser}>
+        <form onSubmit={addUser} className="add-user-form">
             <h2>Add User</h2>
             <div>
                 <label htmlFor="name">Nom</label>
@@ -54,8 +54,8 @@ function AddUser() {
                     <option value="bof">BOF</option>
                     <option value="personnelFinance">Personnel Finance</option>
                 </select>
-                <label htmlFor="telephone">Numéro Télephone</label>
-                <input type="number" name="telephone" value={formData.telephone} onChange={handleChange} placeholder="Saisir numéro télephone" className='form-control' />
+                <label htmlFor="phone">Numéro Télephone</label>
+                <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="Saisir numéro télephone" className='form-control' />
                 <button type="submit">Submit</button>
             </div>
         </form>

@@ -29,6 +29,7 @@ const UserController = {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     },
+    //get all user
     getUser: async (req, res , next) =>{
         try {
             const users = await User.findAll();
@@ -37,6 +38,24 @@ const UserController = {
             console.error(error);
             res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
           }
+    },
+    // get user by ID
+    getUserById: async (req, res , next)=>{
+        const id = req.params.id;
+        try {
+              const user = await User.findOne({
+                where: { id }
+              });
+              if (user) {
+                res.json(user);
+              } else {
+                res.status(404).json({ error: 'utilisateur non trouvé' });
+              }
+            } catch (error) {
+              console.error(error);
+              res.status(500).json({ error: 'Erreur lors de la récupération du utilisateur' });
+            }
+          
     },
 
 
@@ -69,26 +88,13 @@ const UserController = {
 },
 // mettre-a-jour utilisateur par son id 
     updateUser: async (req, res, next) => {
-       try {
-        const userId = req.params.id;
-        const { name,username, email, phone, profil } = req.body;
+        const id = req.params.id;
+  try {
+    const [updatedRows] = await User.update(req.body, {
+      where: { id }
+    });
 
-        const user = await User.findByPk(userId);
-
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        user.name = name;
-        user.username=username;
-        user.email = email;
-        user.phone = phone;
-        user.profil = profil;
-       
-
-        await user.save();
-
-        res.json({ message: 'User updated successfully', user });
+        res.json({ message: 'User updated successfully' });
       } catch (error) {
         console.error('Error updating user:', error);
         res.status(500).json({ error: 'Internal Server Error' });
