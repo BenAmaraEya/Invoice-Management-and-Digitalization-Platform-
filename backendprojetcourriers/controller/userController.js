@@ -5,14 +5,22 @@ const User = require("../models/User");
 const UserController = {
     login: async (req, res, next) => {
         const { username, password } = req.body;
+
         try {
             const user = await User.findOne({ where: { username } });
+
             if (!user) {
                 return res.status(401).json({ error: 'Invalid username' });
             }
+
+            
             if (password !== user.password) {
                 return res.status(401).json({ error: 'Invalid password' });
             }
+        //lorsque l'utilisateur est authentifie les attrubut isactive true et last_login prend le date de l'authentification 
+            user.isactive = true;
+            user.last_login = new Date();
+            await user.save();
 
             const token = generateToken(user);
             res.json({ token });
@@ -47,6 +55,7 @@ const UserController = {
             phone,
             profil,
             password,
+            isActive:false
             
 
           });
@@ -62,7 +71,7 @@ const UserController = {
     updateUser: async (req, res, next) => {
        try {
         const userId = req.params.id;
-        const { name,username, email, phone, profil,isactive } = req.body;
+        const { name,username, email, phone, profil } = req.body;
 
         const user = await User.findByPk(userId);
 
@@ -75,7 +84,7 @@ const UserController = {
         user.email = email;
         user.phone = phone;
         user.profil = profil;
-        user.isactive=isactive;
+       
 
         await user.save();
 
@@ -88,7 +97,7 @@ const UserController = {
 
 
 //supprimer l'utilisateur par son id
-    deleteUser: async (req, res, next) => {
+   /* deleteUser: async (req, res, next) => {
         try {
             const userId = req.params.id;
 
@@ -105,7 +114,7 @@ const UserController = {
             console.error('Error deleting user:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
-    }
+    }*/
 };
 
 async function generatePassword() {
