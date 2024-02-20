@@ -1,4 +1,4 @@
-import React from "react";
+/*mport React from "react";
 import Header from './../Header/Header';
 import Routers from '../../router/Routers';
 import Footer from './../Footer/Footer';
@@ -13,11 +13,12 @@ const Layout = () => {
     );
 };
 
-export default Layout;
-/*import React from "react";
-import DefaultHeader from './../Header/DefaultHeader';
-import DashboardHeader from './../Header/DashboardHeader';
-import ProfileHeader from './../Header/ProfileHeader';
+export default Layout;*/
+
+import React from "react";
+import HomeHeader from './../Header/HomeHeader';
+import LoginHeader from './../Header/LoginHeader';
+import Header from './../Header/Header';
 import Routers from '../../router/Routers';
 import Footer from './../Footer/Footer';
 import { useLocation } from 'react-router-dom';
@@ -27,12 +28,12 @@ const Layout = () => {
 
     // Define a function to determine which header component to render based on the current route
     const renderHeader = () => {
-        if (location.pathname === "/dashboard") {
-            return <DashboardHeader />;
-        } else if (location.pathname === "/profile") {
-            return <ProfileHeader />;
+        if (location.pathname === "/home") {
+            return <HomeHeader />;
+        } else if (location.pathname === "/login") {
+            return <LoginHeader />;
         } else {
-            return <DefaultHeader />;
+            return <Header />;
         }
     };
 
@@ -45,4 +46,4 @@ const Layout = () => {
     );
 };
 
-export default Layout;*/
+export default Layout;

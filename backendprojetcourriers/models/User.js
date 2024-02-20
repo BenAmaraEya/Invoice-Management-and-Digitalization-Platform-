@@ -36,7 +36,8 @@ const User = sequelize.define('User', {
     },
     phone:{
         type:DataTypes.STRING
-    }
+    },
+    
 });
 
 module.exports = User;
