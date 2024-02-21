@@ -30,7 +30,7 @@ const Login = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Invalid email or password");
+        throw new Error("Invalid ");
       }
 
       const data = await response.json();

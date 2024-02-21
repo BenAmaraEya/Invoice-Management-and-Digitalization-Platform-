@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import axios from 'axios';
 import "../styles/AddUser.css";
+
 function AddUser() {
     const [formData, setFormData] = useState({
         name: "",
         username: "",
         email: "",
         profil: "fournisseur", 
-        telephone: ""
+        telephone: "",
+        iderp: "",
+        idFiscale: "",
+        adresse: "",
+        nationnalite: ""
     });
 
     const handleChange = (e) => {
@@ -18,19 +23,23 @@ function AddUser() {
         }));
     };
 
-    // Fonction de soumission du formulaire
-    const addUser = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post('http://localhost:3006/user/adduser', formData)
+        const url = formData.profil === "fournisseur" ? 'http://localhost:3006/fournisseur/addfournisseur' : 'http://localhost:3006/user/adduser';
+        
+        axios.post(url, formData)
             .then(res => {
                 console.log('Utilisateur ajouté avec succès:', res.data);
-                // Réinitialiser le formulaire après l'ajout de l'utilisateur
                 setFormData({
                     name: "",
                     username: "",
                     email: "",
                     profil: "fournisseur",
-                    phone: ""
+                    telephone: "",
+                    iderp: "",
+                    idFiscale: "",
+                    adresse: "",
+                    nationnalite: ""
                 });
             })
             .catch(error => {
@@ -39,8 +48,8 @@ function AddUser() {
     };
 
     return (
-        <form onSubmit={addUser} className="add-user-form">
-            <h2>Add User</h2>
+        <form onSubmit={handleSubmit} className="add-user-form">
+            <h2>Ajouter Utilisateur</h2>
             <div>
                 <label htmlFor="name">Nom</label>
                 <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Saisir Nom" className='form-control' />
@@ -54,9 +63,22 @@ function AddUser() {
                     <option value="bof">BOF</option>
                     <option value="personnelFinance">Personnel Finance</option>
                 </select>
-                <label htmlFor="phone">Numéro Télephone</label>
-                <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="Saisir numéro télephone" className='form-control' />
-                <button type="submit">Submit</button>
+                <label htmlFor="telephone">Numéro Téléphone</label>
+                <input type="text" name="telephone" value={formData.telephone} onChange={handleChange} placeholder="Saisir numéro téléphone" className='form-control' />
+                {formData.profil === "fournisseur" && (
+                    <div>
+                        <h3>Formulaire Fournisseur</h3>
+                        <label htmlFor="iderp">iderp</label>
+                        <input type="text" name="iderp" value={formData.iderp} onChange={handleChange} className='form-control' />
+                        <label htmlFor="idFiscale">idFiscale</label>
+                        <input type="text" name="idFiscale" value={formData.idFiscale} onChange={handleChange} className='form-control' />
+                        <label htmlFor="adresse">Adresse</label>
+                        <input type="text" name="adresse" value={formData.adresse} onChange={handleChange} className='form-control' />
+                        <label htmlFor="nationnalite">Nationalité</label>
+                        <input type="text" name="nationnalite" value={formData.nationnalite} onChange={handleChange} className='form-control' />
+                    </div>
+                )}
+                <button type="submit">Ajouter</button>
             </div>
         </form>
     );

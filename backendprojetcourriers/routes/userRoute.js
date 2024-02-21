@@ -10,4 +10,5 @@ router.post('/adduser',UserController.adduser);
 router.put('/update/:id',UserController.updateUser);
 // Route supprime utilisateur
 //router.delete('/:id',UserController.deleteUser);
+router.post('/acces/:id',UserController.access);
 module.exports = router;

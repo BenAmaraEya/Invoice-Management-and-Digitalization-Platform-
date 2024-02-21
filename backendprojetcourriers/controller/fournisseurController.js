@@ -31,30 +31,32 @@ const FournisseurController={
     },
 
     //mettre-a-jour le fournisseur 
-    updatefournisseur:async(req,res,next)=>
-    {
-        try{
-            const fournisseurId=req.params.id;
-            const {iderp,idfiscale,adresse,nationalite}=req.body;
-            const fournisseur= await Fournisseur.findByPk(fournisseurId);
-            if (!fournisseur) {
+    updateFournisseur: async (req, res, next) => {
+        try {
+            const iderp = req.params.iderp;
+            const { idfiscale, adresse, nationnalite, userId, ...fournisseurData } = req.body;
+    
+                const [updatedFournisseurRows] = await Fournisseur.update(fournisseurData, {
+                where: { iderp }
+            });
+    
+            // Vérifiez si l'ID de l'utilisateur existe
+            const user = await User.findOne({ where: { id: userId } });
+            if (!user) {
                 return res.status(404).json({ error: 'User not found' });
             }
-       
-            fournisseur.iderp = iderp;
-            fournisseur.idfiscale=idfiscale;
-            fournisseur.adresse = adresse;
-            fournisseur.nationalite = nationalite;
-           
-       
-            await fournisseur.save();
-       
-            res.json({ message: 'fournisseur updated successfully', fournisseur });
-          } catch (error) {
+    
+            // Mettez à jour les données de l'utilisateur
+            await User.update(req.body, { where: { id: userId } });
+    
+            res.json({ message: 'Fournisseur updated successfully' });
+        } catch (error) {
             console.error('Error updating fournisseur:', error);
             res.status(500).json({ error: 'Internal Server Error' });
-            }
-        },
+        }
+    },
+    
+    
           //get all user
     getFournisseur: async (req, res , next) =>{
         try {
@@ -70,9 +72,9 @@ const FournisseurController={
   //afficher les details de fournisseur     
 getfournisseurbyid: async (req, res) => {
     try {
-        const fournisseurId = req.params.id;
+        const iderp = req.params.iderp;
         
-        const fournisseur = await Fournisseur.findByPk(fournisseurId, {
+        const fournisseur = await Fournisseur.findOne({where: { iderp }, 
             include: User//pour afficher les details d'utilisateur (les information de fournisseur dans le table user) 
         });
 
@@ -90,7 +92,7 @@ getfournisseurbyid: async (req, res) => {
  //supprimer le fournisseur    
 deletefournisseur: async (req, res, next) => {
     try {
-        const fournisseurId = req.params.id;
+        const fournisseurId = req.params.iderp;
 
         // trouver le fournisseur et l'utilisateur associe
         const fournisseur = await Fournisseur.findByPk(fournisseurId, {

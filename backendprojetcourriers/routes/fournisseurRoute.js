@@ -4,13 +4,13 @@ const FournisseurController = require('../controller/fournisseurController');
 
 
 //route get fournisseur par son identifiant
-router.get('/:id',FournisseurController.getfournisseurbyid);
+router.get('/:iderp',FournisseurController.getfournisseurbyid);
 router.get('/',FournisseurController.getFournisseur);
 // Route ajout fournisseur
 router.post('/addfournisseur',FournisseurController.addfournisseur);
 
 // Route mettre a jour fournisseur
-router.put('/:id',FournisseurController.updatefournisseur)
+router.put('/:iderp',FournisseurController.updateFournisseur)
 
-router.delete('/:id',FournisseurController.deletefournisseur);
+router.delete('/:iderp',FournisseurController.deletefournisseur);
 module.exports = router;

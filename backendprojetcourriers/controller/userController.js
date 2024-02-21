@@ -1,7 +1,17 @@
 const { generateToken } = require('../utils/jwt'); 
 const bcrypt=require('bcrypt');
 const User = require("../models/User");
-
+const nodemailer = require('nodemailer');
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: 'hamedw594@gmail.com',
+      pass: 'waouly12'
+  },
+  tls: {
+    rejectUnauthorized: false // Désactiver la vérification du certificat SSL
+}
+});
 const UserController = {
     login: async (req, res, next) => {
         const { username, password } = req.body;
@@ -12,7 +22,6 @@ const UserController = {
             if (!user) {
                 return res.status(401).json({ error: 'Invalid username' });
             }
-
             
             if (password !== user.password) {
                 return res.status(401).json({ error: 'Invalid password' });
@@ -100,6 +109,24 @@ const UserController = {
         res.status(500).json({ error: 'Internal Server Error' });
         }
     },
+    //log out
+    logout: async (req, res, next) => {
+      try {
+          // Obtenez l'ID de l'utilisateur à partir du jeton d'authentification
+          const userId = req.user.id;
+  
+          // Mettez à jour l'attribut isActive de l'utilisateur à false
+          const user = await User.findByPk(userId);
+          user.isactive = false;
+          await user.save();
+  
+          // Répondez avec succès
+          res.status(200).json({ message: 'User logged out successfully' });
+      } catch (error) {
+          console.error('Error logging out:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+      }
+  },
 
 
 //supprimer l'utilisateur par son id
@@ -121,7 +148,42 @@ const UserController = {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }*/
+ 
+  
+  // Route pour envoyer les informations de connexion par e-mail à un utilisateur existant
+  access: async (req, res, next) => {
+    const userId = req.params.id;
+    try {
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const mailOptions = {
+            from: 'hamedw594@gmail.com',
+            to: user.email,
+            subject: 'Your Login Credentials for the System',
+            html: `
+                <p>Dear ${user.name},</p>
+                <p>Here are your temporary login credentials for the system:</p>
+                <p>Username: ${user.username}</p>
+                <p>Password: ${user.password}</p>
+                <p>Please change your password after logging in for security reasons.</p>
+                <p>Regards,</p>
+                <p>Your System</p>
+            `
+        };
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: 'Login credentials sent successfully' });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
 };
+
+
 
 async function generatePassword() {
     

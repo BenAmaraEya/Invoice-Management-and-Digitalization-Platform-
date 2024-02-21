@@ -1,38 +1,53 @@
+// UpdateUser.js
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import { useParams, useHistory } from "react-router-dom";
-import "../styles/AddUser.css";
+import { useNavigate, useParams } from "react-router-dom";
+import "../styles/Update.css";
 
 function UpdateUser() {
     const [formData, setFormData] = useState({
+        iderp: "",
+        idfiscale: "",
+        adresse: "",
+        nationnalite: "",
+        userId: "",
         name: "",
         username: "",
         email: "",
-        profil: "", 
+        password: "",
         phone: ""
     });
-    const { id } = useParams();
-
+    const { iderp } = useParams();
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3006/user/${id}`);
-                const userData = response.data;
-                setFormData(prevState => ({
-                    ...prevState,
+                const response = await axios.get(`http://localhost:3006/fournisseur/${iderp}`);
+                const fournisseurData = response.data.fournisseur;
+                const userData = fournisseurData.User;
+    
+                // Créer un nouvel objet formData en fusionnant les données du fournisseur et de l'utilisateur
+                const updatedFormData = {
+                    iderp: fournisseurData.iderp,
+                    idfiscale: fournisseurData.idfiscale,
+                    adresse: fournisseurData.adresse,
+                    nationnalite: fournisseurData.nationnalite,
+                    userId: userData.id,
                     name: userData.name,
                     username: userData.username,
                     email: userData.email,
-                    profil: userData.profil, 
+                    password: userData.password,
                     phone: userData.phone
-                }));
+                };
+    
+                setFormData(updatedFormData);
             } catch (error) {
                 console.error('Erreur lors de la récupération des données de l\'utilisateur:', error);
             }
         };
-
+    
         fetchUserData();
-    }, [id]);
+    }, [iderp]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -42,36 +57,40 @@ function UpdateUser() {
         }));
     };
 
-    const updateuser = async (e) => {
+    const updateUser = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`http://localhost:3006/user/update/`+id, formData);
+            await axios.put(`http://localhost:3006/fournisseur/${iderp}`, formData);
             console.log('Utilisateur modifié avec succès');
-            
-        } catch (error) {
+            navigate('/listUser');
+                } catch (error) {
             console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
         }
     };
 
     return (
-        <form onSubmit={updateuser} className="add-user-form">
-            <h2>Update User</h2>
+        <form onSubmit={updateUser} className="form-container">
+            <h2>Modifier Fournisseur</h2>
             <div>
+                <label htmlFor="iderp">iderp</label>
+                <input type="text" name="iderp" value={formData.iderp} onChange={handleChange} />
+                <label htmlFor="idFiscale">idFiscale</label>
+                <input type="text" name="idFiscale" value={formData.idfiscale} onChange={handleChange} />
+                <label htmlFor="adresse">Adresse</label>
+                <input type="text" name="adresse" value={formData.adresse} onChange={handleChange} />
+                <label htmlFor="nationnalite">Nationnalite</label>
+                <input type="text" name="nationnalite" value={formData.nationnalite} onChange={handleChange} />
                 <label htmlFor="name">Nom</label>
-                <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Saisir Nom" className='form-control' />
+                <input type="text" name="name" value={formData.name} onChange={handleChange} />
                 <label htmlFor="username">Username</label>
-                <input type="text" name="username" value={formData.username} onChange={handleChange} placeholder="Saisir Username" className='form-control' />
+                <input type="text" name="username" value={formData.username} onChange={handleChange} />
                 <label htmlFor="email">Email</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Saisir Email" className='form-control' />
-                <label htmlFor="profil">Profil</label>
-                <select name="profil" value={formData.profil} onChange={handleChange} className='form-control'>
-                    <option value="fournisseur">Fournisseur</option>
-                    <option value="bof">BOF</option>
-                    <option value="personnelFinance">Personnel Finance</option>
-                </select>
+                <input type="email" name="email" value={formData.email} onChange={handleChange} />
+                <label htmlFor="password">Mot de passe</label>
+                <input type="Text" name="password" value={formData.password} onChange={handleChange} />
                 <label htmlFor="phone">Numéro Télephone</label>
-                <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="Saisir numéro télephone" className='form-control' />
-                <button type="submit">Update</button>
+                <input type="text" name="phone" value={formData.phone} onChange={handleChange} />
+                <button type="submit">Modifier</button>
             </div>
         </form>
     );
