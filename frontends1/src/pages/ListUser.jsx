@@ -3,26 +3,27 @@ import axios from 'axios';
 import { Link } from "react-router-dom";
 import "../styles/ListUser.css";
 function ListUser() {
-    const [user, setUser] = useState([]);
+    const [fournisseur, setUser] = useState([]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:3006/user/')
+        axios.get('http://localhost:3006/fournisseur/')
             .then(res => {
                 setUser(res.data); 
             })
             .catch(error => {
                 setError(error);
-                console.error('Error fetching users:', error);
+                console.error('Error fetching fournisseurs:', error);
             });
     }, []);
 
     return (
         <div>
-<Link to="/addUser" className="add-user-link">Add User</Link>       
+<Link to="/addUser" className="add-user-link">Add supplier</Link>       
      <table>
                 <thead>
                     <tr>
+                        <th>id Supplier</th>
                         <th>Name</th>
                         <th>Username</th>
                         <th>Email</th>
@@ -34,9 +35,9 @@ function ListUser() {
                     </tr>
                 </thead>
                 <tbody>
-                    {user.map((data, i) => (
+                    {fournisseur.map((data, i) => (
                         <tr key={i}>
-                            <td>{data.name}</td>
+                            <td>{data.User.name}</td>
                             <td>{data.username}</td>
                             <td>{data.email}</td>
                             <td>{data.last_login}</td>

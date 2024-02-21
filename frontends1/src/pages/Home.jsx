@@ -1,5 +1,6 @@
 import React from "react";
 import Logo from "../assets/images/TTlogo.png";
+import partener1 from "../assets/images/chakira cable.jpeg";
 import { Container, Button,Card, CardImg, CardBody, CardTitle } from "reactstrap";
 import { NavLink, Link } from "react-router-dom";
 import "../styles/Home.css";
@@ -18,9 +19,9 @@ const Home = () => {
                     </p>
                     <div className="btns d-flex align-item-center gap-4">
                         <Link to="/login">
-                            <Button className="btn_login">login now !</Button>
+                            <Button className="btn_login">login !</Button>
                         </Link>
-                    </div>
+                    </div> 
                 </div>
                 <div className="right-content">
                     <img src={Logo} alt="TT logo" />
@@ -30,7 +31,7 @@ const Home = () => {
                 <h2>Our Partners</h2>
                 <div className="gallery">
                     <Card className="partner-card">
-                        <CardImg src={Logo} alt="partner 1" />
+                        <CardImg src={partener1} alt="partner 1" />
                     </Card>
                     <Card className="partner-card">
                         <CardImg src={Logo} alt="partner 2" />

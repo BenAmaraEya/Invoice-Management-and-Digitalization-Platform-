@@ -55,6 +55,18 @@ const FournisseurController={
             res.status(500).json({ error: 'Internal Server Error' });
             }
         },
+          //get all user
+    getFournisseur: async (req, res , next) =>{
+        try {
+            const users = await Fournisseur.findAll(
+                {include:User}
+            );
+            res.json(users);
+          } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
+          }
+        },
   //afficher les details de fournisseur     
 getfournisseurbyid: async (req, res) => {
     try {
