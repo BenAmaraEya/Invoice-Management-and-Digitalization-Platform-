@@ -5,8 +5,8 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-      user: 'hamedw594@gmail.com',
-      pass: 'waouly12'
+      user: 'eyabenamara288@gmail.com',
+      pass: 'muyl fqmf ayvs tocj'
   },
   tls: {
     rejectUnauthorized: false // Désactiver la vérification du certificat SSL
@@ -69,32 +69,50 @@ const UserController = {
 
 
     //ajout d'un utilisateur
-    adduser: async(req ,res,next)=>{
+    adduser: async (req, res, next) => {
       try {
-          const {name,username,email,phone,profil}=req.body;
-          //le mot de passe est générer automatiquement
-          const password =await generatePassword()
+          const { name, username, email, phone, profil } = req.body;
+          // Generate a random password
+          const password = await generatePassword();
           
-          //const hashedPassword=await bcrypt.hash(password,10);
-          const newUser=await User.create({
-            name,
-            username,
-            email,
-            phone,
-            profil,
-            password,
-            isActive:false
-            
-
+          // Create a new user in the database
+          const newUser = await User.create({
+              name,
+              username,
+              email,
+              phone,
+              profil,
+              password,
+              isActive: false
           });
+          
+          // Compose email
+          const mailOptions = {
+              from: 'eyabenamara288@gmail.com',
+              to: email,
+              subject: 'Your Login Credentials for the System',
+              html: `
+                  <p>Dear ${name},</p>
+                  <p>Welcome to our system!</p>
+                  <p>Here are your login credentials:</p>
+                  <p>Username: ${username}</p>
+                  <p>Password: ${password}</p>
+                  <p>Please change your password after logging in for security reasons.</p>
+                  <p>Regards,</p>
+                  <p>Your System</p>
+              `
+          };
+          
+          // Send email
+          await transporter.sendMail(mailOptions);
+  
+          // Respond with success message
           res.status(201).json({ message: 'User added successfully', user: newUser });
-      } 
-    catch(error){
-        console.error('Error adding user:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
-       
-    }
-},
+      } catch (error) {
+          console.error('Error adding user:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+      }
+  },
 // mettre-a-jour utilisateur par son id 
     updateUser: async (req, res, next) => {
         const id = req.params.id;
@@ -151,7 +169,7 @@ const UserController = {
  
   
   // Route pour envoyer les informations de connexion par e-mail à un utilisateur existant
-  access: async (req, res, next) => {
+  /*access: async (req, res, next) => {
     const userId = req.params.id;
     try {
         const user = await User.findByPk(userId);
@@ -160,7 +178,7 @@ const UserController = {
         }
 
         const mailOptions = {
-            from: 'hamedw594@gmail.com',
+            from: 'eyabenamara288@gmail.com',
             to: user.email,
             subject: 'Your Login Credentials for the System',
             html: `
@@ -180,7 +198,8 @@ const UserController = {
         console.error('Error:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
-}
+}*/
+
 };
 
 

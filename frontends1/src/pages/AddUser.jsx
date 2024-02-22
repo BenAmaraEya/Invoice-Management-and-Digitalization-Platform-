@@ -23,28 +23,30 @@ function AddUser() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const url = formData.profil === "fournisseur" ? 'http://localhost:3006/fournisseur/addfournisseur' : 'http://localhost:3006/user/adduser';
+
+        try {
+            const url = formData.profil === "fournisseur" ? 'http://localhost:3006/fournisseur/addfournisseur' : 'http://localhost:3006/user/adduser';
         
-        axios.post(url, formData)
-            .then(res => {
-                console.log('Utilisateur ajouté avec succès:', res.data);
-                setFormData({
-                    name: "",
-                    username: "",
-                    email: "",
-                    profil: "fournisseur",
-                    telephone: "",
-                    iderp: "",
-                    idFiscale: "",
-                    adresse: "",
-                    nationnalite: ""
-                });
-            })
-            .catch(error => {
-                console.error('Erreur lors de l\'ajout de l\'utilisateur:', error);
+            const response = await axios.post(url, formData);
+            console.log('Utilisateur ajouté avec succès:', response.data);
+
+            // Clear form fields after successful submission
+            setFormData({
+                name: "",
+                username: "",
+                email: "",
+                profil: "fournisseur",
+                telephone: "",
+                iderp: "",
+                idFiscale: "",
+                adresse: "",
+                nationnalite: ""
             });
+        } catch (error) {
+            console.error('Erreur lors de l\'ajout de l\'utilisateur:', error);
+        }
     };
 
     return (

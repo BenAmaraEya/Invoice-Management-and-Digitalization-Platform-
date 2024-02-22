@@ -1,32 +1,31 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const { connectDB, sequelize } = require('./database');
 const path = require('path');
 const authRoute = require('./routes/authRoute');
-const userRoute=require('./routes/userRoute');
-const fournisseurRoute=require('./routes/fournisseurRoute');
-
+const userRoute = require('./routes/userRoute');
+const fournisseurRoute = require('./routes/fournisseurRoute');
 
 connectDB();
 app.use(express.json());
+// Enable CORS
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-//const Facture = require('./models/Facture');
-
-
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
-
-app.use('/user',authRoute);
-app.use('/user',userRoute);
-app.use('/fournisseur',fournisseurRoute);
-
+// Serve static files
 const publicPath = path.join(__dirname, 'C:\Users\pc\Desktop\PFE\PFE_Project\frontends1');
 app.use(express.static(publicPath));
 
+// Define routes
+app.use('/auth', authRoute); // Authentication routes
+app.use('/user', userRoute); // User-related routes
+app.use('/fournisseur', fournisseurRoute); // Fournisseur routes
+
+// Start server
 const PORT = process.env.PORT || 3006;
 app.listen(PORT, () => {
   console.log(`Server running on port http://localhost:${PORT}/`);

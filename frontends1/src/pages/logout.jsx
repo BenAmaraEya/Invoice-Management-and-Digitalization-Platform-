@@ -1,7 +1,5 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
-const Logout = () => {
+/*const Logout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,4 +39,33 @@ const Logout = () => {
   return null;
 };
 
+export default Logout;*/
+// api.js
+// Logout.jsx
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+const Logout = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const logoutUser = async () => {
+      try {
+        // Supprimer le token d'authentification du local storage
+        localStorage.removeItem("accessToken");
+
+        // Rediriger vers la page de connexion après la déconnexion
+        navigate('/login');
+      } catch (error) {
+        console.error("Error during logout:", error);
+      }
+    };
+
+    logoutUser();
+  }, [navigate]);
+
+  return null; // Your Logout component should return something, even if it's null
+};
+
 export default Logout;
+
