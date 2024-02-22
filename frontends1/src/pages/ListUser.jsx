@@ -17,6 +17,7 @@ function ListUser() {
                 console.error('Error fetching fournisseurs:', error);
             });
     }, []);
+    //Supprimer Fournisseur
     const DeleteFournisseur = async (iderp) => {
         try {
             await axios.delete(`http://localhost:3006/fournisseur/${iderp}`);
@@ -26,9 +27,18 @@ function ListUser() {
             console.error('Erreur lors de la suppression du fournisseur:', error);
         }
     };
+    // donner accées au système
+    const Acesse = async (id) => {
+        try {
+            await axios.post(`http://localhost:3006/user/acces/${id}`);
+            console.log('Envoyer accées au système avec succès');
+        } catch (error) {
+            console.error('Erreur :', error);
+        }
+    };
     return (
         <div>
-<Link to="/addUser" className="add-user-link">Ajouter Fournisseur</Link>   
+<Link to="/addUser" className="add-user-link">Ajouter Utilisateur</Link>   
 <h1>Liste Fournisseurs</h1>    
      <table>
     
@@ -71,8 +81,10 @@ function ListUser() {
                             <Link to={`../updateUser/${data.iderp}`} className="update-link">Modifier</Link>
                             </button>
                             <button onClick={() => DeleteFournisseur(data.iderp)}>Supprimer</button>
+                            <button onClick={() => Acesse(data.User.id)}>Accés</button>
+
                         </td>
-                
+                    
                         </tr>
                     ))}
                 </tbody>

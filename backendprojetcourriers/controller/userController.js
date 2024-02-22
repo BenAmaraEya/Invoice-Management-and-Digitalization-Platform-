@@ -23,9 +23,10 @@ const UserController = {
                 return res.status(401).json({ error: 'Invalid username' });
             }
             
-            if (password !== user.password) {
-                return res.status(401).json({ error: 'Invalid password' });
-            }
+            const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid password' });
+    }
         //lorsque l'utilisateur est authentifie les attrubut isactive true et last_login prend le date de l'authentification 
             user.isactive = true;
             user.last_login = new Date();
@@ -85,26 +86,6 @@ const UserController = {
               password,
               isActive: false
           });
-          
-          // Compose email
-          const mailOptions = {
-              from: 'eyabenamara288@gmail.com',
-              to: email,
-              subject: 'Your Login Credentials for the System',
-              html: `
-                  <p>Dear ${name},</p>
-                  <p>Welcome to our system!</p>
-                  <p>Here are your login credentials:</p>
-                  <p>Username: ${username}</p>
-                  <p>Password: ${password}</p>
-                  <p>Please change your password after logging in for security reasons.</p>
-                  <p>Regards,</p>
-                  <p>Your System</p>
-              `
-          };
-          
-          // Send email
-          await transporter.sendMail(mailOptions);
   
           // Respond with success message
           res.status(201).json({ message: 'User added successfully', user: newUser });
@@ -169,7 +150,7 @@ const UserController = {
  
   
   // Route pour envoyer les informations de connexion par e-mail à un utilisateur existant
-  /*access: async (req, res, next) => {
+  access: async (req, res, next) => {
     const userId = req.params.id;
     try {
         const user = await User.findByPk(userId);
@@ -198,7 +179,23 @@ const UserController = {
         console.error('Error:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
-}*/
+},
+//modifier mot passe 
+updatePassword: async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findOne({ where: { id: userId } });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        const passwordhash = await bcrypt.hash(req.body.password, 10);
+        await user.update({ password: passwordhash }, { where: { id: userId } });
+        res.json({ message: ' updated successfully' });
+    } catch (error) {
+        console.error('Error updating :', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+},
 
 };
 

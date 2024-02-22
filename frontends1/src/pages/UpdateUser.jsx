@@ -14,7 +14,7 @@ function UpdateUser() {
         name: "",
         username: "",
         email: "",
-        password: "",
+        
         phone: ""
     });
     const { iderp } = useParams();
@@ -36,7 +36,7 @@ function UpdateUser() {
                     name: userData.name,
                     username: userData.username,
                     email: userData.email,
-                    password: userData.password,
+                    
                     phone: userData.phone
                 };
     
@@ -73,9 +73,9 @@ function UpdateUser() {
             <h2>Modifier Fournisseur</h2>
             <div>
                 <label htmlFor="iderp">iderp</label>
-                <input type="text" name="iderp" value={formData.iderp} onChange={handleChange} />
+                <input type="number" name="iderp" value={formData.iderp} onChange={handleChange} />
                 <label htmlFor="idFiscale">idFiscale</label>
-                <input type="text" name="idFiscale" value={formData.idfiscale} onChange={handleChange} />
+                <input type="number" name="idFiscale" value={formData.idfiscale} onChange={handleChange} />
                 <label htmlFor="adresse">Adresse</label>
                 <input type="text" name="adresse" value={formData.adresse} onChange={handleChange} />
                 <label htmlFor="nationnalite">Nationnalite</label>
@@ -86,8 +86,7 @@ function UpdateUser() {
                 <input type="text" name="username" value={formData.username} onChange={handleChange} />
                 <label htmlFor="email">Email</label>
                 <input type="email" name="email" value={formData.email} onChange={handleChange} />
-                <label htmlFor="password">Mot de passe</label>
-                <input type="Text" name="password" value={formData.password} onChange={handleChange} />
+                
                 <label htmlFor="phone">Numéro Télephone</label>
                 <input type="text" name="phone" value={formData.phone} onChange={handleChange} />
                 <button type="submit">Modifier</button>

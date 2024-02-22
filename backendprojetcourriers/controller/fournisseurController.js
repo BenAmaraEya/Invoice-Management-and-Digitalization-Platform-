@@ -9,7 +9,7 @@ const FournisseurController={
             const { iderp, idfiscale, adresse, nationnalite, userId } = req.body;
 
             //récuperer l'id de l'utilisateur associe au fournisseur
-            const user = await User.findByPk(userId);
+            const user = await User.findOne({ where: { id: userId } });
             if (!user) {
                 return res.status(404).json({ error: 'User not found' });
             }
@@ -69,13 +69,13 @@ const FournisseurController={
             res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
           }
         },
-  //afficher les details de fournisseur     
+  //get fournisseur by ID  
 getfournisseurbyid: async (req, res) => {
     try {
         const iderp = req.params.iderp;
         
         const fournisseur = await Fournisseur.findOne({where: { iderp }, 
-            include: User//pour afficher les details d'utilisateur (les information de fournisseur dans le table user) 
+            include: User 
         });
 
         if (!fournisseur) {
@@ -111,8 +111,6 @@ deletefournisseur: async (req, res, next) => {
         } else {
             console.error('Associated user not found');
         }
-
-        
         await fournisseur.destroy();
 
         res.json({ message: 'Fournisseur and associated User deleted successfully' });

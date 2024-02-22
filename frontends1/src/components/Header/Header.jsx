@@ -1,6 +1,6 @@
 // Header.jsx
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink ,useNavigate} from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import "./Header.css";
@@ -27,11 +27,10 @@ const nav_links = [
 ];
 
 const Header = () => {
+  const navigate = useNavigate();
   const handleLogout = async () => {
     try {
-      await Logout(); // Call the logout function
-      // Redirect the user to the login page or do whatever is necessary after logout
-      window.location.href = '/login'; // Example redirection
+      await Logout(navigate); 
     } catch (error) {
       console.error("Error during logout:", error);
     }

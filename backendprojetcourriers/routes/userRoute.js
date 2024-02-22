@@ -8,9 +8,9 @@ router.get('/:id',UserController.getUserById);
 router.post('/adduser',UserController.adduser);
 // Route mettre a jour utilisateur
 router.put('/update/:id',UserController.updateUser);
-//router.post('/logout',UserController.logout);
 // Route supprime utilisateur
 //router.delete('/:id',UserController.deleteUser);
-//router.post('/acces/:id',UserController.access);
-
+router.post('/acces/:id',UserController.access);
+// route mettre a jour mot passe
+router.put('/updatePass/:id',UserController.updatePassword);
 module.exports = router;

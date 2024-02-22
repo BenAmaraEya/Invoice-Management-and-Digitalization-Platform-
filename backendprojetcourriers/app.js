@@ -9,12 +9,13 @@ const fournisseurRoute = require('./routes/fournisseurRoute');
 
 connectDB();
 app.use(express.json());
-// Enable CORS
 app.use(cors({
   origin: 'http://localhost:3000',
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+
 
 // Serve static files
 const publicPath = path.join(__dirname, 'C:\Users\pc\Desktop\PFE\PFE_Project\frontends1');

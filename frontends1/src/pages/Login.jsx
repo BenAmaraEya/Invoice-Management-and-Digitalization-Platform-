@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { Container, Row, Col, Form, FormGroup, Button } from "reactstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
+
 const Login = () => {
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
   });
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -19,9 +21,10 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3006/user/login", {
+      const response = await fetch("http://localhost:3006/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -30,17 +33,20 @@ const Login = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Invalid ");
+        throw new Error("Invalid credentials");
       }
 
       const data = await response.json();
 
-      // Set token in local storage for future requests
-      localStorage.setItem("accessToken", data.token);
+      // Set token in secure cookie for future requests
+      document.cookie = `accessToken=${data.token}; Secure; HttpOnly`;
+
       navigate('/ProfilTT');
     
     } catch (error) {
-      setError("Invalid email or password");
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,7 +60,7 @@ const Login = () => {
                 
                 <Form onSubmit={handleLogin}>
                   <FormGroup>
-                    <label>username</label>
+                    <label>Username</label>
                     <input
                       type="text"
                       placeholder="Enter Your name"
@@ -64,7 +70,8 @@ const Login = () => {
                     />
                   </FormGroup>
                   <FormGroup>
-                    <label>password</label><input
+                    <label>Password</label>
+                    <input
                       type="password"
                       placeholder="Password"
                       required
@@ -75,8 +82,9 @@ const Login = () => {
                   <Button
                     className="btn secondary__btn auth__btn"
                     type="submit"
+                    disabled={loading}
                   >
-                    Login
+                    {loading ? 'Logging in...' : 'Login'}
                   </Button>
                 </Form>
                 {error && <p className="error-message">{error}</p>}

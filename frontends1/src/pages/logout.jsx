@@ -1,7 +1,7 @@
+// Logout.jsx
+import React, { useEffect } from "react";
 
-/*const Logout = () => {
-  const navigate = useNavigate();
-
+const Logout = (navigate) => {
   useEffect(() => {
     const logoutUser = async () => {
       try {
@@ -10,20 +10,17 @@
         
         // Appeler la fonction pour déconnecter l'utilisateur
         await changeUserActiveStatusToFalse();
-        
-        // Rediriger vers la page de connexion après la déconnexion
-        navigate('/login');
       } catch (error) {
         console.error("Error during logout:", error);
       }
     };
 
     logoutUser();
-  }, [navigate]);
+  },  [navigate]);
 
   const changeUserActiveStatusToFalse = async () => {
     try {
-      await fetch("http://localhost:3006/user/logout", {
+      await fetch("http://localhost:3006/auth/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,10 +36,11 @@
   return null;
 };
 
-export default Logout;*/
+export default Logout;
+
 // api.js
 // Logout.jsx
-import React, { useEffect } from "react";
+/*import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Logout = () => {
@@ -67,5 +65,5 @@ const Logout = () => {
   return null; // Your Logout component should return something, even if it's null
 };
 
-export default Logout;
+export default Logout;*/
 
