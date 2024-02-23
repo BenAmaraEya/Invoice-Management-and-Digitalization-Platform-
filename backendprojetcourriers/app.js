@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const requestIp = require('request-ip');
 const { connectDB, sequelize } = require('./database');
 const path = require('path');
 const authRoute = require('./routes/authRoute');
@@ -8,6 +9,7 @@ const userRoute = require('./routes/userRoute');
 const fournisseurRoute = require('./routes/fournisseurRoute');
 
 connectDB();
+app.set('trust proxy', true);
 app.use(express.json());
 app.use(cors({
   origin: 'http://localhost:3000',
@@ -16,7 +18,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-
+app.use(requestIp.mw());
 
 // Serve static files
 const publicPath = path.join(__dirname, 'C:\Users\pc\Desktop\PFE\PFE_Project\frontends1');

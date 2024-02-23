@@ -1,25 +1,46 @@
 import React, { useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link ,useNavigate} from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt, faKey, faSignOutAlt, faCog } from "@fortawesome/free-solid-svg-icons"; 
 import "./Header.css";
-import UpdatePasswordForm from "../../pages/updatePassword";
-import Logout from "../../pages/logout";
+
+
 const Header = () => {
-  
+  const navigate = useNavigate();
   const userId = localStorage.getItem("userId"); 
 
-  const handleSelectChange = (event) => {
+  const handleSelectChange = async (event) => {
     const selectedOption = event.target.value;
     if (selectedOption === "updatePassword") {
       // Redirect to update password page
-      window.location.href = `/updatePass/${userId}`;
+      navigate(`/updatePass/${userId}`);
     } else if (selectedOption === "logout") {
       // Perform logout action
-      window.location.href = `/logout/${userId}`;
-      <Logout/>
+      try {
+        const response = await fetch(`http://localhost:3006/auth/logout/${userId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          // Clear local storage
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("userId");
+          console.log("token removed");
+          navigate('/login');
+        } else {
+          console.error("Failed to logout:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error during logout:", error);
+      }
     }
   };
+
+    
+  
 
   return (
     <header className="header">
@@ -55,7 +76,7 @@ const Header = () => {
                         Choose an action
                       </option>
                       <option value="updatePassword">Update Password</option>
-                      <option value="logout"><Logout/></option>
+                      <option value="logout">Logout</option>
                     </select>
                   </li>
                 </ul>
