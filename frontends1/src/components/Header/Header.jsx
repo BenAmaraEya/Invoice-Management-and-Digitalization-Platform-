@@ -16,6 +16,7 @@ const Header = () => {
       window.location.href = `/updatePass/${userId}`;
     } else if (selectedOption === "logout") {
       // Perform logout action
+      window.location.href = `/logout/${userId}`;
       <Logout/>
     }
   };

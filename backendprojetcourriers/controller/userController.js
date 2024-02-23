@@ -30,7 +30,7 @@ const UserController = {
             }
 
             // Update user's activity status to true (logged in)
-            user.isActive = true;
+            user.isactive = true;
             user.last_login = new Date();
             await user.save();
 
@@ -117,17 +117,23 @@ const UserController = {
     //log out
     logout: async (req, res, next) => {
         try {
-          // Check if the user is authenticated
+           id= req.params.id
+          /* Check if the user is authenticated
           if (!req.user || !req.user.id) {
             return res.status(401).json({ error: 'User not authenticated' });
-          }
+          }*/
       
           // Get the ID of the user from the authentication token
-          const userId = req.user.id;
+          const userId = id;
       
           // Update the isActive attribute of the user to false
           const user = await User.findByPk(userId);
-          user.isActive = false;
+          if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+          }
+          //await user.update({ password: passwordhash }, { where: { id: userId } });
+
+          user.isactive = false;
           await user.save();
       
           // Respond with success
