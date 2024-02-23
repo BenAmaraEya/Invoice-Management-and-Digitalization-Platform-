@@ -1,69 +1,37 @@
-// Logout.jsx
-import React, { useEffect } from "react";
+// Logout.js
 
-const Logout = (navigate) => {
-  useEffect(() => {
-    const logoutUser = async () => {
-      try {
-        // Supprimer le token d'authentification du local storage
-        localStorage.removeItem("accessToken");
-        
-        // Appeler la fonction pour déconnecter l'utilisateur
-        await changeUserActiveStatusToFalse();
-      } catch (error) {
-        console.error("Error during logout:", error);
-      }
-    };
-
-    logoutUser();
-  },  [navigate]);
-
-  const changeUserActiveStatusToFalse = async () => {
-    try {
-      await fetch("http://localhost:3006/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
-      console.log("User deactivated successfully");
-    } catch (error) {
-      console.error("Error deactivating user:", error);
-    }
-  };
-
-  return null;
-};
-
-export default Logout;
-
-// api.js
-// Logout.jsx
-/*import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const Logout = () => {
   const navigate = useNavigate();
+  
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("http://localhost:3006/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // No need to send user ID for logout
+      });
 
-  useEffect(() => {
-    const logoutUser = async () => {
-      try {
-        // Supprimer le token d'authentification du local storage
+      if (response.ok) {
+        // Clear local storage
         localStorage.removeItem("accessToken");
-
-        // Rediriger vers la page de connexion après la déconnexion
+        localStorage.removeItem("userId");
         navigate('/login');
-      } catch (error) {
-        console.error("Error during logout:", error);
+      } else {
+        console.error("Failed to logout:", response.statusText);
       }
-    };
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
 
-    logoutUser();
-  }, [navigate]);
-
-  return null; // Your Logout component should return something, even if it's null
+  return (
+    <button onClick={handleLogout}>Logout</button>
+  );
 };
 
-export default Logout;*/
-
+export default Logout;

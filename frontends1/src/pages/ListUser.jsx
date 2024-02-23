@@ -63,7 +63,7 @@ function ListUser() {
                             <td>{data.User.username}</td>
                             <td>{data.User.email}</td>
                             <td>
-    {data.User.isactive ? (
+    {data.User.isActive ? (
         <div>
             <i className="fas fa-check-circle"></i> Connecté
         </div>

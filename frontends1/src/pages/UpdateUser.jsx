@@ -14,7 +14,6 @@ function UpdateUser() {
         name: "",
         username: "",
         email: "",
-        
         phone: ""
     });
     const { iderp } = useParams();

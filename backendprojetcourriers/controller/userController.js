@@ -20,25 +20,29 @@ const UserController = {
             const user = await User.findOne({ where: { username } });
 
             if (!user) {
-                return res.status(401).json({ error: 'Invalid username' });
+                return res.status(401).json({ error: 'Invalid username or password' });
             }
-            
+
+            // Compare hashed passwords
             const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      return res.status(401).json({ error: 'Invalid password' });
-    }
-        //lorsque l'utilisateur est authentifie les attrubut isactive true et last_login prend le date de l'authentification 
-            user.isactive = true;
+            if (!passwordMatch) {
+                return res.status(401).json({ error: 'Invalid username or password' });
+            }
+
+            // Update user's activity status to true (logged in)
+            user.isActive = true;
             user.last_login = new Date();
             await user.save();
 
+            // Generate token
             const token = generateToken(user);
-            res.json({ token });
+            res.json({ token, id: user.id });
         } catch (error) {
             console.error('Error logging in:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     },
+    
     //get all user
     getUser: async (req, res , next) =>{
         try {
@@ -71,29 +75,31 @@ const UserController = {
 
     //ajout d'un utilisateur
     adduser: async (req, res, next) => {
-      try {
-          const { name, username, email, phone, profil } = req.body;
-          // Generate a random password
-          const password = await generatePassword();
-          
-          // Create a new user in the database
-          const newUser = await User.create({
-              name,
-              username,
-              email,
-              phone,
-              profil,
-              password,
-              isActive: false
-          });
-  
-          // Respond with success message
-          res.status(201).json({ message: 'User added successfully', user: newUser });
-      } catch (error) {
-          console.error('Error adding user:', error);
-          res.status(500).json({ error: 'Internal Server Error' });
-      }
-  },
+        try {
+            const { name, username, email, phone, profil } = req.body;
+            
+            const password = username;
+            // Hash the password
+            const passwordHash = await bcrypt.hash(password, 10);
+
+            // Create a new user with the hashed password
+            const newUser = await User.create({
+                name,
+                username,
+                email,
+                phone,
+                profil,
+                password: passwordHash, // Store the hashed password
+                isActive: false
+            });
+
+            // Respond with success message
+            res.status(201).json({ message: 'User added successfully', user: newUser });
+        } catch (error) {
+            console.error('Error adding user:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
 // mettre-a-jour utilisateur par son id 
     updateUser: async (req, res, next) => {
         const id = req.params.id;
@@ -110,22 +116,27 @@ const UserController = {
     },
     //log out
     logout: async (req, res, next) => {
-      try {
-          // Obtenez l'ID de l'utilisateur à partir du jeton d'authentification
+        try {
+          // Check if the user is authenticated
+          if (!req.user || !req.user.id) {
+            return res.status(401).json({ error: 'User not authenticated' });
+          }
+      
+          // Get the ID of the user from the authentication token
           const userId = req.user.id;
-  
-          // Mettez à jour l'attribut isActive de l'utilisateur à false
+      
+          // Update the isActive attribute of the user to false
           const user = await User.findByPk(userId);
-          user.isactive = false;
+          user.isActive = false;
           await user.save();
-  
-          // Répondez avec succès
+      
+          // Respond with success
           res.status(200).json({ message: 'User logged out successfully' });
-      } catch (error) {
+        } catch (error) {
           console.error('Error logging out:', error);
           res.status(500).json({ error: 'Internal Server Error' });
-      }
-  },
+        }
+      },
 
 
 //supprimer l'utilisateur par son id
@@ -197,13 +208,14 @@ updatePassword: async (req, res, next) => {
     }
 },
 
+
 };
 
 
 
-async function generatePassword() {
+/*async function generatePassword() {
     
     const randomstring = require("randomstring");
     return randomstring.generate(8); 
-}
+}*/
 module.exports = UserController;

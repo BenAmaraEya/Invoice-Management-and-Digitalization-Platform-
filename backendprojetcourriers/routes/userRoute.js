@@ -13,4 +13,6 @@ router.put('/update/:id',UserController.updateUser);
 router.post('/acces/:id',UserController.access);
 // route mettre a jour mot passe
 router.put('/updatePass/:id',UserController.updatePassword);
+
+
 module.exports = router;

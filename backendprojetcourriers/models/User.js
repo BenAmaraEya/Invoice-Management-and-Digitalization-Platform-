@@ -26,6 +26,9 @@ const User = sequelize.define('User', {
     },
     password:{
         type:DataTypes.STRING,
+        defaultValue: function() {
+            return this.username; 
+        }
     },
     profil:{
         type:DataTypes.STRING,

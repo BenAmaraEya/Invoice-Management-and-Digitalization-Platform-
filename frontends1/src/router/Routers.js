@@ -7,6 +7,7 @@ import ListUser from "./../pages/ListUser";
 import AddUser from "./../pages/AddUser";
 import UpdateUser from"./../pages/UpdateUser";
 import Logout from "../pages/logout";
+import UpdatePasswordForm from "../pages/updatePassword";
 const Routers = () => {
     return (
         <Routes>
@@ -14,11 +15,11 @@ const Routers = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/logout" element={<Logout />} />
-            <Route path="/profil" element={<Profil />} />
+            <Route path="/profil/:id" element={<Profil />} />
             <Route path="/listUser" element={<ListUser />} />
             <Route path="/addUser" element={<AddUser />} />
             <Route path="/updateUser/:iderp" element={<UpdateUser />} />
-
+            <Route path="/updatepass/:id" element={<UpdatePasswordForm />} />
 
         </Routes>
     );
