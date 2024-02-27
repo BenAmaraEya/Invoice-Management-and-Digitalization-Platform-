@@ -8,15 +8,19 @@ function ListUser() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:3006/fournisseur/')
-            .then(res => {
-                setUser(res.data); 
-            })
-            .catch(error => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('http://localhost:3006/fournisseur/');
+                setUser(response.data);
+            } catch (error) {
                 setError(error);
                 console.error('Error fetching fournisseurs:', error);
-            });
+            }
+        };
+    
+        fetchData();
     }, []);
+    
     //Supprimer Fournisseur
     const DeleteFournisseur = async (iderp) => {
         try {

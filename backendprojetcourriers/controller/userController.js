@@ -56,7 +56,7 @@ const UserController = {
             // récupérer l'ip et la localisation 
             const publicIP = await getPublicIP();
             const locationData = await axios.get(`https://ipinfo.io/${publicIP}/json`);
-            const location = locationData.data;;
+            const location = locationData.data;
 
             // Send login alert email
             await UserController.sendLoginAlertEmail(user, location);
@@ -182,7 +182,7 @@ const UserController = {
                     <p>Dear ${user.name},</p>
                     <p>Here are your temporary login credentials for the system:</p>
                     <p>Username: ${user.username}</p>
-                    <p>Password: ${user.password}</p>
+                    <p>Password: ${user.usename}</p>
                     <p>Please change your password after logging in for security reasons.</p>
                     <p>Regards,</p>
                     <p>Your System</p>
@@ -197,7 +197,7 @@ const UserController = {
         }
     },
 
-    updatePassword: async (req, res, next) => {
+    /*updatePassword: async (req, res, next) => {
         try {
             const userId = req.params.id;
             const user = await User.findOne({ where: { id: userId } });
@@ -211,7 +211,37 @@ const UserController = {
             console.error('Error updating :', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
-    },
+    },*/
+    
+    updatePassword: async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findOne({ where: { id: userId } });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Vérifiez si l'ancien mot de passe fourni correspond au mot de passe actuel de l'utilisateur
+        const isMatch = await bcrypt.compare(req.body.oldPassword, user.password);
+
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Old password is incorrect' });
+        }
+
+        // Générez le hash du nouveau mot de passe
+        const newPasswordHash = await bcrypt.hash(req.body.newPassword, 10);
+
+        // Mettre à jour le mot de passe de l'utilisateur
+        await user.update({ password: newPasswordHash }, { where: { id: userId } });
+
+        res.json({ message: 'Password updated successfully' });
+    } catch (error) {
+        console.error('Error updating password:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
 };
 
 

@@ -4,7 +4,8 @@ import { useParams } from 'react-router-dom';
 
 const UpdatePasswordForm = () => {
     const [formData, setFormData] = useState({
-        password: ""
+        oldPassword: "",
+        newPassword: ""
     });
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -43,11 +44,20 @@ const UpdatePasswordForm = () => {
             <h2>Update Password</h2>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="password">Update Password</label>
+                    <label htmlFor="oldPassword">Old Password</label>
                     <input
                         type="password"
-                        name="password"
-                        value={formData.password}
+                        name="oldPassword"
+                        value={formData.oldPassword}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="newPassword">New Password</label>
+                    <input
+                        type="password"
+                        name="newPassword"
+                        value={formData.newPassword}
                         onChange={handleChange}
                     />
                 </div>
