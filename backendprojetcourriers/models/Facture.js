@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const  {sequelize}  = require('../database');
+const Pieces_jointe = require('./PiecesJointe');
 const Facture = sequelize.define('Facture', {
 idF:{
     type: DataTypes.INTEGER,
@@ -43,10 +44,14 @@ datereception:{
     type: DataTypes.DATE,
 
 },
+num_po:{
+type: DataTypes.STRING
+},
 pathpdf:{
     type: DataTypes.STRING,
     
 }
 });
+Facture.hasMany(Pieces_jointe, { as: 'Pieces_jointes', foreignKey: 'idFacture',onDelete: 'CASCADE' });
 
 module.exports = Facture;
