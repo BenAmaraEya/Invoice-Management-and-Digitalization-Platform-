@@ -7,7 +7,7 @@ const path = require('path');
 const authRoute = require('./routes/authRoute');
 const userRoute = require('./routes/userRoute');
 const fournisseurRoute = require('./routes/fournisseurRoute');
-
+const factureRoute = require('./routes/factureRoute');
 connectDB();
 app.set('trust proxy', true);
 app.use(express.json());
@@ -28,6 +28,9 @@ app.use(express.static(publicPath));
 app.use('/auth', authRoute); // Authentication routes
 app.use('/user', userRoute); // User-related routes
 app.use('/fournisseur', fournisseurRoute); // Fournisseur routes
+app.use('/facture',factureRoute);
+
+
 
 // Start server
 const PORT = process.env.PORT || 3006;

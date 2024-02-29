@@ -47,7 +47,7 @@ const Login = () => {
       
       console.log("User ID:", id);
       console.log("Response Data:", data);
-      // Redirect to profile or dashboard page
+     
       navigate(`/profile/${id}`);
     } catch (error) {
       setError(error.message);

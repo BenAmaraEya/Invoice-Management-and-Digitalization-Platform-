@@ -12,11 +12,11 @@ const Logout = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        // No need to send user ID for logout
+        
       });
 
       if (response.ok) {
-        // Clear local storage
+        
         localStorage.removeItem("accessToken");
         localStorage.removeItem("userId");
         console.log("token remove");
