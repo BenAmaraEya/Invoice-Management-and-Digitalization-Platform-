@@ -3,7 +3,7 @@ const mime = require('mime-types');
 const Tesseract = require('tesseract.js');
 const fs = require('fs');
 const Facture = require('../models/Facture');
-const pdf2img = require('pdf2img');
+const pdfPoppler = require('pdf-poppler');
 
 const storage = multer.diskStorage({
     destination: 'uploads/', 
@@ -38,11 +38,11 @@ async function recognizeText(imagePath) {
 }
 
 async function extractFieldsFromText(text) {
-    // Implement your logic to extract fields from the recognized text here
-    // For example:
-    const numFactRegex = /(?:Num(?:\.|éro)?(?:\s+|°\s*))(?:de\s*)?facture\s*:\s*(\w+)/i;
+    // Implémentez votre logique d'extraction de champs du texte reconnu ici
+    // Par exemple :
+    const numFactRegex = /(?:Num(?:\.|éro)?(?:\s+|°\s*))(?:de\s*)?facture\s*(\w+)/i;
     const dateFactRegex = /(?:Date\s*:\s*|Date\s*de\s*facture\s*:\s*)(\w+)/i;
-    const montantRegex = /(?:Montant\s*Total\s*TTC\s*:\s*|Montant\s*:\s*)(\d+(\.\d{1,2})?)/i;
+    const montantRegex = /(?:Montant\s*Total\s*TTC\s*|Montant\s*:\s*)(\d+(\.\d{1,2})?)/i;
    
     const numFactMatch = text.match(numFactRegex);
     const dateFactMatch = text.match(dateFactRegex);
@@ -72,50 +72,54 @@ const FactureController = {
                 }
                 
                 const pdfPath = req.file.path;
-                console.log(pdfPath);
+                console.log('PDF Path:', pdfPath);
 
                 // Convert PDF to images
                 const options = {
-                    type: 'jpg',                     // output type
-                    size: 1024,                      // output size
-                    density: 600,                    // output dpi
-                    outputdir: 'uploads',            // output folder
-                    outputname: 'facture_',          // output file name
-                    page: null                       // convert all pages
+                    format: 'jpeg',
+                    out_dir: 'uploads'
                 };
+                try {
+                    const images = await pdfPoppler.convert(pdfPath, options);
+                    console.log('Images:', images.length);
 
-                // Convert PDF to images and handle errors
-                const imagePaths = await pdf2img.convert(pdfPath, options).catch(error => {
-                    console.error('Error converting PDF to images:', error);
-                    throw new Error('Erreur lors de la conversion du PDF en images');
-                });
+                    // Récupérer les chemins des images converties
+                    const imagePaths = Object.keys(images).map(key => images[key]);
 
-                if (!imagePaths || imagePaths.length === 0) {
-                    throw new Error('Aucune image générée lors de la conversion du PDF');
+                    // Vérifier si des images ont été converties
+                    if (imagePaths.length > 0) {
+                        console.log('Images:', imagePaths);
+
+                        // Reconnaître le texte de chaque image
+                        const recognizedTexts = await Promise.all(imagePaths.map(image => recognizeText(image)));
+                        const extractedText = recognizedTexts.join(' ');
+
+                        console.log('Extracted text:', extractedText);
+
+                        // Extraire les champs du texte reconnu
+                        const extractedFields = await extractFieldsFromText(extractedText);
+
+                        // Créer une nouvelle instance de Facture avec les données extraites
+                        const newFacture = await Facture.create({
+                            num_fact: extractedFields.num_fact,
+                            date_fact: extractedFields.date_fact ? new Date(extractedFields.date_fact) : null,
+                            montant: extractedFields.montant,
+                            factname: "facture1",
+                            devise: "TND",
+                            nature: "aa",
+                            objet: "pc",
+                            pathpdf: req.file.path // Chemin vers le fichier PDF téléchargé
+                        });
+
+                        res.status(200).json({ message: 'Fichier téléchargé avec succès.' });
+                    } else {
+                        console.error('Aucune image extraite du PDF.');
+                        return res.status(500).json({ error: 'Aucune image extraite du PDF' });
+                    }
+                } catch (conversionError) {
+                    console.error('Error converting PDF to images:', conversionError);
+                    return res.status(500).json({ error: 'Erreur lors de la conversion du PDF en images', message: conversionError.message });
                 }
-
-                // Recognize text from each image
-                const recognizedTexts = await Promise.all(imagePaths.map(imagePath => recognizeText(imagePath)));
-                const extractedText = recognizedTexts.join(' ');
-
-                console.log('Extracted text:', extractedText);
-
-                // Extract fields from the recognized text
-                const extractedFields = await extractFieldsFromText(extractedText);
-
-                // Create a new instance of Facture with the extracted data
-                const newFacture = await Facture.create({
-                    num_fact: extractedFields.num_fact,
-                    date_fact: extractedFields.date_fact ? new Date(extractedFields.date_fact) : null,
-                    montant: extractedFields.montant,
-                    factname: "facture1",
-                    devise: "TND",
-                    nature: "aa",
-                    objet: "pc",
-                    pathpdf: req.file.path // Path to the uploaded PDF file
-                });
-
-                res.status(200).json({ message: 'Fichier téléchargé avec succès.' });
             });
         } catch (error) {
             console.error('Erreur:', error);
@@ -123,6 +127,5 @@ const FactureController = {
         }
     }
 };
-
 
 module.exports = FactureController;
