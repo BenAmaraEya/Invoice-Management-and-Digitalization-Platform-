@@ -26,21 +26,6 @@ const uploadMiddleware = multer({
     }
 }).single('file');
 
-async function convertPdfToImages(pdfPath) {
-  try {
-      const opts = {
-          format: 'jpeg',
-          out_dir: "./uploads",
-          out_prefix: "page_",
-          page: null
-      };
-      return await pdf.convert(pdfPath, opts);
-  } catch (error) {
-      console.error('Error converting PDF to images:', error);
-      throw error;
-  }
-}
-
 async function recognizeText(imagePath) {
     try {
         const { data: { text } } = await Tesseract.recognize(imagePath, 'fr');
@@ -88,8 +73,28 @@ const FactureController = {
                 
                 const pdfPath = req.file.path;
                 console.log(pdfPath);
-                const imagePaths = await convertPdfToImages(pdfPath);
 
+                // Convert PDF to images
+                const options = {
+                    type: 'jpg',                     // output type
+                    size: 1024,                      // output size
+                    density: 600,                    // output dpi
+                    outputdir: 'uploads',            // output folder
+                    outputname: 'facture_',          // output file name
+                    page: null                       // convert all pages
+                };
+
+                // Convert PDF to images and handle errors
+                const imagePaths = await pdf2img.convert(pdfPath, options).catch(error => {
+                    console.error('Error converting PDF to images:', error);
+                    throw new Error('Erreur lors de la conversion du PDF en images');
+                });
+
+                if (!imagePaths || imagePaths.length === 0) {
+                    throw new Error('Aucune image générée lors de la conversion du PDF');
+                }
+
+                // Recognize text from each image
                 const recognizedTexts = await Promise.all(imagePaths.map(imagePath => recognizeText(imagePath)));
                 const extractedText = recognizedTexts.join(' ');
 
@@ -118,5 +123,6 @@ const FactureController = {
         }
     }
 };
+
 
 module.exports = FactureController;
