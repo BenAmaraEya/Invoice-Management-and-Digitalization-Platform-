@@ -34,7 +34,7 @@ nature:{
 },
 status:{
     type: DataTypes.STRING,
-    
+    defaultValue: "Attente"
 },
 objet:{
     type: DataTypes.STRING,
