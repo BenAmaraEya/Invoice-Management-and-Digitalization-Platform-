@@ -9,6 +9,7 @@ import UpdateUser from"./../pages/UpdateUser";
 import Logout from "../pages/logout";
 import UpdatePasswordForm from "../pages/updatePassword";
 import UploadFacture from "../pages/UploadFacture";
+import FactureForm from "../pages/FactureForm";
 const Routers = () => {
     return (
         <Routes>
@@ -22,6 +23,7 @@ const Routers = () => {
             <Route path="/updateUser/:iderp" element={<UpdateUser />} />
             <Route path="/updatepass/:id" element={<UpdatePasswordForm />} />
             <Route path ="/uploadfacture" element={<UploadFacture/>}/>
+            <Route path ="/facture-form" element={<FactureForm/>}/>
 
         </Routes>
     );

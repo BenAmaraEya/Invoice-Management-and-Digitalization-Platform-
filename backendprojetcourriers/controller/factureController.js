@@ -1,100 +1,126 @@
+const { spawn } = require('child_process');
 const multer = require('multer');
-const mime = require('mime-types');
-const fs = require('fs');
+const Tesseract = require('tesseract.js');
 const Facture = require('../models/Facture');
-const { createWorker } = require('tesseract.js');
+const pdfPoppler = require('pdf-poppler');
 
-async function extractTextFromPDF(pdfPath) {
-    const worker = createWorker();
-
-    await worker.load();
-    await worker.loadLanguage('eng');
-    await worker.initialize('eng');
-
-    const { data: { text } } = await worker.recognize(({
-        input: { url: pdfPath }, // Chemin vers le fichier PDF
-    }));
-
-    await worker.terminate();
-
-    return text;
-}
-
-
+// Multer setup for file uploading
 const storage = multer.diskStorage({
-    destination: 'uploads/', 
-    filename: function (req, file, cb) {
-        cb(null, file.originalname);
-    }
+  destination: function (req, file, cb) {
+    cb(null, 'uploads'); // specify the destination folder
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname); // use the original file name
+  }
 });
 
-const uploadMiddleware = multer({ 
-    storage: storage,
-    limits: {
-        fileSize: 500 * 1024 * 1024 // Limit 500 MB
-    },
-    fileFilter: function (req, file, cb) {
-        if (mime.lookup(file.originalname) === 'application/pdf') {
-            cb(null, true);
-        } else {
-            cb(new Error('Seuls les fichiers PDF sont autorisés'));
-        }
+const upload = multer({ storage: storage }).single('factureFile');
+
+const factureController = {
+  upload: async (req, res) => {
+    upload(req, res, err => {
+      if (err) {
+        return res.status(400).json({ message: 'Error uploading file', error: err });
+      }
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+
+      // Convert PDF to images
+      const pdfFilePath = req.file.path;
+      const outputImagePath = './uploads/';
+      pdfPoppler.convert(pdfFilePath, { format: 'png', out_dir: outputImagePath, prefix: 'uploads' })
+        .then(() => {
+          // Perform OCR using Tesseract.js on the first page of the PDF
+          Tesseract.recognize(`${outputImagePath}uploads-1.png`, 'fra', {
+            logger: m => console.log(m)
+          }).then(({ data: { text } }) => {
+            // Extracting necessary information from OCR text
+            const extractedInfo = extractInfoFromOCR(text);
+      
+            // Send the extracted information back to the client for validation
+            res.json({ success: true, extractedInfo });
+          }).catch(err => {
+            console.error(err);
+            res.status(500).json({ message: 'Error performing OCR', error: err });
+          });
+        }).catch(err => {
+          console.error(err);
+          res.status(500).json({ message: 'Error converting PDF to image', error: err });
+        });
+    });
+  },
+
+  save: async (req, res) => {
+    // Assuming the user has confirmed the extracted information
+    const { num_fact, date_fact, montant, factname, devise, nature, objet } = req.body;
+
+    try {
+        // Save the extracted information to the database
+        const facture = await Facture.create({
+            num_fact,
+            date_fact,
+            montant,
+            factname,
+            devise,
+            nature,
+            objet,
+            //pathpdf: req.file.path,
+            // Add other fields as necessary
+        });
+
+        // Send a success response
+        console.log('Facture data added successfully.');
+        res.json({ success: true, facture });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error saving extracted information', error: error });
     }
-}).single('file');
+}
 
+/*save: async (req, res) => {
+    const { factname, devise, nature, objet, num_po, datereception } = req.body;
 
+    try {
+      const facture = await Facture.create({
+        num_fact:extractedFields.num_fact,
+        date_fact: extractedFields.date_fact ? new Date(extractedFields.date_fact) : null,
+        montant: extractedFields.montant,
+        factname: req.file.originalname,
+        pathpdf: req.file.path,
+        ...req.body,
+      });
 
-const FactureController = {
-    upload: async (req, res, next) => {
-        const { factname, devise, nature, objet, num_po, datereception } = req.body;
-        try {
-            uploadMiddleware(req, res, async function (err) {
-                if (err) {
-                    let status = 500;
-                    let message = 'Une erreur inconnue s\'est produite.';
-                    if (err instanceof multer.MulterError) {
-                        status = 400;
-                        message = 'Une erreur s\'est produite lors du téléchargement du fichier.';
-                    }
-                    return res.status(status).json({ message });
-                }
-                
-                const pdfPath = req.file.path;
-                
-                // Extract text from PDF using Tesseract.js
-                let extractedText = '';
-                try {
-                    extractedText = await extractTextFromPDF(pdfPath);
-                    // Ensure extractedText is a string
-                    if (typeof extractedText !== 'string') {
-                        throw new Error('Extracted text is not a string');
-                    }
-                    console.log(extractedText);
-                } catch (error) {
-                    console.error('Error extracting text from PDF:', error);
-                    return res.status(500).json({ error: 'Erreur lors de l\'extraction du texte du PDF', message: error.message });
-                }
-
-                // Extract fields from the recognized text
-                const extractedFields = await extractFieldsFromText(extractedText);
-                console.log(extractedFields);
-                // Create a new instance of Facture with the extracted data
-                const newFacture = await Facture.create({
-                    num_fact: extractedFields.num_fact,
-                    date_fact: extractedFields.date_fact ?new Date(extractedFields.date_fact):null,
-                    montant: extractedFields.montant,
-                    pathpdf: req.file.path ,// Path to the uploaded PDF file
-                    ...req.body,
-
-                });
-
-                res.status(200).json({ message: 'Fichier téléchargé avec succès.' });
-            });
-        } catch (error) {
-            console.error('Erreur:', error);
-            return res.status(500).json({ error: 'Erreur lors du traitement du fichier', message: error.message });
-        }
+      res.json({ success: true, facture });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error saving extracted information', error: error });
     }
+  }*/
 };
+// Function to extract information from OCR text
+function extractInfoFromOCR(text) {
+    // Regular expressions for extracting specific information from the OCR text
+    const num_factRegex = /Numéro\s*de\s*facture\s*(\d+)/i;
+    const dateFactRegex = /(?:Date\s*:\s*|Date\s*de\s*facture\s*:\s*)(\w+)/i;
+    const montantRegex = /(?:Montant\s*Total\s*TTC\s*|Montant\s*:\s*)(\d+(\.\d{1,2})?)/i;
+    // Add more regular expressions for other details as needed
+  
+    // Extracting information using regular expressions
+    const num_factMatch = text.match(num_factRegex);
+    const dateFactMatch = text.match(dateFactRegex);
+    const montantMatch = text.match(montantRegex);
+    // Extract more details using additional regular expressions
+  
+    // Check if matches are found and extract the values
+    const num_fact = num_factMatch ? num_factMatch[1] : null;
+    const date_fact= dateFactMatch ? dateFactMatch[1] : null;
+    const montant= montantMatch ? parseFloat(montantMatch[1]) : null
+    // Extract more details similarly
+    console.log(text);
+    return { num_fact, date_fact, montant };
+    
 
-module.exports = FactureController;
+  }
+
+module.exports = factureController;

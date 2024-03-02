@@ -1,0 +1,58 @@
+/* formfacture.css */
+
+/* Set background color for the container */
+.facture-container {
+    height: 60vh; 
+    width: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 140px;
+    margin-top: 35%;
+    border-radius: 10px;
+    
+  }
+  
+  /* Set styles for the form elements */
+  .facture-form {
+    background: whitesmoke;
+    padding: 80px;
+    border-radius: 8px; 
+    width: 80%;
+  }
+  
+  /* Add spacing between form inputs */
+  .facture-label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .facture-input {
+    width: 110%; 
+  padding: 10px; 
+  margin-bottom: 10px; 
+  
+  border-radius: 5px; 
+  border: 1px solid #ccc; 
+  background-color: transparent; 
+  }
+  
+  .facture-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .facture-button:hover {
+    background-color: #0056b3;
+  }
+ .form-paragraph{
+    padding-top: 100px;
+    text-align: center;
+    font-size: 18px;
+    
+ }
+  
