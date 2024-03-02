@@ -4,6 +4,7 @@ const Tesseract = require('tesseract.js');
 const fs = require('fs');
 const Facture = require('../models/Facture');
 const pdfPoppler = require('pdf-poppler');
+const { spawn } = require('child_process');
 
 const storage = multer.diskStorage({
     destination: 'uploads/', 
@@ -28,7 +29,7 @@ const uploadMiddleware = multer({
 
 async function recognizeText(imagePath) {
     try {
-        const { data: { text } } = await Tesseract.recognize(imagePath, 'fr');
+        const { data: { text } } = await Tesseract.recognize(imagePath, 'eng');
         console.log('Recognized text:', text);
         return text;
     } catch (error) {
@@ -38,8 +39,7 @@ async function recognizeText(imagePath) {
 }
 
 async function extractFieldsFromText(text) {
-    // Implémentez votre logique d'extraction de champs du texte reconnu ici
-    // Par exemple :
+  
     const numFactRegex = /(?:Num(?:\.|éro)?(?:\s+|°\s*))(?:de\s*)?facture\s*(\w+)/i;
     const dateFactRegex = /(?:Date\s*:\s*|Date\s*de\s*facture\s*:\s*)(\w+)/i;
     const montantRegex = /(?:Montant\s*Total\s*TTC\s*|Montant\s*:\s*)(\d+(\.\d{1,2})?)/i;
@@ -56,6 +56,7 @@ async function extractFieldsFromText(text) {
 
     return extractedFields;
 }
+
 
 const FactureController = {
     upload: async (req, res, next) => {
@@ -74,58 +75,64 @@ const FactureController = {
                 const pdfPath = req.file.path;
                 console.log('PDF Path:', pdfPath);
 
-                // Convert PDF to images
+                /* Convert PDF to images
                 const options = {
                     format: 'jpeg',
                     out_dir: 'uploads'
                 };
                 try {
                     const images = await pdfPoppler.convert(pdfPath, options);
-                    console.log('Images:', images.length);
 
-                    // Récupérer les chemins des images converties
-                    const imagePaths = Object.keys(images).map(key => images[key]);
-
-                    // Vérifier si des images ont été converties
-                    if (imagePaths.length > 0) {
-                        console.log('Images:', imagePaths);
-
-                        // Reconnaître le texte de chaque image
-                        const recognizedTexts = await Promise.all(imagePaths.map(image => recognizeText(image)));
-                        const extractedText = recognizedTexts.join(' ');
-
-                        console.log('Extracted text:', extractedText);
-
-                        // Extraire les champs du texte reconnu
-                        const extractedFields = await extractFieldsFromText(extractedText);
-
-                        // Créer une nouvelle instance de Facture avec les données extraites
-                        const newFacture = await Facture.create({
-                            num_fact: extractedFields.num_fact,
-                            date_fact: extractedFields.date_fact ? new Date(extractedFields.date_fact) : null,
-                            montant: extractedFields.montant,
-                            factname: "facture1",
-                            devise: "TND",
-                            nature: "aa",
-                            objet: "pc",
-                            pathpdf: req.file.path // Chemin vers le fichier PDF téléchargé
-                        });
-
-                        res.status(200).json({ message: 'Fichier téléchargé avec succès.' });
-                    } else {
-                        console.error('Aucune image extraite du PDF.');
-                        return res.status(500).json({ error: 'Aucune image extraite du PDF' });
-                    }
-                } catch (conversionError) {
-                    console.error('Error converting PDF to images:', conversionError);
-                    return res.status(500).json({ error: 'Erreur lors de la conversion du PDF en images', message: conversionError.message });
+                    // Récupérer le chemin de l'image convertie
+                    //const imagePath = Object.values(images)[0]; // Prendre le premier élément du tableau
+                    
+                    // Afficher les chemins des images converties pour vérifier
+                    console.log('Image Paths:', images);*/
+                   try{
+                
+                    const outputImagePath = './uploads/';
+                    await pdfPoppler.convert(pdfPath, { format: 'png', out_dir: outputImagePath, prefix: 'uploads' });
+                    
+                    const imagePath = `${outputImagePath}uploads-1.png`;
+                    const recognizedText = await recognizeText(imagePath);
+                    console.log('Recognized Text:', recognizedText);
+                    
+                    const extractedFields = await extractFieldsFromText(recognizedText);
+                    console.log('Extracted Fields:', extractedFields);
+                    
+                    res.status(200).json({ message: 'Fichier téléchargé avec succès.' });
+                } catch (error) {
+                    console.error('Error processing PDF:', error);
+                    res.status(500).json({ error: 'Erreur lors du traitement du fichier PDF', message: error.message });
                 }
             });
         } catch (error) {
             console.error('Erreur:', error);
             return res.status(500).json({ error: 'Erreur lors du traitement du fichier', message: error.message });
         }
-    }
+    },
+    save: async (req, res) => {
+        const { factname, devise, nature, objet, num_po, datereception } = req.body;
+    
+        try {
+          const facture = await Facture.create({
+            num_fact:extractedFields.num_fact,
+            date_fact: extractedFields.date_fact ? new Date(extractedFields.date_fact) : null,
+            montant: extractedFields.montant,
+            factname: req.file.originalname,
+            pathpdf: req.file.path,
+            ...req.body,
+          });
+    
+          res.json({ success: true, facture });
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ message: 'Error saving extracted information', error: error });
+        }
+      }
 };
 
+
+
 module.exports = FactureController;
+
