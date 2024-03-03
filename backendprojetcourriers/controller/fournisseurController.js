@@ -119,6 +119,24 @@ deletefournisseur: async (req, res, next) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 },
+  //get fournisseur by UserID  
+  getfournisseurbyuserId: async (req, res) => {
+    try {
+        const id = req.params.UserId;
+        
+        const fournisseur = await Fournisseur.findOne({where: { UserId:id }
+        });
+
+        if (!fournisseur) {
+            return res.status(404).json({ error: 'Fournisseur not found' });
+        }
+
+        res.json({ fournisseur });
+    } catch (error) {
+        console.error('Error fetching fournisseur:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+},
 
 };
 

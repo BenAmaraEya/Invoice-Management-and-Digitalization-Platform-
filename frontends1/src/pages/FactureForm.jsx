@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation , useParams } from 'react-router-dom';
 import { Container, Row, Col, Form, FormGroup, Button } from "reactstrap";
 import '../styles/factureform.css'; //
 function FactureForm() {
@@ -12,8 +12,10 @@ function FactureForm() {
     factname: '',
     devise: '',
     nature: '',
-    objet: ''
+    objet: '',
   });
+  const { iderp } = useParams();
+
 
   const extractedInfo = location.state.extractedInfo || {};
 
@@ -36,7 +38,11 @@ function FactureForm() {
 
     try {
       // Send the form data to the backend to save
-      await axios.post('http://localhost:3006/facture/save', formData);
+      const id = localStorage.getItem("userId");
+      const result=await axios.get(`http://localhost:3006/fournisseur/userId/`+id);
+      console.log(result);
+      let iderp=result.data.fournisseur.iderp;
+      await axios.post(`http://localhost:3006/facture/save/`+iderp, formData);
 
       // Log a message when the data is successfully added
       console.log('Facture data added successfully.');
@@ -69,7 +75,7 @@ return (
                   </FormGroup>
                   <FormGroup>
                     <label className="facture-label">Montant:</label>
-                    <input className="facture-input" type="text" name="montant" value={formData.montant} onChange={handleChange} />
+                    <input className="facture-input" type="number" name="montant" value={formData.montant} onChange={handleChange} />
                   </FormGroup>
                   <FormGroup>
                     <label className="facture-label">Facture Name:</label>

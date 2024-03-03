@@ -4,5 +4,5 @@ const factureController= require('../controller/factureController');
 
 
 router.post('/upload',factureController.upload);
-router.post('/save',factureController.save);
+router.post('/save/:iderp',factureController.save);
 module.exports=router;

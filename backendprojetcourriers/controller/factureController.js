@@ -51,7 +51,7 @@ const factureController = {
     });
   },
 
-  save: async (req, res) => {
+  /*save: async (req, res) => {
     // Assuming the user has confirmed the extracted information
     const { num_fact, date_fact, montant, factname, devise, nature, objet } = req.body;
 
@@ -76,18 +76,16 @@ const factureController = {
         console.error(error);
         res.status(500).json({ message: 'Error saving extracted information', error: error });
     }
-}
+}*/
 
-/*save: async (req, res) => {
+save: async (req, res) => {
     const { factname, devise, nature, objet, num_po, datereception } = req.body;
-
+    const iderp = req.params.iderp;
     try {
       const facture = await Facture.create({
-        num_fact:extractedFields.num_fact,
-        date_fact: extractedFields.date_fact ? new Date(extractedFields.date_fact) : null,
-        montant: extractedFields.montant,
-        factname: req.file.originalname,
-        pathpdf: req.file.path,
+        iderp,
+        //factname: req.file.originalname,
+        //pathpdf: `uploads/${req.file.originalname}`,
         ...req.body,
       });
 
@@ -96,7 +94,7 @@ const factureController = {
       console.error(error);
       res.status(500).json({ message: 'Error saving extracted information', error: error });
     }
-  }*/
+  }
 };
 // Function to extract information from OCR text
 function extractInfoFromOCR(text) {

@@ -6,6 +6,8 @@ const FournisseurController = require('../controller/fournisseurController');
 //route get fournisseur par son identifiant
 router.get('/:iderp',FournisseurController.getfournisseurbyid);
 router.get('/',FournisseurController.getFournisseur);
+router.get('/userId/:UserId',FournisseurController.getfournisseurbyuserId);
+
 // Route ajout fournisseur
 router.post('/addfournisseur',FournisseurController.addfournisseur);
 
