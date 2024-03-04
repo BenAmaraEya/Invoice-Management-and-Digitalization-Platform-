@@ -37,7 +37,7 @@ function FactureUploader() {
 
   return (
     <div>
-      <h2>Upload Facture</h2>
+      <h2>upload document</h2>
       <input type="file" accept=".pdf" onChange={handleFileChange} />
       <button onClick={handleSubmit} disabled={!file || loading}>
         {loading ? 'Uploading...' : 'Upload'}

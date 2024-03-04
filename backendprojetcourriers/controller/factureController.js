@@ -25,7 +25,8 @@ const factureController = {
       if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
       }
-
+      console.log(req.file); // Check if req.file is populated
+      console.log(req.file.originalname);
       // Convert PDF to images
       const pdfFilePath = req.file.path;
       const outputImagePath = './uploads/';
@@ -37,7 +38,7 @@ const factureController = {
           }).then(({ data: { text } }) => {
             // Extracting necessary information from OCR text
             const extractedInfo = extractInfoFromOCR(text);
-      
+            
             // Send the extracted information back to the client for validation
             res.json({ success: true, extractedInfo });
           }).catch(err => {
@@ -48,14 +49,22 @@ const factureController = {
           console.error(err);
           res.status(500).json({ message: 'Error converting PDF to image', error: err });
         });
+        
+        
     });
   },
 
   /*save: async (req, res) => {
-    // Assuming the user has confirmed the extracted information
-    const { num_fact, date_fact, montant, factname, devise, nature, objet } = req.body;
-
     try {
+        // Ensure that the required properties are available in req.body and req.file
+        const { num_fact, date_fact, montant, factname, devise, nature, objet } = req.body;
+        const { path: pathpdf } = req.file; // Destructure req.file to extract path
+
+        // Check if all required properties are available
+        if (!num_fact || !date_fact || !montant || !factname || !devise || !nature || !objet || !pathpdf) {
+            return res.status(400).json({ message: 'Missing required fields in request' });
+        }
+
         // Save the extracted information to the database
         const facture = await Facture.create({
             num_fact,
@@ -65,7 +74,7 @@ const factureController = {
             devise,
             nature,
             objet,
-            //pathpdf: req.file.path,
+            pathpdf, // Assign the path value extracted from req.file
             // Add other fields as necessary
         });
 
@@ -78,18 +87,21 @@ const factureController = {
     }
 }*/
 
+
 save: async (req, res) => {
     const { factname, devise, nature, objet, num_po, datereception } = req.body;
     const iderp = req.params.iderp;
     try {
+      
       const facture = await Facture.create({
         iderp,
         //factname: req.file.originalname,
-        //pathpdf: `uploads/${req.file.originalname}`,
+       //pathpdf: `uploads/${file.originalname}`,
+       
         ...req.body,
       });
-
-      res.json({ success: true, facture });
+      const { idF } = facture;
+      res.json({ success: true,  facture: { ...facture.toJSON(), idF }  });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error saving extracted information', error: error });
