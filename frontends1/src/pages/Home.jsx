@@ -19,7 +19,7 @@ const Home = () => {
                     </p>
                     <div className="btns d-flex align-item-center gap-4">
                         <Link to="/login">
-                            <Button className="btn_login">login !</Button>
+                            <Button className="btn_login">connexion</Button>
                         </Link>
                     </div> 
                 </div>
@@ -28,7 +28,7 @@ const Home = () => {
                 </div>
             </div>
             <div className="partners">
-                <h2>Our Partners</h2>
+                <h2>Nos Partenaires</h2>
                 <div className="gallery">
                     <Card className="partner-card">
                         <CardImg src={partener1} alt="partner 1" />

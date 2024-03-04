@@ -48,7 +48,7 @@ const Login = () => {
       console.log("User ID:", id);
       console.log("Response Data:", data);
      
-      navigate(`/profile/${id}`);
+      navigate(`/dashboard/${id}`);
     } catch (error) {
       setError(error.message);
     } finally {

@@ -1,15 +1,16 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, Switch } from "react-router-dom"; // Import Switch
 import Login from "./../pages/Login";
-import Profil from "./../pages/ProfilTT";
+import Dashboard from "./../pages/Dashboard";
 import Home from "./../pages/Home";
 import ListUser from "./../pages/ListUser";
 import AddUser from "./../pages/AddUser";
-import UpdateUser from"./../pages/UpdateUser";
+import UpdateUser from "./../pages/UpdateUser";
 import Logout from "../pages/logout";
 import UpdatePasswordForm from "../pages/updatePassword";
 import UploadFacture from "../pages/UploadFacture";
 import FactureForm from "../pages/FactureForm";
+
 const Routers = () => {
     return (
         <Routes>
@@ -17,17 +18,16 @@ const Routers = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/logout/:id" element={<Logout />} />
-            <Route path="/profil/:id" element={<Profil />} />
+            <Route path="/dashboard/:id" element={<Dashboard />} />
             <Route path="/listUser" element={<ListUser />} />
             <Route path="/addUser" element={<AddUser />} />
             <Route path="/updateUser/:iderp" element={<UpdateUser />} />
             <Route path="/updatepass/:id" element={<UpdatePasswordForm />} />
-            <Route path ="/uploadfacture" element={<UploadFacture/>}/>
-            <Route path ="/facture-form" element={<FactureForm/>}/>
-
+            <Route path="/uploadfacture" element={<UploadFacture />} />
+            <Route path="/facture-form" element={<FactureForm />} />
+            {/* You might need to add other routes here */}
         </Routes>
     );
 };
 
 export default Routers;
-

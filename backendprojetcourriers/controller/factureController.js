@@ -133,22 +133,22 @@ save: async (req, res) => {
       res.status(500).json({ message: 'Error fetching facture by ID', error: error });
     }
   },
-
+   
   getFactureBySupplierId: async (req, res) => {
     try {
-      const { iderp } = req.params;
-      const factures = await Facture.find({ iderp });
+        const { iderp } = req.params;
+        const factures = await Facture.findAll({ where: { iderp } });
 
-      if (!factures || factures.length === 0) {
-        return res.status(404).json({ message: 'No factures found for the supplier ID' });
-      }
+        if (!factures || factures.length === 0) {
+            return res.status(404).json({ message: 'No factures found for the supplier ID' });
+        }
 
-      res.json({ success: true, factures });
+        res.json({ success: true, factures });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error fetching factures by supplier ID', error: error });
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching factures by supplier ID', error: error });
     }
-  }
+}
 
 };
 // Function to extract information from OCR text
