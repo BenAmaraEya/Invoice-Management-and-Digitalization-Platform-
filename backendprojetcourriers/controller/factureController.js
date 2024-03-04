@@ -54,49 +54,21 @@ const factureController = {
     });
   },
 
-  /*save: async (req, res) => {
-    try {
-        // Ensure that the required properties are available in req.body and req.file
-        const { num_fact, date_fact, montant, factname, devise, nature, objet } = req.body;
-        const { path: pathpdf } = req.file; // Destructure req.file to extract path
-
-        // Check if all required properties are available
-        if (!num_fact || !date_fact || !montant || !factname || !devise || !nature || !objet || !pathpdf) {
-            return res.status(400).json({ message: 'Missing required fields in request' });
-        }
-
-        // Save the extracted information to the database
-        const facture = await Facture.create({
-            num_fact,
-            date_fact,
-            montant,
-            factname,
-            devise,
-            nature,
-            objet,
-            pathpdf, // Assign the path value extracted from req.file
-            // Add other fields as necessary
-        });
-
-        // Send a success response
-        console.log('Facture data added successfully.');
-        res.json({ success: true, facture });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error saving extracted information', error: error });
-    }
-}*/
-
 
 save: async (req, res) => {
     const { factname, devise, nature, objet, num_po, datereception } = req.body;
     const iderp = req.params.iderp;
     try {
+      if (!req.files || !req.files['factureFile']) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
       
+      const factureFile = req.files['factureFile'];
+      const pathpdf = factureFile.path;
       const facture = await Facture.create({
         iderp,
         //factname: req.file.originalname,
-       //pathpdf: `uploads/${file.originalname}`,
+        pathpdf,
        
         ...req.body,
       });
@@ -106,7 +78,78 @@ save: async (req, res) => {
       console.error(error);
       res.status(500).json({ message: 'Error saving extracted information', error: error });
     }
+  },
+  displayFacture: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const facture = await Facture.findById(id);
+
+      if (!facture) {
+        return res.status(404).json({ message: 'Facture not found' });
+      }
+
+      // Return the facture object with its pathpdf
+      res.json({ success: true, facture });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error displaying facture', error: error });
+    }
+  },
+
+  deleteFacture: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const facture = await Facture.findById(id);
+
+      if (!facture) {
+        return res.status(404).json({ message: 'Facture not found' });
+      }
+
+      // Remove the associated file
+      fs.unlinkSync(facture.pathpdf);
+
+      // Delete the facture from the database
+      await facture.remove();
+
+      res.json({ success: true, message: 'Facture deleted successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error deleting facture', error: error });
+    }
+  },
+
+  getFactureById: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const facture = await Facture.findById(id);
+
+      if (!facture) {
+        return res.status(404).json({ message: 'Facture not found' });
+      }
+
+      res.json({ success: true, facture });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching facture by ID', error: error });
+    }
+  },
+
+  getFactureBySupplierId: async (req, res) => {
+    try {
+      const { iderp } = req.params;
+      const factures = await Facture.find({ iderp });
+
+      if (!factures || factures.length === 0) {
+        return res.status(404).json({ message: 'No factures found for the supplier ID' });
+      }
+
+      res.json({ success: true, factures });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching factures by supplier ID', error: error });
+    }
   }
+
 };
 // Function to extract information from OCR text
 function extractInfoFromOCR(text) {
