@@ -1,4 +1,5 @@
 const { spawn } = require('child_process');
+const fs = require('fs');
 const multer = require('multer');
 const Tesseract = require('tesseract.js');
 const Facture = require('../models/Facture');
@@ -55,34 +56,41 @@ const factureController = {
   },
 
 
-save: async (req, res) => {
-    const { factname, devise, nature, objet, num_po, datereception } = req.body;
+  save: async (req, res) => {
+    const { factname, devise, nature, objet, num_po, datereception,num_fact,montant,date_fact } = req.body;
     const iderp = req.params.iderp;
+
     try {
-      if (!req.files || !req.files['factureFile']) {
-        return res.status(400).json({ message: 'No file uploaded' });
-      }
-      
-      const factureFile = req.files['factureFile'];
-      const pathpdf = factureFile.path;
-      const facture = await Facture.create({
-        iderp,
-        //factname: req.file.originalname,
-        pathpdf,
-       
-        ...req.body,
-      });
-      const { idF } = facture;
-      res.json({ success: true,  facture: { ...facture.toJSON(), idF }  });
+        console.log('Received request to save facture:', req.body);
+
+        const facture = await Facture.create({
+            iderp,
+            factname,
+            devise,
+            nature,
+            objet,
+            num_po,
+            datereception,
+            num_fact,
+            date_fact,
+            montant
+            
+        });
+
+        const { idF } = facture;
+        res.json({ success: true,  facture: { ...facture.toJSON(), idF } });
+        console.log('Facture saved successfully.');
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error saving extracted information', error: error });
+        console.error(error);
+        res.status(500).json({ message: 'Error saving facture', error: error });
     }
-  },
+},
+
+
   displayFacture: async (req, res) => {
     try {
       const { id } = req.params;
-      const facture = await Facture.findById(id);
+      const facture = await Facture.findByPk(id);
 
       if (!facture) {
         return res.status(404).json({ message: 'Facture not found' });
@@ -98,25 +106,34 @@ save: async (req, res) => {
 
   deleteFacture: async (req, res) => {
     try {
-      const { id } = req.params;
-      const facture = await Facture.findById(id);
+        const { fournisseurId, factureId } = req.params;
+        const facture = await Facture.findOne({ where: { idF: factureId, iderp: fournisseurId } });
 
-      if (!facture) {
-        return res.status(404).json({ message: 'Facture not found' });
-      }
+        if (!facture) {
+            return res.status(404).json({ message: 'Facture not found for this Fournisseur' });
+        }
 
-      // Remove the associated file
-      fs.unlinkSync(facture.pathpdf);
+        // Check if the status is "en attente" (pending)
+        if (facture.status !== 'Attente') {
+            return res.status(403).json({ message: 'Facture cannot be deleted as its status is not "en attente"' });
+        }
 
-      // Delete the facture from the database
-      await facture.remove();
+        // Check if the pathpdf is not null
+        if (facture.pathpdf) {
+            // Remove the associated file
+            fs.unlinkSync(facture.pathpdf);
+        }
 
-      res.json({ success: true, message: 'Facture deleted successfully' });
+        // Delete the facture from the database
+        await facture.destroy();
+
+        res.json({ success: true, message: 'Facture deleted successfully' });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error deleting facture', error: error });
+        console.error(error);
+        res.status(500).json({ message: 'Error deleting facture', error: error });
     }
-  },
+},
+
 
   getFactureById: async (req, res) => {
     try {

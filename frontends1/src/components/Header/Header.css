@@ -74,4 +74,12 @@
   .dropdown-item .icon {
     margin-right: 8px;
   }
+  .dropdown-btn {
+    cursor: pointer;
+  }
   
+  /* Apply pointer cursor to the dropdown items */
+  .dropdown-content button {
+    cursor: pointer;
+   
+  }

@@ -42,7 +42,7 @@ const Layout = () => {
         <>
             {renderHeader()}
             <Routers />
-            <Footer />
+           
         </>
     );
 };

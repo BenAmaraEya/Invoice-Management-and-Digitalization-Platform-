@@ -80,6 +80,7 @@ function FactureForm() {
     event.preventDefault(); 
 
     try {
+      console.log('Form data before submission:', formData);
       const id = localStorage.getItem("userId");
       const result = await axios.get(`http://localhost:3006/fournisseur/userId/` + id);
       const fournisseurIdFiscal = result.data.fournisseur.idfiscale;
