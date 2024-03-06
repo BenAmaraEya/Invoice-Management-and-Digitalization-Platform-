@@ -62,45 +62,37 @@ const factureController = {
     const iderp = req.params.iderp;
 
     try {
-      console.log('Received request to save facture:', req.body);
-  
-      // Create the facture
-      const facture = await Facture.create({
-          iderp,
-          factname,
-          devise,
-          nature,
-          objet,
-          num_po,
-          datereception,
-          num_fact,
-          date_fact,
-          montant
-      });
-  
-      // Find or create the associated bordereau
-      const [bordereau, created] = await Bordereau.findOrCreate({
+        console.log('Received request to save facture:', req.body);
+
+        // Create the facture
+        const facture = await Facture.create({
+            iderp,
+            factname,
+            devise,
+            nature,
+            objet,
+            num_po,
+            datereception,
+            num_fact,
+            date_fact,
+            montant
+        });
+
+        // Find or create the associated bordereau
+        const [bordereau, created] = await Bordereau.findOrCreate({
           where: { nature },
           defaults: { date: new Date() }
       });
-  
-      // Associate the facture with the bordereau
-      await facture.setBordereau(bordereau);
-  
-      // Retrieve all distinct factures associated with the bordereau
-      const distinctFactures = await Facture.findAll({
-          where: { BordereauId: bordereau.idB }, // Assuming you have BordereauId as the foreign key
-          attributes: ['idF', 'factname'], // Specify the attributes you want to retrieve
-          distinct: true // Retrieve distinct factures
-      });
-  
-      const { idF } = facture;
-      res.json({ success: true, facture: { ...facture.toJSON(), idF }, distinctFactures });
-      console.log('Facture saved successfully.');
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error saving facture', error: error });
-  }
+        // Associate the facture with the bordereau
+        await facture.setBordereau(bordereau);
+
+        const { idF } = facture;
+        res.json({ success: true, facture: { ...facture.toJSON(), idF } });
+        console.log('Facture saved successfully.');
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error saving facture', error: error });
+    }
 },
 
 
