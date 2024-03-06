@@ -4,13 +4,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt, faSignOutAlt, faCog } from "@fortawesome/free-solid-svg-icons";
 import "./Header.css";
 import logo from '../../assets/images/TTlogo.png';
-import axios from 'axios';
 
 const Header = () => {
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
   const [isBordereauMenuOpen, setIsBordereauMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  
 
   const handleToggleBordereauMenu = () => {
     setIsBordereauMenuOpen(!isBordereauMenuOpen);
@@ -20,20 +20,10 @@ const Header = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
   };
 
-  const handleBordereauCreation = async (nature) => {
-    try {
-      const response = await axios.post('http://localhost:3006/bordereaux', {
-        nature: nature
-      });
-
-      if (response.data.bordereauId) {
-        navigate(`/upload-facture/${response.data.bordereauId}`);
-      } else {
-        console.error("Bordereau ID not returned from the server");
-      }
-    } catch (error) {
-      console.error("Error creating bordereau:", error);
-    }
+  const handleNatureSelection = (nature) => {
+    
+    navigate('/uploadFacture', { state: { nature } });
+    setIsBordereauMenuOpen(false); // Close the menu after selecting a nature
   };
 
   const handleUpdatePassword = () => {
@@ -89,10 +79,10 @@ const Header = () => {
               </div>
               {isBordereauMenuOpen && (
                 <div className="dropdown-content">
-                  <button className="dropdown-item" onClick={() => handleBordereauCreation('Nature 1')}>
+                  <button className="dropdown-item" onClick={() => handleNatureSelection('Nature 1')}>
                     TND
                   </button>
-                  <button className="dropdown-item" onClick={() => handleBordereauCreation('Nature 2')}>
+                  <button className="dropdown-item" onClick={() => handleNatureSelection('Nature 2')}>
                     Nature 2
                   </button>
                 </div>
@@ -125,6 +115,7 @@ const Header = () => {
           </li>
         </ul>
       </div>
+      
     </header>
   );
 };

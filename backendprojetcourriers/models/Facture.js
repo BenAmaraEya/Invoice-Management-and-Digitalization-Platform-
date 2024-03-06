@@ -1,6 +1,8 @@
 const { DataTypes } = require('sequelize');
 const  {sequelize}  = require('../database');
 const Pieces_jointe = require('./PiecesJointe');
+const Bordereau= require ('./Bordereau');
+
 const Facture = sequelize.define('Facture', {
 idF:{
     type: DataTypes.INTEGER,
@@ -50,8 +52,8 @@ type: DataTypes.STRING
 pathpdf:{
     type: DataTypes.STRING,
     
-}
+},
 });
 Facture.hasMany(Pieces_jointe, { as: 'Pieces_jointes', foreignKey: 'idFacture',onDelete: 'CASCADE' });
-
+Facture.belongsTo(Bordereau, { foreignKey: 'bordereauId' });
 module.exports = Facture;
