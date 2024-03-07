@@ -5,7 +5,7 @@ const Tesseract = require('tesseract.js');
 const Facture = require('../models/Facture');
 const pdfPoppler = require('pdf-poppler');
 const Bordereau =require('../models/Bordereau');
-
+const authorizeSupplier = authenticateToken(['fournisseur']);
 // Multer setup for file uploading
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).single('factureFile');
 
 const factureController = {
-  upload: async (req, res) => {
+  upload: [authorizeSupplier,async (req, res) => {
     upload(req, res, err => {
       if (err) {
         return res.status(400).json({ message: 'Error uploading file', error: err });
@@ -54,10 +54,10 @@ const factureController = {
         
         
     });
-  },
+  }],
 
 
-  save: async (req, res) => {
+  save: [authorizeSupplier,async (req, res) => {
     const { factname, devise, nature, objet, num_po, datereception, num_fact, montant, date_fact,pathpdf } = req.body;
     const iderp = req.params.iderp;
 
@@ -94,10 +94,10 @@ const factureController = {
         console.error(error);
         res.status(500).json({ message: 'Error saving facture', error: error });
     }
-},
+}],
 
 
-  displayFacture: async (req, res) => {
+  displayFacture: [authorizeSupplier,async (req, res) => {
     try {
       const { id } = req.params;
       const facture = await Facture.findByPk(id);
@@ -112,9 +112,9 @@ const factureController = {
       console.error(error);
       res.status(500).json({ message: 'Error displaying facture', error: error });
     }
-  },
+  }],
 
-  deleteFacture: async (req, res) => {
+  deleteFacture:[authorizeSupplier, async (req, res) => {
     try {
         const { fournisseurId, factureId } = req.params;
         const facture = await Facture.findOne({ where: { idF: factureId, iderp: fournisseurId } });
@@ -139,7 +139,7 @@ const factureController = {
         console.error(error);
         res.status(500).json({ message: 'Error deleting facture', error: error });
     }
-},
+}],
 
 
   getFactureById: async (req, res) => {
