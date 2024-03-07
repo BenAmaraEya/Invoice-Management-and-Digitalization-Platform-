@@ -6,7 +6,7 @@ import '../styles/factureform.css';
 
 function FactureForm() {
   const location = useLocation();
-  const { iderp } = useParams();
+  const { iderp ,nature} = useParams();
   const [formData, setFormData] = useState({
     num_fact: '',
     num_po:'',
@@ -14,9 +14,10 @@ function FactureForm() {
     montant: '',
     factname: '',
     devise: 'TND',
-    nature: '3WM TND',
+    nature: nature,
     objet: 'NOUVELLE FACTURE',
     datereception: new Date().toISOString().split('T')[0],
+    pathpdf:'',
     idfiscale: '', 
     fournisseur:'',
     delai_paiement:new Date(new Date().getTime() + (30 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0],
@@ -25,11 +26,14 @@ function FactureForm() {
 
   useEffect(() => {
     const extractedInfo = location.state.extractedInfo || {};
+    const filepath = location.state.filePath || {};
+
     setFormData(prevData => ({
       ...prevData,
       num_fact: extractedInfo.num_fact || '',
       date_fact: extractedInfo.date_fact || '',
       montant: extractedInfo.montant || '',
+      pathpdf:filepath
     }));
     
     fetchFournisseurIdFiscale();

@@ -58,7 +58,7 @@ const factureController = {
 
 
   save: async (req, res) => {
-    const { factname, devise, nature, objet, num_po, datereception, num_fact, montant, date_fact } = req.body;
+    const { factname, devise, nature, objet, num_po, datereception, num_fact, montant, date_fact,pathpdf } = req.body;
     const iderp = req.params.iderp;
 
     try {
@@ -75,7 +75,8 @@ const factureController = {
             datereception,
             num_fact,
             date_fact,
-            montant
+            montant,
+            pathpdf
         });
 
         // Find or create the associated bordereau
@@ -122,18 +123,15 @@ const factureController = {
             return res.status(404).json({ message: 'Facture not found for this Fournisseur' });
         }
 
-        // Check if the status is "en attente" (pending)
-        if (facture.status !== 'Attente') {
-            return res.status(403).json({ message: 'Facture cannot be deleted as its status is not "en attente"' });
+        // Vérifiez si le chemin du fichier PDF est stocké dans la base de données
+        if (!facture.pathpdf) {
+            return res.status(400).json({ message: 'No PDF file associated with this facture' });
         }
 
-        // Check if the pathpdf is not null
-        if (facture.pathpdf) {
-            // Remove the associated file
-            fs.unlinkSync(facture.pathpdf);
-        }
+        // Supprimez le fichier PDF du système de fichiers en utilisant le chemin réel
+        fs.unlinkSync(facture.pathpdf);
 
-        // Delete the facture from the database
+        // Supprimez la facture de la base de données
         await facture.destroy();
 
         res.json({ success: true, message: 'Facture deleted successfully' });

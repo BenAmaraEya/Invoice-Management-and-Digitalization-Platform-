@@ -23,8 +23,8 @@ const Routers = () => {
             <Route path="/addUser" element={<AddUser />} />
             <Route path="/updateUser/:iderp" element={<UpdateUser />} />
             <Route path="/updatepass/:id" element={<UpdatePasswordForm />} />
-            <Route path="/uploadfacture" element={<UploadFacture />} />
-            <Route path="/facture-form" element={<FactureForm />} />
+            <Route path="/uploadfacture/:nature" element={<UploadFacture />} />   
+            <Route path="/facture-form/:nature" element={<FactureForm />} />
             {/* You might need to add other routes here */}
         </Routes>
     );

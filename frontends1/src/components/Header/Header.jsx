@@ -22,7 +22,8 @@ const Header = () => {
 
   const handleNatureSelection = (nature) => {
     
-    navigate('/uploadFacture', { state: { nature } });
+    navigate('/uploadFacture/'+nature, { state: { nature } });
+    console.log(nature);
     setIsBordereauMenuOpen(false); // Close the menu after selecting a nature
   };
 
@@ -79,10 +80,10 @@ const Header = () => {
               </div>
               {isBordereauMenuOpen && (
                 <div className="dropdown-content">
-                  <button className="dropdown-item" onClick={() => handleNatureSelection('Nature 1')}>
+                  <button className="dropdown-item" onClick={() => handleNatureSelection('3WMTND')}>
                     TND
                   </button>
-                  <button className="dropdown-item" onClick={() => handleNatureSelection('Nature 2')}>
+                  <button className="dropdown-item" onClick={() => handleNatureSelection('Nature2')}>
                     Nature 2
                   </button>
                 </div>
