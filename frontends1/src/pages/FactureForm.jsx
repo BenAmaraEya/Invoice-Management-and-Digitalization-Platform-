@@ -96,6 +96,7 @@ function FactureForm() {
     try {
       console.log('Form data before submission:', formData);
       const id = localStorage.getItem("userId");
+      const token =localStorage.getItem('accessToken');
       const result = await axios.get(`http://localhost:3006/fournisseur/userId/` + id);
       const fournisseurIdFiscal = result.data.fournisseur.idfiscale;
       setFormData(prevData => ({
@@ -104,7 +105,13 @@ function FactureForm() {
       }));
       let iderp = result.data.fournisseur.iderp;
 
-      const response=await axios.post(`http://localhost:3006/facture/save/` + iderp, formData);
+      const response=await axios.post(`http://localhost:3006/facture/save/` + iderp, formData,{
+        headers: {
+          
+          Authorization:`Bearer ${token}`
+         
+        }
+      });
       
       console.log('Facture data added successfully.');
       alert('Facture data added successfully.');

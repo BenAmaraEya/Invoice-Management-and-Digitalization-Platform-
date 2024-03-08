@@ -43,7 +43,14 @@ const ListeFactures = () => {
 
     const deleteFacture = async (fournisseurId, factureId) => {
         try {
-            const response = await axios.delete(`http://localhost:3006/facture/fournisseur/${fournisseurId}/facture/${factureId}`);
+            const token = localStorage.getItem('accessToken');
+            const response = await axios.delete(`http://localhost:3006/facture/fournisseur/${fournisseurId}/facture/${factureId}`,{
+                headers: {
+                    
+                    Authorization:`Bearer ${token}`
+                   
+                  }
+            });
             if (response.data.success) {
                 // If deletion is successful, update the factures list
                 setFactures(factures.filter(facture => facture.idF !== factureId));
@@ -60,25 +67,31 @@ const ListeFactures = () => {
 
     const exportToExcel = async () => {
         try {
+            // Get the token from localStorage
+            const token = localStorage.getItem('accessToken');
+    
             const response = await axios.post('http://localhost:3006/facture/export', {
-                factures: factures
+                factures: factures,
             }, {
-                responseType: 'blob' // Set response type to blob to handle binary data
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                responseType: 'blob', // Set response type to blob to handle binary data
             });
-
+    
             // Create a Blob from the response data
             const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
+    
             // Create a download link
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', 'factures.xlsx');
-
+    
             // Append the link to the body and click it to trigger the download
             document.body.appendChild(link);
             link.click();
-
+    
             // Cleanup
             link.parentNode.removeChild(link);
         } catch (error) {

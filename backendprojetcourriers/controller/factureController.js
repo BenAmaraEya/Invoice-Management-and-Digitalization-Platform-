@@ -6,7 +6,7 @@ const Facture = require('../models/Facture');
 const pdfPoppler = require('pdf-poppler');
 const Bordereau =require('../models/Bordereau');
 const { authenticateToken } = require('../utils/jwt');
-//const authorizeSupplier = authenticateToken(['fournisseur']);
+authorizeSupplier = authenticateToken(['fournisseur']);
 const Excel = require('exceljs');
 require('../AutoBordereaux');
 
@@ -58,7 +58,7 @@ const generateExcel = async (factures) => {
   return buffer;
 };
 const factureController = {
-  upload: [async (req, res) => {
+  upload: [authorizeSupplier,async (req, res) => {
     upload(req, res, err => {
       if (err) {
         return res.status(400).json({ message: 'Error uploading file', error: err });
@@ -96,7 +96,7 @@ const factureController = {
   }],
 
 
-  save: [async (req, res) => {
+  save: [authorizeSupplier,async (req, res) => {
     const { factname, devise, nature, objet, num_po, datereception, num_fact, montant, date_fact,pathpdf } = req.body;
     const iderp = req.params.iderp;
 
@@ -136,7 +136,7 @@ const factureController = {
 }],
 
 
-  displayFacture: [async (req, res) => {
+  displayFacture: [authorizeSupplier,async (req, res) => {
     try {
       const { id } = req.params;
       const facture = await Facture.findByPk(id);
@@ -153,7 +153,7 @@ const factureController = {
     }
   }],
 
-  deleteFacture:async (req, res) => {
+  deleteFacture:[authorizeSupplier,async (req, res) => {
     try {
         const { fournisseurId, factureId } = req.params;
         const facture = await Facture.findOne({ where: { idF: factureId, iderp: fournisseurId } });
@@ -180,7 +180,7 @@ const factureController = {
         res.status(500).json({ message: 'Error deleting facture', error: error });
     }
 },
-
+  ],
 
   getFactureById: async (req, res) => {
     try {
@@ -213,7 +213,7 @@ const factureController = {
         res.status(500).json({ message: 'Error fetching factures by supplier ID', error: error });
     }
 },
-ExportFacturetoExcel: async (req, res) => {
+ExportFacturetoExcel:[authorizeSupplier, async (req, res) => {
   try {
       // Retrieve facture data from the database or request body
       const factures = req.body.factures; // Adjust this according to your implementation
@@ -229,7 +229,7 @@ ExportFacturetoExcel: async (req, res) => {
       console.error(error);
       res.status(500).json({ message: 'Error generating Excel file', error: error });
   }
-},
+}],
 // Contrôleur des factures
 
 getFacturesCountByStatus: async (req, res) => {
