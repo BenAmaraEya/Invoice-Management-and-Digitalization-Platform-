@@ -67,12 +67,18 @@ const Header = () => {
               Accueil
             </NavLink>
           </li>
+          
           <li className="nav__item">
             <NavLink to={`/dashboard/${userId}`} activeClassName="active" exact>
               Dashboard
             </NavLink>
           </li>
-          {/* Bordereau menu */}
+          <li className="nav__item">
+            <NavLink to={`/factures/${userId}`} activeClassName="active" exact>
+              Factures
+            </NavLink>
+          </li>
+         
           <li className="nav__item bordereau-item">
             <div className="dropdown">
               <div className="dropdown-btn" onClick={handleToggleBordereauMenu}>
@@ -90,13 +96,7 @@ const Header = () => {
               )}
             </div>
           </li>
-          <li className="nav__item">
-            <NavLink to="/our-space" activeClassName="active" exact>
-              <FontAwesomeIcon icon={faMapMarkerAlt} className="icon" />
-              OurSpace
-            </NavLink>
-          </li>
-          {/* User settings menu */}
+        
           <li className="nav__item user-settings-item">
             <div className="dropdown">
               <div className="dropdown-btn" onClick={handleToggleUserMenu}>
@@ -104,12 +104,16 @@ const Header = () => {
               </div>
               {isUserMenuOpen && (
                 <div className="dropdown-content">
+                   <button className="dropdown-item" >
+                    Réclamations
+                  </button>
                   <button className="dropdown-item" onClick={handleUpdatePassword}>
                     Update Password
                   </button>
                   <button className="dropdown-item" onClick={handleLogout}>
                     Logout
                   </button>
+
                 </div>
               )}
             </div>

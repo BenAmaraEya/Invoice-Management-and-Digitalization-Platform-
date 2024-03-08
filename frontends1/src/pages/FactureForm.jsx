@@ -21,7 +21,7 @@ function FactureForm() {
     idfiscale: '', 
     fournisseur:'',
     delai_paiement:new Date(new Date().getTime() + (30 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0],
-    piece_name:''
+    piece_name: [], 
   });
 
   useEffect(() => {
@@ -74,10 +74,20 @@ function FactureForm() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value,
-    }));
+
+    // If it's a piece_name, toggle the checkbox selection
+    if (name === 'piece_name') {
+      const isChecked = formData.piece_name.includes(value);
+      setFormData(prevData => ({
+        ...prevData,
+        piece_name: isChecked ? prevData.piece_name.filter(item => item !== value) : [...prevData.piece_name, value],
+      }));
+    } else {
+      setFormData(prevData => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -185,10 +195,31 @@ function FactureForm() {
                   </FormGroup>
                   <FormGroup>
                     <label className="facture-label">Piéces Jointes :*</label>
-                    <select className="facture-input" name="piece_name" value={formData.piece_name} onChange={handleChange}  required>
-                      <option value="bon de command">bon de command</option>
-                      <option value="pv de reception">pv de reception</option>
-                    </select>
+                   
+                    <div>
+                      <label>
+                        <input
+                          type="checkbox"
+                          name="piece_name"
+                          value="bon de command"
+                          checked={formData.piece_name.includes('bon de command')}
+                          onChange={handleChange}
+                        />
+                        Bon de Commande
+                      </label>
+                    </div>
+                    <div>
+                      <label>
+                        <input
+                          type="checkbox"
+                          name="piece_name"
+                          value="pv de reception"
+                          checked={formData.piece_name.includes('pv de reception')}
+                          onChange={handleChange}
+                        />
+                        PV de Reception
+                      </label>
+                    </div>
                   </FormGroup>
                   <FormGroup>
   <label className="facture-label">Delai de Paiement:*</label>

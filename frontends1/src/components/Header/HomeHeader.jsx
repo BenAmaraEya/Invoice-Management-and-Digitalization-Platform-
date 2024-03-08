@@ -52,7 +52,7 @@ const Header = ({ isLoggedIn }) => {
                             </ul>
                         </div>
                         <div className="nav_right d-flex align-item-center gap-4">
-                            {/* Here you can add other components like user profile, logout button, etc. */}
+                          
                         </div>
                     </div>
                 </Row>

@@ -23,9 +23,11 @@ function FactureUploader() {
     formData.append('factureFile', file);
 
     try {
+      
       const response = await axios.post('http://localhost:3006/facture/upload', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+         
         }
       });
 

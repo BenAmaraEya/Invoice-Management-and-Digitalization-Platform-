@@ -10,7 +10,8 @@ import Logout from "../pages/logout";
 import UpdatePasswordForm from "../pages/updatePassword";
 import UploadFacture from "../pages/UploadFacture";
 import FactureForm from "../pages/FactureForm";
-
+import PdfViewer from "../pages/PdfViewer";
+import ListeFactures from "../pages/ListeFactures";
 const Routers = () => {
     return (
         <Routes>
@@ -25,7 +26,8 @@ const Routers = () => {
             <Route path="/updatepass/:id" element={<UpdatePasswordForm />} />
             <Route path="/uploadfacture/:nature" element={<UploadFacture />} />   
             <Route path="/facture-form/:nature" element={<FactureForm />} />
-            {/* You might need to add other routes here */}
+            <Route path="/pdf/:filename" element={<PdfViewer />} /> 
+            <Route path="/factures/:id" element={<ListeFactures />} /> 
         </Routes>
     );
 };
