@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './../styles/dashboard.css';
 
 const Dashboard = () => {
   const [factureCounts, setFactureCounts] = useState({
-    NBValide: 0,
-    NBpaye: 0,
+    NBFValide: 0,
+    NBFpaye: 0,
     NBFAttente: 0,
     NBFrejete: 0
   });
@@ -25,35 +26,32 @@ const Dashboard = () => {
 
   return (
     <div>
-      
-      <div>
-       
-        <table className="facture-count-table">
-          <thead>
-            <tr>
-              <th>Status</th>
-              <th>Nombre</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Factures Validé</td>
-              <td>{factureCounts.NBFValide}</td>
-            </tr>
-            <tr>
-              <td>Factures Payé</td>
-              <td>{factureCounts.NBFpaye}</td>
-            </tr>
-            <tr>
-              <td>Factures En Attente</td>
-              <td>{factureCounts.NBFAttente}</td>
-            </tr>
-            <tr>
-              <td>Factures Rejeté</td>
-              <td>{factureCounts.NBFrejete}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div className="small-box bg-gradient-success">
+        <div className="inner">
+          <h3>{factureCounts.NBFValide}</h3>
+          <p>Factures Validé</p>
+        </div>
+      </div>
+
+      <div className="small-box bg-gradient-pay">
+        <div className="inner">
+          <h3>{factureCounts.NBFpaye}</h3>
+          <p>Factures Payé</p>
+        </div>
+      </div>
+
+      <div className="small-box bg-gradient-attente">
+        <div className="inner">
+          <h3>{factureCounts.NBFAttente}</h3>
+          <p>Factures En Attente</p>
+        </div>
+      </div>
+
+      <div className="small-box bg-gradient-rejete">
+        <div className="inner">
+          <h3>{factureCounts.NBFrejete}</h3>
+          <p>Factures Rejeté</p>
+        </div>
       </div>
     </div>
   );

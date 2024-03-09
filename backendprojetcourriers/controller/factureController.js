@@ -163,10 +163,10 @@ const factureController = {
         }
 
         // Vérifiez si le chemin du fichier PDF est stocké dans la base de données
-        if (facture.pathpdf) {
+       /* if (facture.pathpdf) {
             fs.unlinkSync(facture.pathpdf);
            
-        }
+        }*/
 
        
       

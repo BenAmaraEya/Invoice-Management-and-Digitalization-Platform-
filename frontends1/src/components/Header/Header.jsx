@@ -57,11 +57,12 @@ const Header = () => {
 
   return (
     <header className="header">
+       <div className="logo-container">
+    <img src={logo} alt="" className="logo" />
+  </div>
       <div className="navigation">
         <ul className="menu d-flex align-items-center gap-5">
-          <div className="logo">
-            <img src={logo} alt="" width={100} />
-          </div>
+          
           <li className="nav__item">
             <NavLink to="/home" activeClassName="active" exact>
               Accueil
@@ -79,7 +80,7 @@ const Header = () => {
             </NavLink>
           </li>
          
-          <li className="nav__item bordereau-item">
+         { /*<li className="nav__item bordereau-item">
             <div className="dropdown">
               <div className="dropdown-btn" onClick={handleToggleBordereauMenu}>
                 Bordereau
@@ -95,7 +96,7 @@ const Header = () => {
                 </div>
               )}
             </div>
-          </li>
+          </li>*/}
         
           <li className="nav__item user-settings-item">
             <div className="dropdown">

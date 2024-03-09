@@ -1,47 +1,50 @@
+// UpdatePasswordForm.jsx
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import './../styles/updatepassword.css'; // Import your CSS file
 
 const UpdatePasswordForm = () => {
-    const [formData, setFormData] = useState({
-        oldPassword: "",
-        newPassword: ""
-    });
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const { id } = useParams();
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-
-        try {
-            const response = await axios.put(`http://localhost:3006/user/updatePass/${id}`, formData);
-
-            if (response.status !== 200) {
-                throw new Error("Failed to update password");
+    
+        const [formData, setFormData] = useState({
+            oldPassword: "",
+            newPassword: ""
+        });
+        const [error, setError] = useState(null);
+        const [loading, setLoading] = useState(false);
+        const { id } = useParams();
+    
+        const handleChange = (e) => {
+            const { name, value } = e.target;
+            setFormData(prevState => ({
+                ...prevState,
+                [name]: value
+            }));
+        };
+    
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            setLoading(true);
+    
+            try {
+                const response = await axios.put(`http://localhost:3006/user/updatePass/${id}`, formData);
+    
+                if (response.status !== 200) {
+                    throw new Error("Failed to update password");
+                }
+    
+                // Password updated successfully
+                window.alert('Password updated successfully');
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
             }
-
-            // Password updated successfully
-            window.alert('Password updated successfully');
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
+        };
     return (
-        <div>
-            <h2>Update Password</h2>
+        <div className="update-password-card">
+            
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="oldPassword">Old Password</label>

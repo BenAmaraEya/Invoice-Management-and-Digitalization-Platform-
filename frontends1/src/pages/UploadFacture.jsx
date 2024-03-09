@@ -1,18 +1,21 @@
+// FactureUploader.jsx
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import './../styles/uploadfacture.css'; // Import CSS file for styling
 
 function FactureUploader() {
   const navigate = useNavigate();
   const { nature } = useParams();
   const [file, setFile] = useState(null);
-  const [fileName, setFileName] = useState(''); // Utiliser fileName au lieu de filePath
+  const [fileName, setFileName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
-    setFileName(event.target.files[0].name); // Stocker le nom du fichier
+    setFileName(event.target.files[0].name);
   };
 
   const handleSubmit = async () => {
@@ -27,17 +30,12 @@ function FactureUploader() {
       const response = await axios.post('http://localhost:3006/facture/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization:`Bearer ${token}`
-         
+          Authorization: `Bearer ${token}`
         }
       });
 
-      // Construire le chemin complet du fichier
       const filePath = `uploads/${fileName}`;
-
-      // Navigate to the form page with extracted information
-      navigate(`/facture-form/${nature}`, { state: { extractedInfo: response.data.extractedInfo, filePath: filePath } });
-    
+      navigate('/facture-form', { state: { extractedInfo: response.data.extractedInfo, filePath: filePath } });
     } catch (error) {
       setError('Error uploading facture');
     } finally {
@@ -46,13 +44,18 @@ function FactureUploader() {
   };
 
   return (
-    <div>
-      <h2>Upload Document</h2>
-      <input type="file" accept=".pdf" onChange={handleFileChange} />
-      <button onClick={handleSubmit} disabled={!file || loading}>
+    <div className="facture-uploader-container">
+      <h4>télecharger Documents</h4>
+      
+      <div className="file-input-container">
+      <input className="input" type="file" accept=".pdf" onChange={handleFileChange} />
+        <p>Une seule page doit être téléchargée sous la forme PDF</p>
+        <p>Max 50 Mo</p>
+      </div>
+      
+      <button className="upload-btn" onClick={handleSubmit} disabled={!file || loading}>
         {loading ? 'Uploading...' : 'Upload'}
       </button>
-     
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );

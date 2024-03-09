@@ -43,7 +43,7 @@ function ListUser() {
     return (
         <div>
 <Link to="/addUser" className="add-user-link">Ajouter Utilisateur</Link>   
-<h1>Liste Fournisseurs</h1>    
+<h3 className="list-fournisseur">Liste Fournisseurs</h3>    
      <table>
     
                 <thead>
@@ -82,10 +82,10 @@ function ListUser() {
                             <td>{data.adresse}</td>
                         <td>
                             <button>
-                            <Link to={`../updateUser/${data.iderp}`} className="update-link">Modifier</Link>
+                            <Link className="update-link"to={`../updateUser/${data.iderp}`} >Modifier</Link>
                             </button>
-                            <button onClick={() => DeleteFournisseur(data.iderp)}>Supprimer</button>
-                            <button onClick={() => Acesse(data.User.id)}>Accés</button>
+                            <button onClick={() => DeleteFournisseur(data.iderp)} className="delete-button">Supprimer</button>
+                            <button className="access-button" onClick={() => Acesse(data.User.id)}>Accés</button>
 
                         </td>
                     

@@ -14,7 +14,7 @@ function FactureForm() {
     montant: '',
     factname: '',
     devise: 'TND',
-    nature: nature,
+    nature: '3WMTND',
     objet: 'NOUVELLE FACTURE',
     datereception: new Date().toISOString().split('T')[0],
     pathpdf:'',
@@ -144,94 +144,96 @@ function FactureForm() {
             <p className='form-paragraph'>Vérifiez et complétez votre formulaire attentivement avant de soumettre.</p>
             <div className="facture-container d-flex justify-content-between">
               <div className="facture-form">
-
                 <Form onSubmit={handleSubmit}>
-                <FormGroup>
-                    <label className="facture-label">Nature 3WM:*</label>
-                    <input className="facture-input" type="text" name="nature" value={formData.nature} onChange={handleChange} required />
-                  </FormGroup>
-                  <FormGroup>
-                    <label className="facture-label">Numéro PO:*</label>
-                    <input className="facture-input" type="text" name="num_po" value={formData.num_po} onChange={handleChange} required  />
-                  </FormGroup>
-                  <FormGroup>
-  <label className="facture-label">fournisseur:*</label>
-  <input className="facture-input" type="text" name="name" value={formData.fournisseur} onChange={handleChange} disabled  />
-</FormGroup>
-
- <FormGroup>
-                    <label className="facture-label">ID Fiscale :*</label>
-                    <input className="facture-input" type="text" name="idfiscale" value={formData.idfiscale} onChange={handleChange} disabled />
-                  </FormGroup>
-                  <FormGroup>
-                    <label className="facture-label">Numéro de Facture:</label>
-                    <input className="facture-input" type="text" name="num_fact" value={formData.num_fact} onChange={handleChange} required/>
-                  </FormGroup>
-                  <FormGroup>
-                    <label className="facture-label">Nom de Facture:*</label>
-                    <input className="facture-input" type="text" name="factname" value={formData.factname} onChange={handleChange} required/>
-                  </FormGroup>
-                  <FormGroup>
-                    <label className="facture-label">Date de facture:*</label>
-                    <input className="facture-input" type="date" name="date_fact" value={formData.date_fact} onChange={handleChange} required />
-                  </FormGroup>
-                  <FormGroup>
-                    <label className="facture-label">Montant:*</label>
-                    <input className="facture-input" type="number" name="montant" value={formData.montant} onChange={handleChange} required/>
-                  </FormGroup>
-                 
-                  <FormGroup>
-                    <label className="facture-label">Devise:*</label>
-                    <select className="facture-input" name="devise" value={formData.devise} onChange={handleChange} required>
-                      <option value="TND">TND</option>
-                      <option value="EURO">EU</option>
-                      <option value="USD">USD</option>
-                    </select>
-                  </FormGroup>
-                 
-                  <FormGroup>
-  <label className="facture-label">Date de Réception*:</label>
-  <input className="facture-input" type="date" name="datereception" value={formData.datereception} disabled />
-</FormGroup>
-                  <FormGroup>
-                    <label className="facture-label">Object:*</label>
-                    <select className="facture-input" name="objet" value={formData.objet} onChange={handleChange} required>
-                      <option value="NOUVELLE FACTURE">Nouvelle Facture</option>
-                      <option value="ancien facture">Ancien Facture</option>
-                    </select>
-                  </FormGroup>
-                  <FormGroup>
-                    <label className="facture-label">Piéces Jointes :*</label>
-                   
-                    <div>
-                      <label>
-                        <input
-                          type="checkbox"
-                          name="piece_name"
-                          value="bon de command"
-                          checked={formData.piece_name.includes('bon de command')}
-                          onChange={handleChange}
-                        />
-                        Bon de Commande
-                      </label>
-                    </div>
-                    <div>
-                      <label>
-                        <input
-                          type="checkbox"
-                          name="piece_name"
-                          value="pv de reception"
-                          checked={formData.piece_name.includes('pv de reception')}
-                          onChange={handleChange}
-                        />
-                        PV de Reception
-                      </label>
-                    </div>
-                  </FormGroup>
-                  <FormGroup>
-  <label className="facture-label">Delai de Paiement:*</label>
-  <input className="facture-input" type="text" name="name" value={formData.delai_paiement} onChange={handleChange} disabled  />
-</FormGroup>
+                  <Row>
+                    <Col md="6">
+                      <FormGroup>
+                        <label className="facture-label">Nature 3WM:*</label>
+                        <input className="facture-input" type="text" name="nature" value={formData.nature} onChange={handleChange} required />
+                      </FormGroup>
+                      <FormGroup>
+                        <label className="facture-label">Numéro PO:*</label>
+                        <input className="facture-input" type="text" name="num_po" value={formData.num_po} onChange={handleChange} required  />
+                      </FormGroup>
+                      <FormGroup>
+                        <label className="facture-label">fournisseur:*</label>
+                        <input className="facture-input" type="text" name="name" value={formData.fournisseur} onChange={handleChange} disabled  />
+                      </FormGroup>
+                      <FormGroup>
+                        <label className="facture-label">ID Fiscale :*</label>
+                        <input className="facture-input" type="text" name="idfiscale" value={formData.idfiscale} onChange={handleChange} disabled />
+                      </FormGroup>
+                      <FormGroup>
+                        <label className="facture-label">Numéro de Facture:</label>
+                        <input className="facture-input" type="text" name="num_fact" value={formData.num_fact} onChange={handleChange} required/>
+                      </FormGroup>
+                      <FormGroup>
+                        <label className="facture-label">Date de facture:*</label>
+                        <input className="facture-input" type="date" name="date_fact" value={formData.date_fact} onChange={handleChange} required />
+                      </FormGroup>
+                     
+                    </Col>
+                    <Col md="6">
+                    <FormGroup>
+                        <label className="facture-label">Nom de Facture:*</label>
+                        <input className="facture-input" type="text" name="factname" value={formData.factname} onChange={handleChange} required/>
+                      </FormGroup>
+                      <FormGroup>
+                        <label className="facture-label">Date de facture:*</label>
+                        <input className="facture-input" type="date" name="date_fact" value={formData.date_fact} onChange={handleChange} required />
+                      </FormGroup>
+                      <FormGroup>
+                        <label className="facture-label">Montant:*</label>
+                        <input className="facture-input" type="number" name="montant" value={formData.montant} onChange={handleChange} required/>
+                      </FormGroup>
+                      <FormGroup>
+                        <label className="facture-label">Devise:*</label>
+                        <select className="facture-input" name="devise" value={formData.devise} onChange={handleChange} required>
+                          <option value="TND">TND</option>
+                          <option value="EURO">EU</option>
+                          <option value="USD">USD</option>
+                        </select>
+                      </FormGroup>
+                      <FormGroup>
+                        <label className="facture-label">Object:*</label>
+                        <select className="facture-input" name="objet" value={formData.objet} onChange={handleChange} required>
+                          <option value="NOUVELLE FACTURE">Nouvelle Facture</option>
+                          <option value="ancien facture">Ancien Facture</option>
+                        </select>
+                      </FormGroup>
+                      <FormGroup>
+                        <label className="facture-label">Pièces Jointes :*</label>
+                        <div>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="piece_name"
+                              value="bon de command"
+                              checked={formData.piece_name.includes('bon de command')}
+                              onChange={handleChange}
+                            />
+                            Bon de Commande
+                          </label>
+                        </div>
+                        <div>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="piece_name"
+                              value="pv de reception"
+                              checked={formData.piece_name.includes('pv de reception')}
+                              onChange={handleChange}
+                            />
+                            PV de Reception
+                          </label>
+                        </div>
+                      </FormGroup>
+                      <FormGroup>
+                        <label className="facture-label">Delai de Paiement:*</label>
+                        <input className="facture-input" type="text" name="name" value={formData.delai_paiement} onChange={handleChange} disabled  />
+                      </FormGroup>
+                    </Col>
+                  </Row>
                   <button className="facture-button" type="submit">Valider</button>
                 </Form>
               </div>
