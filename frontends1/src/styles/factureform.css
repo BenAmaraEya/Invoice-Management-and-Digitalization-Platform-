@@ -29,18 +29,33 @@
   border-radius: 5px;
 }
 
-.facture-button {
+.validerform-btn {
   background-color: #007bff;
   color: #fff;
   padding: 10px 20px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  margin-left: 300px;
+  margin-left: 200px;
+  
  
 }
-
-.facture-button:hover {
+.annulerform-btn{
+  background-color: rgb(210, 210, 210)!important;
+  color: black !important;
+  padding: 10px 20px !important;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 300px;
+  margin-left: 15px;
+  
+}
+.btn-container{
+  display: flex !important;
+  
+}
+.validerform-btn:hover {
   background-color: #0056b3;
 }
 

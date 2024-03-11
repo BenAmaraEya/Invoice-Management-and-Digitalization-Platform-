@@ -9,6 +9,9 @@ const { authenticateToken } = require('../utils/jwt');
 authorizeSupplier = authenticateToken(['fournisseur']);
 const Excel = require('exceljs');
 require('../AutoBordereaux');
+const path = require('path');
+const { where } = require('sequelize');
+
 
 
 // Multer setup for file uploading
@@ -162,16 +165,12 @@ const factureController = {
             return res.status(404).json({ message: 'Facture not found for this Fournisseur' });
         }
 
-        // Vérifiez si le chemin du fichier PDF est stocké dans la base de données
-       /* if (facture.pathpdf) {
+        
+        if (!facture.pathpdf) {
             fs.unlinkSync(facture.pathpdf);
            
-        }*/
+        }
 
-       
-      
-
-        // Supprimez la facture de la base de données
         await facture.destroy();
 
         res.json({ success: true, message: 'Facture deleted successfully' });
@@ -234,8 +233,9 @@ ExportFacturetoExcel:[authorizeSupplier, async (req, res) => {
 
 getFacturesCountByStatus: async (req, res) => {
   try {
-      // Récupérer les données des factures depuis votre base de données
-      const factures = await Facture.findAll(); // Change this line
+      // Récupérer les données des factures de fournisseur
+      const {iderp}=req.params;
+      const factures = await Facture.findAll({where:{ iderp } }); // Change this line
       console.log("Factures found:", factures);
       // Initialiser les compteurs pour chaque catégorie de factures
       let NBFValide = 0;
@@ -273,6 +273,19 @@ getFacturesCountByStatus: async (req, res) => {
   } catch (error) {
       console.error('Error fetching factures:', error);
       return res.status(500).json({ error: 'Internal server error' });
+  }
+},
+viewFacturePDF: async (req, res) => {
+  try {
+    const filename = req.params.filename;
+    const filePath = path.join(__dirname, '../uploads', filename);
+
+   
+    res.setHeader('Content-Type', 'application/pdf');
+    res.sendFile(filePath);
+  } catch (error) {
+    console.error('Error viewing facture PDF:', error);
+    res.status(500).json({ message: 'Error viewing facture PDF', error: error });
   }
 }
 

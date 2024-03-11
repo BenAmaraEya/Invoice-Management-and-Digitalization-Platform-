@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const PdfViewer = ({ filename }) => {
+const PdfViewer = ({ pdfPath }) => {
     const [pdfUrl, setPdfUrl] = useState(null);
 
     useEffect(() => {
         const fetchPdf = async () => {
             try {
-                const response = await axios.get(`http://localhost:3006/facture/${filename}`, {
+                const response = await axios.get(`http://localhost:3006/${pdfPath}`, {
                     responseType: "blob",
                 });
                 const pdfUrl = URL.createObjectURL(new Blob([response.data]));
@@ -20,18 +20,20 @@ const PdfViewer = ({ filename }) => {
         fetchPdf();
     
         return () => {
-            // Clean up when unmounting the component
+            // Clean up resources
             if (pdfUrl) {
                 URL.revokeObjectURL(pdfUrl);
             }
         };
-    }, [filename]);
-
-   
+    }, [pdfPath]);
 
     return (
         <div>
-            <embed src={pdfUrl} type="application/pdf" width="100%" height="600px" />
+            {pdfUrl ? (
+                <embed src={pdfUrl} type="application/pdf" width="100%" height="600px" />
+            ) : (
+                <p>Loading PDF...</p>
+            )}
         </div>
     );
 };

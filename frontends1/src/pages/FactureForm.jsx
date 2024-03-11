@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useLocation, useParams } from 'react-router-dom';
-import { Container, Row, Col, Form, FormGroup } from "reactstrap";
+import { useLocation, useParams,Link } from 'react-router-dom';
+import { Container, Row, Col, Form, FormGroup, Button } from "reactstrap";
+
 import '../styles/factureform.css';
 
 function FactureForm() {
   const location = useLocation();
   const { iderp ,nature} = useParams();
+  const id = localStorage.getItem("userId");
   const [formData, setFormData] = useState({
     num_fact: '',
     num_po:'',
@@ -75,7 +77,7 @@ function FactureForm() {
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    // If it's a piece_name, toggle the checkbox selection
+    
     if (name === 'piece_name') {
       const isChecked = formData.piece_name.includes(value);
       setFormData(prevData => ({
@@ -178,10 +180,7 @@ function FactureForm() {
                         <label className="facture-label">Nom de Facture:*</label>
                         <input className="facture-input" type="text" name="factname" value={formData.factname} onChange={handleChange} required/>
                       </FormGroup>
-                      <FormGroup>
-                        <label className="facture-label">Date de facture:*</label>
-                        <input className="facture-input" type="date" name="date_fact" value={formData.date_fact} onChange={handleChange} required />
-                      </FormGroup>
+                      
                       <FormGroup>
                         <label className="facture-label">Montant:*</label>
                         <input className="facture-input" type="number" name="montant" value={formData.montant} onChange={handleChange} required/>
@@ -234,7 +233,12 @@ function FactureForm() {
                       </FormGroup>
                     </Col>
                   </Row>
-                  <button className="facture-button" type="submit">Valider</button>
+                  <div className='btn-container'>
+                  <button className="validerform-btn" type="submit">Valider</button>
+                  <Link to={`/factures/${id}`}>
+                  <Button className='annulerform-btn'>Annuler</Button>
+                    </Link>
+                    </div>
                 </Form>
               </div>
             </div>
