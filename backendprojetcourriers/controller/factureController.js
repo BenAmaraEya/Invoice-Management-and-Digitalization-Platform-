@@ -184,7 +184,7 @@ const factureController = {
   getFactureById: async (req, res) => {
     try {
       const { idF } = req.params;
-      const facture = await Facture.findOne({wehere:idF});
+      const facture = await Facture.findOne({where:idF});
 
       if (!facture) {
         return res.status(404).json({ message: 'Facture not found' });

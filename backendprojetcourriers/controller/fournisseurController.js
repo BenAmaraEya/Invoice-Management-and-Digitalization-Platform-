@@ -55,19 +55,32 @@ const FournisseurController={
             res.status(500).json({ error: 'Internal Server Error' });
         }
     },
+    getAll: async (req, res, next) => {
+        
+            try {
+              const fournisseurs = await User.findAll();
+              res.json(fournisseurs);
+            } catch (error) {
+              console.error(error);
+              res.status(500).json({ error: 'Erreur lors de la récupération des fournisseurs' });
+            }
+         
+    },
     
-    
-          //get all user
-    getFournisseur: async (req, res , next) =>{
-        try {
-            const users = await Fournisseur.findAll(
-                {include:User}
-            );
-            res.json(users);
-          } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
-          }
+          //get fournisseurs
+          getFournisseurs: async (req, res, next) => {
+            try {
+                const fournisseurs = await Fournisseur.findAll({
+                    include: {
+                        model: User,
+                        where: { profil: 'fournisseur' } // Filter users by profile
+                    }
+                });
+                res.json(fournisseurs);
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Erreur lors de la récupération des fournisseurs' });
+            }
         },
   //get fournisseur by ID  
 getfournisseurbyid: async (req, res) => {

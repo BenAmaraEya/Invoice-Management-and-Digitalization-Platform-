@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const axios=require ('axios');
 
 const User = require("../models/User");
+const Fournisseur=require("../models/Fournisseur");
 const nodemailer = require('nodemailer');
 
 
@@ -51,7 +52,7 @@ const UserController = {
             const token = generateToken(user);
 
             // récupérer token et id 
-            res.json({ token, id: user.id });
+            res.json({ token, id: user.id ,profil:user.profil});
 
             // récupérer l'ip et la localisation 
             const publicIP = await getPublicIP();
@@ -85,7 +86,9 @@ const UserController = {
 
     getUser: async (req, res, next) => {
         try {
-            const users = await User.findAll();
+            const users = await User.findAll( {include: {
+                model: Fournisseur
+            }});
             res.json(users);
         } catch (error) {
             console.error(error);
@@ -182,7 +185,7 @@ const UserController = {
                     <p>Dear ${user.name},</p>
                     <p>Here are your temporary login credentials for the system:</p>
                     <p>Username: ${user.username}</p>
-                    <p>Password: ${user.usename}</p>
+                    <p>Password: ${user.username}</p>
                     <p>Please change your password after logging in for security reasons.</p>
                     <p>Regards,</p>
                     <p>Your System</p>

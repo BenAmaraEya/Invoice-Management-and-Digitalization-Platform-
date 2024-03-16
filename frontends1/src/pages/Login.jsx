@@ -39,16 +39,21 @@ const Login = () => {
       }
   
       const data = await response.json();
-        const { token, id } = data;
-  
+        const { token, id,profil } = data;
+       
+        
       // Store the token and user ID in local storage
       localStorage.setItem("accessToken", data.token);
       localStorage.setItem("userId", id);
       
       console.log("User ID:", id);
       console.log("Response Data:", data);
-     
-      navigate(`/dashboard/${id}`);
+      console.log("profil",profil);
+      if (profil === 'fournisseur') {
+        navigate(`/dashboard/${id}`);
+      } else if (profil === 'bof') {
+        navigate(`/dashboardP/${id}`);}
+        
     } catch (error) {
       setError(error.message);
     } finally {

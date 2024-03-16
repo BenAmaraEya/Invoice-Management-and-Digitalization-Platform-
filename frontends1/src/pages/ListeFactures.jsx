@@ -61,7 +61,7 @@ const ListeFactures = () => {
         }
     };
 
-    const openPdf = async (facture) => {
+   /* const openPdf = async (facture) => {
         try {
             const pdfPath = facture.pathpdf;
             setPdfPath(pdfPath);
@@ -71,7 +71,18 @@ const ListeFactures = () => {
             setPdfError('Error fetching PDF');
         }
     };
-
+*/const viewFacturePDF = async (pathpdf) => {
+    try {
+        const response = await axios.get(`http://localhost:3006/facture/view-pdf/${pathpdf}`, {
+            responseType: 'blob' // Set the response type to blob to handle PDF files
+        });
+        const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        window.open(pdfUrl); // Open the PDF in a new tab
+    } catch (error) {
+        console.error('Error viewing facture PDF:', error);
+    }
+};
     const exportToExcel = async () => {
         try {
             const token = localStorage.getItem('accessToken');
@@ -127,9 +138,15 @@ const ListeFactures = () => {
                                 <button className='delete-btn' onClick={() => deleteFacture(facture.iderp, facture.idF)}>
                                     <FaTrash />
                                 </button>
+                               
                             </td>
+                           <td>
+                           <Link to={`/updatefacture/${facture.idF}`}>
+                                    <Button className='update-facture'>Update</Button>
+                                </Link>
+                           </td>
                             <td>
-                            <button onClick={() => openPdf(facture)}>View PDF</button>
+                            <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
                                
                             </td>
                         </tr>

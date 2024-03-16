@@ -13,6 +13,8 @@ import FactureForm from "../pages/FactureForm";
 import PdfViewer from "../pages/PdfViewer";
 import ListeFactures from "../pages/ListeFactures";
 import UpdateFacture from "../pages/UpdateFacture";
+import DashboardP from "../pages/personnelDCF/DashboardP";
+import ListCourries from "../pages/personnelDCF/ListCourriers";
 const Routers = () => {
     return (
         <Routes>
@@ -30,6 +32,8 @@ const Routers = () => {
             <Route path="/pdf/:filename" element={<PdfViewer />} /> 
             <Route path="/factures/:id" element={<ListeFactures />} /> 
             <Route path="/updatefacture/:idF" element={<UpdateFacture />} /> 
+            <Route path="/dashboardP/:id" element={<DashboardP/>}/>
+            <Route path="/listcourriers/:iderp" element={<ListCourries/>}/>
         </Routes>
     );
 };
