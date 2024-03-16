@@ -10,4 +10,6 @@ router.delete('/fournisseur/:fournisseurId/facture/:factureId',factureController
 router.post('/export',factureController.ExportFacturetoExcel);
 router.get('/view-pdf/uploads/:filename', factureController.viewFacturePDF);
 router.get('/status/:iderp',factureController.getFacturesCountByStatus);
+router.put('/updateFacture/:idF',factureController.updateFacture);
+router.get('/facturebyId/:idF',factureController.getFactureById);
 module.exports=router;

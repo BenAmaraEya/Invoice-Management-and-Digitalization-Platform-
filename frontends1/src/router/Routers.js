@@ -12,6 +12,7 @@ import UploadFacture from "../pages/UploadFacture";
 import FactureForm from "../pages/FactureForm";
 import PdfViewer from "../pages/PdfViewer";
 import ListeFactures from "../pages/ListeFactures";
+import UpdateFacture from "../pages/UpdateFacture";
 const Routers = () => {
     return (
         <Routes>
@@ -28,6 +29,7 @@ const Routers = () => {
             <Route path="/facture-form" element={<FactureForm />} />
             <Route path="/pdf/:filename" element={<PdfViewer />} /> 
             <Route path="/factures/:id" element={<ListeFactures />} /> 
+            <Route path="/updatefacture/:idF" element={<UpdateFacture />} /> 
         </Routes>
     );
 };

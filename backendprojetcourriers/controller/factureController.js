@@ -61,7 +61,7 @@ const generateExcel = async (factures) => {
   return buffer;
 };
 const factureController = {
-  upload: [authorizeSupplier,async (req, res) => {
+  upload: async (req, res) => {
     upload(req, res, err => {
       if (err) {
         return res.status(400).json({ message: 'Error uploading file', error: err });
@@ -96,7 +96,7 @@ const factureController = {
         
         
     });
-  }],
+  },
 
 
   save: [authorizeSupplier,async (req, res) => {
@@ -183,8 +183,8 @@ const factureController = {
 
   getFactureById: async (req, res) => {
     try {
-      const { id } = req.params;
-      const facture = await Facture.findById(id);
+      const { idF } = req.params;
+      const facture = await Facture.findOne({wehere:idF});
 
       if (!facture) {
         return res.status(404).json({ message: 'Facture not found' });
@@ -287,9 +287,31 @@ viewFacturePDF: async (req, res) => {
     console.error('Error viewing facture PDF:', error);
     res.status(500).json({ message: 'Error viewing facture PDF', error: error });
   }
+},
+ updateFacture : async (req, res) => {
+  try {
+    const { idF } = req.params;
+    const facture = await Facture.findOne({ where: { idF } });
+    if (!facture) {
+      return res.status(404).json({ message: 'Facture not found' });
+    }
+
+    const { pathpdf, ...factureData } = req.body;
+if(facture.status=='en attente'){
+    // Vérifier si le document a été modifié
+    if (req.file) {
+      fs.unlinkSync(facture.pathpdf); // Supprimer l'ancien fichier PDF
+      facture.pathpdf = req.file.path; // Mettre à jour le chemin du nouveau fichier PDF
+    }
+
+    // Mettre à jour les autres données de la facture
+    await Facture.update(factureData, { where: { idF } });
 }
-
-
+    res.json({ message: 'Facture updated successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
 };
 // Function to extract information from OCR text
 function extractInfoFromOCR(text) {
