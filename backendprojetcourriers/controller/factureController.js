@@ -184,7 +184,7 @@ const factureController = {
   getFactureById: async (req, res) => {
     try {
       const { idF } = req.params;
-      const facture = await Facture.findOne({where:idF});
+      const facture = await Facture.findOne({ where: { idF: idF } });
 
       if (!facture) {
         return res.status(404).json({ message: 'Facture not found' });
@@ -296,16 +296,17 @@ viewFacturePDF: async (req, res) => {
       return res.status(404).json({ message: 'Facture not found' });
     }
 
-    const { pathpdf, ...factureData } = req.body;
-if(facture.status=='en attente'){
-    // Vérifier si le document a été modifié
-    if (req.file) {
-      fs.unlinkSync(facture.pathpdf); // Supprimer l'ancien fichier PDF
-      facture.pathpdf = req.file.path; // Mettre à jour le chemin du nouveau fichier PDF
-    }
+    const { pathpdf: newFilePath, ...factureData } = req.body; 
+    if (facture.status === 'Attente') {
+      
+        const oldFilePath = facture.pathpdf; // Chemin du fichier de l'ancien PDF
 
-    // Mettre à jour les autres données de la facture
-    await Facture.update(factureData, { where: { idF } });
+      // Mettre à jour les autres données de la facture
+      await Facture.update({ pathpdf: newFilePath, ...factureData }, { where: { idF } }); // Update pathpdf along with other data
+      if (newFilePath !== oldFilePath) {
+        fs.unlinkSync(oldFilePath); // Supprimez l'ancien fichier PDF
+      }
+    console.log(facture);
 }
     res.json({ message: 'Facture updated successfully' });
   } catch (error) {
@@ -319,7 +320,6 @@ function extractInfoFromOCR(text) {
     const num_factRegex = /Numéro\s*de\s*facture\s*(\d+)/i;
     const dateFactRegex = /(?:Date\s*:\s*|Date\s*de\s*facture\s*:\s*)(\w+)/i;
     const montantRegex = /(?:Montant\s*Total\s*TTC\s*|Montant\s*:\s*)(\d+(\.\d{1,2})?)/i;
-    // Add more regular expressions for other details as needed
   
     // Extracting information using regular expressions
     const num_factMatch = text.match(num_factRegex);

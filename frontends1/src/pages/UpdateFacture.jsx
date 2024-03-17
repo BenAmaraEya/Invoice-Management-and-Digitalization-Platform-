@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 const UpdateFactureDetailsPage = () => {
   const { idF } = useParams();
   const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState('');
   const [forceRender, setForceRender] = useState(false);
   const [facture, setFacture] = useState({
     num_fact: '',
@@ -61,7 +63,13 @@ const UpdateFactureDetailsPage = () => {
       [name]: value,
     }));
   };
-
+  const handleDateChange = (date) => {
+    setFacture(prevFacture => ({
+      ...prevFacture,
+      date_fact: date,
+      datereception:date
+    }));
+  };
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -76,37 +84,39 @@ const UpdateFactureDetailsPage = () => {
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
+    setFileName(event.target.files[0].name);
   };
 
   const changeDocuments = async () => {
     try {
       const token = localStorage.getItem('accessToken');
+      
       const formData = new FormData();
-      formData.append('file', facture.pathpdf); // Assurez-vous que facture.pathpdf est le fichier sélectionné
+    formData.append('factureFile', file); 
   
       const response = await axios.post('http://localhost:3006/facture/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`
+          //Authorization: `Bearer ${token}`
         }
       });
   
       const extractedInfo = response.data.extractedInfo;
-      const filePath = `uploads/${response.data.fileName}`;
+      const filePath = `uploads/${fileName}`;
   
       // Update the form fields with the extracted data
       setFacture(prevFacture => ({
         ...prevFacture,
-        num_fact: extractedInfo.num_fact || '',
-        num_po: extractedInfo.num_po || '',
-        date_fact: extractedInfo.date_fact || '',
-        montant: extractedInfo.montant || '',
-        factname: extractedInfo.factname || '',
-        devise: extractedInfo.devise || 'TND',
-        nature: extractedInfo.nature || '',
-        objet: extractedInfo.objet || '',
-        datereception: extractedInfo.datereception || '',
-        pathpdf: filePath || '', // Use the newly uploaded PDF file path
+        num_fact: extractedInfo.num_fact || facture.num_fact || '',
+        num_po: extractedInfo.num_po || facture.num_po ||'',
+        date_fact: extractedInfo.date_fact ||facture.date_fact || '',
+        montant: extractedInfo.montant || facture.montant ||'',
+        factname: extractedInfo.factname || facture.factname ||'',
+        devise: extractedInfo.devise ||facture.devise || 'TND',
+        nature: extractedInfo.nature ||facture.nature || '',
+        objet: extractedInfo.objet ||facture.objet || '',
+        datereception: extractedInfo.datereception || facture.datereception ||'',
+        pathpdf: filePath || '', 
       }));
     } catch (error) {
       console.log('Error uploading facture');
@@ -129,8 +139,7 @@ const UpdateFactureDetailsPage = () => {
         <br />
         <label>
           Date de facture:
-          <input type="date" name="date_fact" value={facture.date_fact}  onChange={handleChange} required />
-        </label>
+          <DatePicker selected={facture.date_fact} onChange={handleDateChange} />        </label>
         <br />
         <label>
           Montant:
@@ -163,8 +172,7 @@ const UpdateFactureDetailsPage = () => {
         <br />
         <label>
           Date de Réception:
-          <input type="date" name="datereception" value={facture.datereception} onChange={handleChange} />
-        </label>
+          <DatePicker selected={facture.datereception} onChange={handleDateChange} />         </label>
         <br />
         <label>
           Chemin PDF:
