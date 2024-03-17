@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams ,useNavigate} from 'react-router-dom';
 import DatePicker from 'react-datepicker';
+import { Container, Row, Col, Form, FormGroup, Button } from "reactstrap";
 import 'react-datepicker/dist/react-datepicker.css';
+import '../styles/updatefacture.css';
 const UpdateFactureDetailsPage = () => {
   const { idF } = useParams();
+  const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
-  const [forceRender, setForceRender] = useState(false);
   const [facture, setFacture] = useState({
     num_fact: '',
     num_po: '',
@@ -19,6 +21,7 @@ const UpdateFactureDetailsPage = () => {
     objet: '',
     datereception: '',
     pathpdf: '',
+    piece_name: [], // Ajoutez le state pour les pièces jointes sélectionnées
   });
 
   useEffect(() => {
@@ -26,7 +29,7 @@ const UpdateFactureDetailsPage = () => {
       try {
         const response = await axios.get(`http://localhost:3006/facture/facturebyId/${idF}`);
         const fetchedFacture = response.data.facture;
-        
+        console.log(fetchedFacture);
         if (fetchedFacture) {
           setFacture(prevFacture => ({
             ...prevFacture,
@@ -40,6 +43,7 @@ const UpdateFactureDetailsPage = () => {
             objet: fetchedFacture.objet || '',
             datereception: fetchedFacture.datereception || '',
             pathpdf: fetchedFacture.pathpdf || '',
+            piece_name: fetchedFacture.Pieces_jointes.map(piece => piece.piece_name) || [], // Récupère les noms des pièces jointes existantes
           }));
         } else {
           console.error('Facture data not found in response');
@@ -52,16 +56,42 @@ const UpdateFactureDetailsPage = () => {
     fetchFactureDetails();
   }, [idF]);
 
-  useEffect(() => {
-    setForceRender(prevState => !prevState);
-  }, [facture]);
-
   const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFacture(prevFacture => ({
-      ...prevFacture,
-      [name]: value,
-    }));
+    const { name, value, checked } = event.target;
+    if (name === 'piece_name') {
+      const updatedPieces = checked
+        ? [...facture.piece_name, value] // Ajoute la pièce jointe sélectionnée
+        : facture.piece_name.filter(piece => piece !== value); // Retire la pièce jointe désélectionnée
+      setFacture(prevFacture => ({
+        ...prevFacture,
+        piece_name: updatedPieces,
+      }));
+    } else {
+      setFacture(prevFacture => ({
+        ...prevFacture,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      //update facture
+      await axios.put(`http://localhost:3006/facture/updateFacture/${idF}`, facture);
+      alert('Facture details updated successfully');
+
+      // Update pieces jointes
+      await axios.put(`http://localhost:3006/piecejoint/updatepiece/${idF}`, {
+        piece_name: facture.piece_name,
+      });
+      alert('Pieces jointes updated successfully');
+      navigate(`/factures/${facture.iderp}`);
+    } catch (error) {
+      console.error('Error updating facture and pieces jointes:', error);
+      alert('Failed to update facture and pieces jointes');
+    }
   };
   const handleDateChange = (date) => {
     setFacture(prevFacture => ({
@@ -70,18 +100,6 @@ const UpdateFactureDetailsPage = () => {
       datereception:date
     }));
   };
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    try {
-      await axios.put(`http://localhost:3006/facture/updateFacture/${idF}`, facture);
-      alert('Facture details updated successfully');
-    } catch (error) {
-      console.error('Error updating facture details:', error);
-      alert('Failed to update facture details');
-    }
-  };
-
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
     setFileName(event.target.files[0].name);
@@ -104,7 +122,6 @@ const UpdateFactureDetailsPage = () => {
       const extractedInfo = response.data.extractedInfo;
       const filePath = `uploads/${fileName}`;
   
-      // Update the form fields with the extracted data
       setFacture(prevFacture => ({
         ...prevFacture,
         num_fact: extractedInfo.num_fact || facture.num_fact || '',
@@ -124,33 +141,48 @@ const UpdateFactureDetailsPage = () => {
   };
 
   return (
-    <div>
+    <section>
+    <Container>
+      <Row>
+        <Col lg="8" className="m-auto">
+    
       <h1>Modifier Facture </h1>
+      <div className="facture-container d-flex justify-content-between">
+              <div className="facture-form">
       <form onSubmit={handleSubmit}>
+      <Row>
+                    <Col md="6">
+                      <FormGroup>
         <label>
           Numéro de Facture:
           <input type="text" name="num_fact" value={facture.num_fact} onChange={handleChange} required />
         </label>
-        <br />
+        </FormGroup>
+                      <FormGroup>
         <label>
           Numéro PO:
           <input type="text" name="num_po" value={facture.num_po} onChange={handleChange} />
         </label>
-        <br />
+        </FormGroup>
+                      <FormGroup>
         <label>
           Date de facture:
           <DatePicker selected={facture.date_fact} onChange={handleDateChange} />        </label>
-        <br />
+          </FormGroup>
+          
+                      <FormGroup>
         <label>
           Montant:
           <input type="number" name="montant" value={facture.montant} onChange={handleChange} required />
         </label>
-        <br />
+        </FormGroup>
+                      <FormGroup>
         <label>
           Nom de Facture:
           <input type="text" name="factname" value={facture.factname} onChange={handleChange} required />
         </label>
-        <br />
+        </FormGroup>
+                      <FormGroup>
         <label>
           Devise:
           <select name="devise" value={facture.devise} onChange={handleChange} required>
@@ -159,21 +191,58 @@ const UpdateFactureDetailsPage = () => {
             <option value="USD">USD</option>
           </select>
         </label>
-        <br />
+        </FormGroup>
+        </Col>
+                    <Col md="6">
+                      <FormGroup>
         <label>
           Nature:
           <input type="text" name="nature" value={facture.nature} onChange={handleChange} required />
         </label>
-        <br />
+        </FormGroup>
+                      <FormGroup>
         <label>
           Objet:
           <input type="text" name="objet" value={facture.objet} onChange={handleChange} required />
         </label>
-        <br />
+        </FormGroup>
+                      <FormGroup>
         <label>
           Date de Réception:
           <DatePicker selected={facture.datereception} onChange={handleDateChange} />         </label>
-        <br />
+          </FormGroup>
+                   
+                      <FormGroup>
+  <label>
+    Pièces Jointes :
+    <div>
+      <label>
+        <input
+          type="checkbox"
+          name="piece_name"
+          value="bon de command"
+          checked={facture.piece_name.includes('bon de command')}
+          onChange={handleChange}
+        />
+        Bon de Commande
+      </label>
+    </div>
+    <div>
+      <label>
+        <input
+          type="checkbox"
+          name="piece_name"
+          value="pv de reception"
+          checked={facture.piece_name.includes('pv de reception')}
+          onChange={handleChange}
+        />
+        PV de Reception
+      </label>
+    </div>
+  </label>
+</FormGroup>
+
+                      <FormGroup>
         <label>
           Chemin PDF:
           <input type="text" name="pathpdf" value={facture.pathpdf} onChange={handleChange} required />
@@ -185,10 +254,19 @@ const UpdateFactureDetailsPage = () => {
             Modifier Document
           </button>
         </label>
-        <br />
+        </FormGroup>
+        </Col>
+                  </Row>
+                  <div className='btn-container'>
         <button type="submit">Valider</button>
+        </div>
       </form>
-    </div>
+      </div>
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </section>
   );
 };
 

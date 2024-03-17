@@ -139,8 +139,7 @@ const ListeFactures = () => {
                                     <FaTrash />
                                 </button>
                                
-                            </td>
-                           <td>
+                           
                            <Link to={`/updatefacture/${facture.idF}`}>
                                     <Button className='update-facture'>Update</Button>
                                 </Link>

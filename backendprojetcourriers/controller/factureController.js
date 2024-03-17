@@ -5,6 +5,7 @@ const Tesseract = require('tesseract.js');
 const Facture = require('../models/Facture');
 const pdfPoppler = require('pdf-poppler');
 const Bordereau =require('../models/Bordereau');
+const Pieces_jointe = require('../models/PiecesJointe');
 const { authenticateToken } = require('../utils/jwt');
 authorizeSupplier = authenticateToken(['fournisseur']);
 const Excel = require('exceljs');
@@ -184,7 +185,7 @@ const factureController = {
   getFactureById: async (req, res) => {
     try {
       const { idF } = req.params;
-      const facture = await Facture.findOne({ where: { idF: idF } });
+      const facture = await Facture.findOne({ where: { idF: idF }, include: { model: Pieces_jointe, as: 'Pieces_jointes' } });
 
       if (!facture) {
         return res.status(404).json({ message: 'Facture not found' });
