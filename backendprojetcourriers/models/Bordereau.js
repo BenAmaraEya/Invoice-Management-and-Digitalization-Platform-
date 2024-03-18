@@ -15,7 +15,7 @@ const Bordereau = sequelize.define('Bordereau', {
         allowNull: false,
     },
     date: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
         defaultValue: DataTypes.NOW,
     }

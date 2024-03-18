@@ -11,7 +11,7 @@ idF:{
     autoIncrement: true,
 },
 date_fact:{
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
     allowNull:false
 },
 num_fact:{
@@ -43,7 +43,7 @@ objet:{
     allowNull:false
 },
 datereception:{
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
 
 },
 num_po:{

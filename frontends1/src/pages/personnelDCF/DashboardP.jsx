@@ -11,7 +11,7 @@ const DashboardP = () => {
     useEffect(() => {
         const fetchFactureStats = async () => {
             try {
-                const response = await axios.get('http://localhost:3006/facture/stat');
+                const response = await axios.get('http://localhost:3006/facture/stat/all');
                 setFactureStats(response.data);
             } catch (error) {
                 console.error('Error fetching facture stats:', error);

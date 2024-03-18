@@ -72,6 +72,7 @@ const ListeFactures = () => {
                             <td>{facture.status}</td>
                             <td>{facture.num_po}</td>
                             <td>{facture.date_fact}</td>
+                            <td></td>
                             <td>
                                 <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
                             </td>

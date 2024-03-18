@@ -16,6 +16,7 @@ import UpdateFacture from "../pages/UpdateFacture";
 import DashboardP from "../pages/personnelDCF/DashboardP";
 import ListCourries from "../pages/personnelDCF/ListCourriers";
 import ListFournisseur from "../pages/personnelDCF/ListFournisseur";
+import Bordereau from "../pages/personnelDCF/BordereauList";
 const Routers = () => {
     return (
         <Routes>
@@ -36,6 +37,7 @@ const Routers = () => {
             <Route path="/dashboardP/:id" element={<DashboardP/>}/>
             <Route path="/listcourriers/:iderp" element={<ListCourries/>}/>
             <Route path="/listfournisseur/:id" element={<ListFournisseur/>}/>
+            <Route path="/bordereaux" element={<Bordereau/>}/>
         </Routes>
     );
 };

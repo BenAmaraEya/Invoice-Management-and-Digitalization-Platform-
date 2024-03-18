@@ -75,7 +75,7 @@ const Header = () => {
             </NavLink>
           </li>
           <li className="nav__item">
-            <NavLink to={`/dashboardP/${userId}`} activeClassName="active" exact>
+            <NavLink to={`/bordereaux`} activeClassName="active" exact>
               Bordereaux
             </NavLink>
           </li>

@@ -8,6 +8,7 @@ const sequelize = new Sequelize({
   port: 3306,
   models: [__dirname + '/models'],
   logging: false,
+  timezone: '+01:00',
 });
 
 const connectDB = async () => {
