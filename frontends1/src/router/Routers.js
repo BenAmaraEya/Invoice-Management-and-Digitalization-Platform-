@@ -15,6 +15,7 @@ import ListeFactures from "../pages/ListeFactures";
 import UpdateFacture from "../pages/UpdateFacture";
 import DashboardP from "../pages/personnelDCF/DashboardP";
 import ListCourries from "../pages/personnelDCF/ListCourriers";
+import ListFournisseur from "../pages/personnelDCF/ListFournisseur";
 const Routers = () => {
     return (
         <Routes>
@@ -34,6 +35,7 @@ const Routers = () => {
             <Route path="/updatefacture/:idF" element={<UpdateFacture />} /> 
             <Route path="/dashboardP/:id" element={<DashboardP/>}/>
             <Route path="/listcourriers/:iderp" element={<ListCourries/>}/>
+            <Route path="/listfournisseur/:id" element={<ListFournisseur/>}/>
         </Routes>
     );
 };

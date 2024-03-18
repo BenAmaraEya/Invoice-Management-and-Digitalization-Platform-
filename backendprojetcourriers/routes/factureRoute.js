@@ -12,4 +12,5 @@ router.get('/view-pdf/uploads/:filename', factureController.viewFacturePDF);
 router.get('/status/:iderp',factureController.getFacturesCountByStatus);
 router.put('/updateFacture/:idF',factureController.updateFacture);
 router.get('/facturebyId/:idF',factureController.getFactureById);
+router.get('/stat',factureController.statfacture);
 module.exports=router;

@@ -17,7 +17,7 @@ export default Layout;*/
 
 import React ,{useContext} from "react";
 import HomeHeader from './../Header/HomeHeader';
-import LoginHeader from './../Header/LoginHeader';
+import PersonnelHeader from '../Header/PersonnelHeader';
 import Header from './../Header/Header';
 import Routers from '../../router/Routers';
 import Footer from './../Footer/Footer';
@@ -31,12 +31,18 @@ const Layout = () => {
     const renderHeader = () => {
         if (location.pathname === "/home") {
             return <HomeHeader />;
-        } else if (location.pathname === "/login") {
-            return <LoginHeader />;
-        } else {
-            return <Header />;
-        }
-    };
+        
+        }else {
+            // Check the user's profile from localStorage
+            const userProfile = localStorage.getItem("userProfil");
+           
+             if (userProfile === "bof") {
+              return <PersonnelHeader />;
+            } else {
+              return <Header />;
+            }
+          }
+        };
 
     return (
         <>

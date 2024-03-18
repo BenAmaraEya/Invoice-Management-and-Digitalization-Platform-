@@ -20,7 +20,7 @@ const Logout = () => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("userId");
         console.log("token remove");
-        navigate('/login');
+        navigate('/home');
       } else {
         console.error("Failed to logout:", response.statusText);
       }

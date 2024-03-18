@@ -313,6 +313,26 @@ viewFacturePDF: async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+},
+statfacture:async(req,res)=>{
+  try {
+    // Query the database to get the required statistics
+    const nbFactureParType = await Facture.countDocuments(); // You need to adjust this query based on your data model
+    const nbFactureRecuHier = await Facture.countDocuments({ receivedAt: { $gte: new Date(new Date().setDate(new Date().getDate() - 1)) } }); // Example: Count factures received in the last 24 hours
+    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    const nbFactureMoisEnCours = await Facture.countDocuments({ createdAt: { $gte: startOfMonth } }); // Example: Count factures created in the current month
+
+    // Send the statistics as JSON response
+    res.json({
+        nbFactureParType,
+        nbFactureRecuHier,
+        nbFactureMoisEnCours
+    });
+} catch (error) {
+    console.error('Error fetching facture stats:', error);
+    res.status(500).json({ message: 'Internal server error' });
+}
+
 }
 };
 // Function to extract information from OCR text

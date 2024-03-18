@@ -57,11 +57,53 @@
     background: linear-gradient(90deg,#815eff,#8462ff);
     color:white;
     font-size: 10px;
-    width: 42px;
+    width: 65px;
     position: relative;
     
-      
-     
-    
+
   }
-  
+ 
+
+
+
+
+.custom-placeholder::placeholder {
+  color: rgb(70, 70, 70); 
+}
+
+.btn_login {
+    color: white;
+    background-color:#004add !important;
+    border-color:#004add;
+    font-weight: bold !important;
+    width: 150px;
+}
+
+
+
+.btn_login:hover {
+    background-color: #246dfe !important;
+    border-color: #246dfe !important;
+}
+.partners {
+    
+    margin-top: 20px;
+    padding: 20px 0;
+    border-top: 1px solid #ccc;
+}
+
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Center the cards horizontally */
+}
+
+.gallery .partner-card {
+    /* Adjust the width as needed */
+    margin: 10px; /* Adjust the margin as needed */
+    width: 28%; /* Adjust the maximum width of the card */
+}
+
+
+

@@ -45,7 +45,8 @@ const Login = () => {
       // Store the token and user ID in local storage
       localStorage.setItem("accessToken", data.token);
       localStorage.setItem("userId", id);
-      
+      localStorage.setItem("profil",profil);
+
       console.log("User ID:", id);
       console.log("Response Data:", data);
       console.log("profil",profil);
