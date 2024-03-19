@@ -6,24 +6,36 @@ import "../styles/Update.css";
 
 function UpdateUser() {
     const [formData, setFormData] = useState({
+        iderp: "",
+        idfiscale: "",
+        adresse: "",
+        nationnalite: "",
+        userId: "",
         name: "",
         username: "",
         email: "",
         phone: ""
     });
-    const { id } = useParams();
+    const { iderp } = useParams();
     const navigate = useNavigate();
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3006/user/${id}`);
-                const userData = response.data;
+                const response = await axios.get(`http://localhost:3006/fournisseur/${iderp}`);
+                const fournisseurData = response.data.fournisseur;
+                const userData = fournisseurData.User;
     
                 // Créer un nouvel objet formData en fusionnant les données du fournisseur et de l'utilisateur
                 const updatedFormData = {
+                    iderp: fournisseurData.iderp,
+                    idfiscale: fournisseurData.idfiscale,
+                    adresse: fournisseurData.adresse,
+                    nationnalite: fournisseurData.nationnalite,
+                    userId: userData.id,
                     name: userData.name,
                     username: userData.username,
                     email: userData.email,
+                    
                     phone: userData.phone
                 };
     
@@ -34,7 +46,7 @@ function UpdateUser() {
         };
     
         fetchUserData();
-    }, [id]);
+    }, [iderp]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -47,7 +59,7 @@ function UpdateUser() {
     const updateUser = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`http://localhost:3006/user/update/${id}`, formData);
+            await axios.put(`http://localhost:3006/fournisseur/${iderp}`, formData);
             console.log('Utilisateur modifié avec succès');
             navigate('/listUser');
                 } catch (error) {
@@ -57,8 +69,16 @@ function UpdateUser() {
 
     return (
         <form onSubmit={updateUser} className="form-container">
-            <h2>Modifier Personnel DFC</h2>
+            <h2>Modifier Fournisseur</h2>
             <div>
+                <label htmlFor="iderp">iderp</label>
+                <input type="number" name="iderp" value={formData.iderp} onChange={handleChange} />
+                <label htmlFor="idFiscale">idFiscale</label>
+                <input type="number" name="idFiscale" value={formData.idfiscale} onChange={handleChange} />
+                <label htmlFor="adresse">Adresse</label>
+                <input type="text" name="adresse" value={formData.adresse} onChange={handleChange} />
+                <label htmlFor="nationnalite">Nationnalite</label>
+                <input type="text" name="nationnalite" value={formData.nationnalite} onChange={handleChange} />
                 <label htmlFor="name">Nom</label>
                 <input type="text" name="name" value={formData.name} onChange={handleChange} />
                 <label htmlFor="username">Username</label>

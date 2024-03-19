@@ -44,11 +44,14 @@ function AddUser() {
             const userResponse = await axios.post('http://localhost:3006/user/adduser', formData);
             const userId = userResponse.data.user.id; 
             console.log(userResponse.data.user.id)
+            if(userResponse.data.user.profil === "fournisseur"){
             // Ajouter Fournisseur
             const fournisseurData = { ...formFournisseur, userId: userId };
             const fournisseurResponse = await axios.post('http://localhost:3006/fournisseur/addfournisseur', fournisseurData);
-            navigate('/listUser');
             console.log('Fournisseur ajouté avec succès:', fournisseurResponse.data);
+        }
+            navigate('/listUser');
+            
 
         } catch (error) {
             console.error('Erreur lors de l\'ajout du fournisseur:', error);
@@ -70,7 +73,8 @@ function AddUser() {
                     <option value="">Choisir un profil</option>
                     <option value="fournisseur">Fournisseur</option>
                     <option value="bof">BOF</option>
-                    <option value="personnelFinance">Personnel Finance</option>
+                    <option value="agentTrésorerie">Agent Trésorerie </option>
+                    <option value="personnelfiscalite">Personnel fiscalité  </option>
                 </select>
                 <label htmlFor="phone">Numéro Téléphone</label>
                 <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="Saisir numéro téléphone" className='form-control' />

@@ -86,9 +86,7 @@ const UserController = {
 
     getUser: async (req, res, next) => {
         try {
-            const users = await User.findAll( {include: {
-                model: Fournisseur
-            }});
+            const users = await User.findAll();
             res.json(users);
         } catch (error) {
             console.error(error);
@@ -147,6 +145,21 @@ const UserController = {
             res.json({ message: 'User updated successfully' });
         } catch (error) {
             console.error('Error updating user:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+    deleteUser: async (req, res) => {
+        const id = req.params.id;
+        try {
+            const user = await User.findByPk(id);
+            if (!user) {
+                return res.status(404).json({ error: 'user not found' });
+            }
+            await user.destroy();
+            res.json({ message: 'User deleted successfully' });
+
+        }catch (error) {
+            console.error('Error delete user:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     },

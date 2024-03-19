@@ -5,7 +5,7 @@ import Dashboard from "./../pages/Dashboard";
 import Home from "./../pages/Home";
 import ListUser from "./../pages/ListUser";
 import AddUser from "./../pages/AddUser";
-import UpdateUser from "./../pages/UpdateUser";
+import UpdateFournisseur from "./../pages/UpdateFournisseur";
 import Logout from "../pages/logout";
 import UpdatePasswordForm from "../pages/updatePassword";
 import UploadFacture from "../pages/UploadFacture";
@@ -17,6 +17,8 @@ import DashboardP from "../pages/personnelDCF/DashboardP";
 import ListCourries from "../pages/personnelDCF/ListCourriers";
 import ListFournisseur from "../pages/personnelDCF/ListFournisseur";
 import Bordereau from "../pages/personnelDCF/BordereauList";
+import UpdateUser from "./../pages/UpdateUser";
+import UploadFact from "../pages/personnelDCF/UploadFact";
 const Routers = () => {
     return (
         <Routes>
@@ -27,7 +29,7 @@ const Routers = () => {
             <Route path="/dashboard/:id" element={<Dashboard />} />
             <Route path="/listUser" element={<ListUser />} />
             <Route path="/addUser" element={<AddUser />} />
-            <Route path="/updateUser/:iderp" element={<UpdateUser />} />
+            <Route path="/updateFournisseur/:iderp" element={<UpdateFournisseur />} />
             <Route path="/updatepass/:id" element={<UpdatePasswordForm />} />
             <Route path="/uploadfacture" element={<UploadFacture />} />   
             <Route path="/facture-form" element={<FactureForm />} />
@@ -38,6 +40,9 @@ const Routers = () => {
             <Route path="/listcourriers/:iderp" element={<ListCourries/>}/>
             <Route path="/listfournisseur/:id" element={<ListFournisseur/>}/>
             <Route path="/bordereaux" element={<Bordereau/>}/>
+            <Route path="/updateUser/:id" element={<UpdateUser />} />
+            <Route path="/uploadFact" element={<UploadFact />} />
+
         </Routes>
     );
 };

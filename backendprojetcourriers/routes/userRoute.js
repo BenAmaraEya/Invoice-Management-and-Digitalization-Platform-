@@ -9,7 +9,7 @@ router.post('/adduser',UserController.adduser);
 // Route mettre a jour utilisateur
 router.put('/update/:id',UserController.updateUser);
 // Route supprime utilisateur
-//router.delete('/:id',UserController.deleteUser);
+router.delete('/delete/:id',UserController.deleteUser);
 router.post('/acces/:id',UserController.access);
 // route mettre a jour mot passe
 router.put('/updatePass/:id',UserController.updatePassword);
