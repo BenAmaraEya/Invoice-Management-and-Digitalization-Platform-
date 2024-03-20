@@ -7,7 +7,7 @@ const pdfPoppler = require('pdf-poppler');
 const Bordereau =require('../models/Bordereau');
 const Pieces_jointe = require('../models/PiecesJointe');
 const { authenticateToken } = require('../utils/jwt');
-authorizeSupplier = authenticateToken(['fournisseur']);
+authorizeSupplier = authenticateToken(['fournisseur','bof']);
 const Excel = require('exceljs');
 require('../AutoBordereaux');
 const path = require('path');
@@ -63,7 +63,7 @@ const generateExcel = async (factures) => {
   return buffer;
 };
 const factureController = {
-  upload: async (req, res) => {
+  upload:[authorizeSupplier, async (req, res) => {
     upload(req, res, err => {
       if (err) {
         return res.status(400).json({ message: 'Error uploading file', error: err });
@@ -98,7 +98,7 @@ const factureController = {
         
         
     });
-  },
+  },],
 
 
   save: [authorizeSupplier,async (req, res) => {
@@ -161,19 +161,14 @@ const factureController = {
     try {
         const { fournisseurId, factureId } = req.params;
         const facture = await Facture.findOne({ where: { idF: factureId, iderp: fournisseurId } });
-
         if (!facture) {
             return res.status(404).json({ message: 'Facture not found for this Fournisseur' });
-        }
-
-        
+        } 
         if (!facture.pathpdf) {
             fs.unlinkSync(facture.pathpdf);
            
         }
-
         await facture.destroy();
-
         res.json({ success: true, message: 'Facture deleted successfully' });
     } catch (error) {
         console.error(error);
@@ -346,7 +341,31 @@ statfacture: async (req, res) => {
     console.error('Error fetching facture stats:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
-}
+},
+validerDocument: async (req,res) =>{
+const {idF} = req.params;
+const facture = await Facture.findByPk(idF);
+if(!facture){
+  return res.status(404).json({ message: 'Facture not found' });}
+const validStatut = "courrier validé par BOF"
+await Facture.update({ status: validStatut,}, { where: { idF } });
+},
+validerFiscalité: async (req,res) =>{
+  const {idF} = req.params;
+  const facture = await Facture.findByPk(idF);
+  if(!facture){
+    return res.status(404).json({ message: 'Facture not found' });}
+  const validStatut = "courrier validé par Personnel fiscalité"
+  await Facture.update({ status: validStatut,}, { where: { idF } });
+  },
+  validerBudget: async (req,res) =>{
+    const {idF} = req.params;
+    const facture = await Facture.findByPk(idF);
+    if(!facture){
+      return res.status(404).json({ message: 'Facture not found' });}
+    const validStatut = "courrier validé par Agent Trésorerie"
+    await Facture.update({ status: validStatut,}, { where: { idF } });
+    },
 };
 // Function to extract information from OCR text
 function extractInfoFromOCR(text) {
@@ -359,7 +378,6 @@ function extractInfoFromOCR(text) {
     const num_factMatch = text.match(num_factRegex);
     const dateFactMatch = text.match(dateFactRegex);
     const montantMatch = text.match(montantRegex);
-    // Extract more details using additional regular expressions
   
     // Check if matches are found and extract the values
     const num_fact = num_factMatch ? num_factMatch[1] : null;
@@ -369,7 +387,6 @@ function extractInfoFromOCR(text) {
     console.log(text);
     return { num_fact, date_fact, montant };
     
-
   }
 
 module.exports = factureController;

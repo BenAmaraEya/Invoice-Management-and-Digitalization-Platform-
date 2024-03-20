@@ -71,9 +71,13 @@ const UploadFacture = () => {
 
     try {
       //add facture
-      const response = await axios.post(`http://localhost:3006/facture/save/` + facture.iderp, facture);
+      const response = await axios.post(`http://localhost:3006/facture/save/` + facture.iderp, {
+        facture,
+        status: "courrier validé par BOF"
+      });
       alert('Facture details updated successfully');
       const idF = response.data.facture.idF;
+      
       // add pieces jointes
       await axios.post(`http://localhost:3006/piecejoint/addpiece/${idF}`, {
         piece_name: facture.piece_name,
