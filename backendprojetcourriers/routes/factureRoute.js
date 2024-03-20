@@ -13,4 +13,5 @@ router.get('/status/:iderp',factureController.getFacturesCountByStatus);
 router.put('/updateFacture/:idF',factureController.updateFacture);
 router.get('/facturebyId/:idF',factureController.getFactureById);
 router.get('/stat/all',factureController.statfacture);
+router.put('/validerCourriers/:idF',factureController.validerDocument);
 module.exports=router;

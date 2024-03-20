@@ -291,18 +291,14 @@ viewFacturePDF: async (req, res) => {
     if (!facture) {
       return res.status(404).json({ message: 'Facture not found' });
     }
-
     const { pathpdf: newFilePath, ...factureData } = req.body; 
     if (facture.status === 'Attente') {
-      
-        const oldFilePath = facture.pathpdf; // Chemin du fichier de l'ancien PDF
-
+        const oldFilePath = facture.pathpdf; 
       // Mettre à jour les autres données de la facture
-      await Facture.update({ pathpdf: newFilePath, ...factureData }, { where: { idF } }); // Update pathpdf along with other data
+      await Facture.update({ pathpdf: newFilePath, ...factureData }, { where: { idF } }); 
       if (newFilePath !== oldFilePath) {
         fs.unlinkSync(oldFilePath); // Supprimez l'ancien fichier PDF
       }
-    console.log(facture);
 }
     res.json({ message: 'Facture updated successfully' });
   } catch (error) {
@@ -320,7 +316,6 @@ statfacture: async (req, res) => {
         } 
       } 
     }); // Count factures received in the last 24 hours
-
     // Adjust the following query based on your data model
     const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     const nbFactureMoisEnCours = await Facture.count({ 
@@ -330,7 +325,6 @@ statfacture: async (req, res) => {
         } 
       } 
     }); // Count factures created in the current month
-
     // Send the statistics as JSON response
     res.json({
       nbFactureParType,
@@ -343,29 +337,84 @@ statfacture: async (req, res) => {
   }
 },
 validerDocument: async (req,res) =>{
+  try{
 const {idF} = req.params;
 const facture = await Facture.findByPk(idF);
 if(!facture){
-  return res.status(404).json({ message: 'Facture not found' });}
-const validStatut = "courrier validé par BOF"
+  return res.status(404).json({ message: 'Facture not found' });
+}
+if(facture.status== 'Attente'){
+  const date = new Date();
+  const jour = date.getDate().toString().padStart(2, '0'); // Obtient le jour du mois avec padding
+  const mois = (date.getMonth() + 1).toString().padStart(2, '0'); // Obtient le mois (janvier est 0) avec padding
+  const annee = date.getFullYear(); // Obtient l'année
+
+  const dateVerifi= `${jour}/${mois}/${annee}`;
+  const validStatut = `courrier validé par BOF, date de vérification : ${dateVerifi}`;
 await Facture.update({ status: validStatut,}, { where: { idF } });
+}
+else {
+  console.log("Le courrier a déjà été examiné.")
+}
+} catch(error){
+  res.status(500).json({ message: 'Internal server error' });
+}
 },
 validerFiscalité: async (req,res) =>{
+  try{
   const {idF} = req.params;
   const facture = await Facture.findByPk(idF);
   if(!facture){
     return res.status(404).json({ message: 'Facture not found' });}
-  const validStatut = "courrier validé par Personnel fiscalité"
+    const date = new Date();
+    const jour = date.getDate().toString().padStart(2, '0'); // Obtient le jour du mois avec padding
+    const mois = (date.getMonth() + 1).toString().padStart(2, '0'); // Obtient le mois (janvier est 0) avec padding
+    const annee = date.getFullYear(); // Obtient l'année
+  
+    const dateVerifi = `${jour}/${mois}/${annee}`;
+  const validStatut = `courrier validé par Personnel fiscalité, date de vérification : ${dateVerifi}`;
   await Facture.update({ status: validStatut,}, { where: { idF } });
+} catch(error){
+  res.status(500).json({ message: 'Internal server error' });
+}
   },
-  validerBudget: async (req,res) =>{
+validerBudget: async (req,res) =>{
+  try{
     const {idF} = req.params;
     const facture = await Facture.findByPk(idF);
     if(!facture){
       return res.status(404).json({ message: 'Facture not found' });}
-    const validStatut = "courrier validé par Agent Trésorerie"
+      const date = new Date();
+      const jour = date.getDate().toString().padStart(2, '0'); // Obtient le jour du mois avec padding
+      const mois = (date.getMonth() + 1).toString().padStart(2, '0'); // Obtient le mois (janvier est 0) avec padding
+      const annee = date.getFullYear(); // Obtient l'année
+    
+      const dateVerifi = `${jour}/${mois}/${annee}`;
+    const validStatut = `courrier validé par Agent Trésorerie, date de vérification : ${dateVerifi}`;
     await Facture.update({ status: validStatut,}, { where: { idF } });
+  } catch(error){
+    res.status(500).json({ message: 'Internal server error' });
+  }
     },
+rejeterCourriers : async (req,res) =>{
+  try{
+  const {idF} = req.params;
+  const facture = await Facture.findByPk(idF);
+  if(!facture){
+    return res.status(404).json({ message: 'Facture not found' });}
+    const {motifRejete} = req.body; 
+    const date = new Date();
+    const jour = date.getDate().toString().padStart(2, '0'); // Obtient le jour du mois avec padding
+    const mois = (date.getMonth() + 1).toString().padStart(2, '0'); // Obtient le mois (janvier est 0) avec padding
+    const annee = date.getFullYear(); // Obtient l'année
+    const dateVerifi = `${jour}/${mois}/${annee}`;
+    const motifRejeteAvecDate = `${motifRejete}, date de vérification : ${dateVerifi}`;
+    await Facture.update({ status: motifRejeteAvecDate}, { where: { idF } });
+  }
+ catch(error){
+  res.status(500).json({ message: 'Internal server error' });
+}
+}
 };
 // Function to extract information from OCR text
 function extractInfoFromOCR(text) {

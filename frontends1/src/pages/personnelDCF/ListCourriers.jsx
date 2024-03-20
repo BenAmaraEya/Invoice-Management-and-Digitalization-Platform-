@@ -45,7 +45,14 @@ const ListeFactures = () => {
             console.error('Error viewing facture PDF:', error);
         }
     };
+const validerDocument = async(idF) =>{
+try{
+await axios.put(`http://localhost:3006/facture/validerCourriers/${idF}`);
 
+}catch(error){
+    console.error('Error valide document: ',error);
+}
+};
     return (
         <div>
             <table>
@@ -60,6 +67,7 @@ const ListeFactures = () => {
                         <th>Date Facture</th>
                         <th>Action</th>
                         <th>PDF</th>
+                        <th>valider</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -75,6 +83,10 @@ const ListeFactures = () => {
                             <td></td>
                             <td>
                                 <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
+                            </td>
+                            <td>
+                            <button className='btn' onClick={() => validerDocument(facture.idF)}> valider
+                                </button>
                             </td>
                         </tr>
                     ))}
