@@ -124,9 +124,8 @@ const factureController = {
         });
 
          //Find or create the associated bordereau
-        const [bordereau, created] = await Bordereau.findOrCreate({
-          where: { nature },
-          defaults: { date: new Date() }
+         const [bordereau, created] = await Bordereau.findOrCreate({
+          where: { nature, date: datereception },
       });
         // Associate the facture with the bordereau
         await facture.setBordereau(bordereau);

@@ -55,5 +55,5 @@ pathpdf:{
 },
 });
 Facture.hasMany(Pieces_jointe, { as: 'Pieces_jointes', foreignKey: 'idFacture',onDelete: 'CASCADE' });
-Facture.belongsTo(Bordereau, { foreignKey: 'bordereauId' });
+Facture.belongsTo(Bordereau, { foreignKey: 'idB' });
 module.exports = Facture;

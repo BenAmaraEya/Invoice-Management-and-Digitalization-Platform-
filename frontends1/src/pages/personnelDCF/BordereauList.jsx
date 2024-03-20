@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import ListFactByB from './ListFactByB';
 
 const BordereauList = () => {
     const [bordereaux, setBordereaux] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchBordereaux();
@@ -17,6 +20,10 @@ const BordereauList = () => {
         }
     };
 
+    const handleViewFactures = (idB) => {
+        navigate(`/fact/${idB}`);
+    };
+
     return (
         <div>
             <h2>Liste des Bordereaux</h2>
@@ -25,13 +32,18 @@ const BordereauList = () => {
                     <tr>
                         <th>Nature</th>
                         <th>Date</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {bordereaux.map((bordereau) => (
-                        <tr key={bordereau.idBordereau}>
+                        <tr key={bordereau.idB}>
                             <td>{bordereau.nature}</td>
                             <td>{bordereau.date}</td>
+                            
+                            <td>
+                                <button onClick={() => handleViewFactures(bordereau.idB)}>Voir Factures</button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>

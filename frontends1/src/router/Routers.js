@@ -19,6 +19,7 @@ import ListFournisseur from "../pages/personnelDCF/ListFournisseur";
 import Bordereau from "../pages/personnelDCF/BordereauList";
 import UpdateUser from "./../pages/UpdateUser";
 import UploadFact from "../pages/personnelDCF/UploadFact";
+import ListFacturesByB from "../pages/personnelDCF/ListFactByB";
 const Routers = () => {
     return (
         <Routes>
@@ -42,6 +43,7 @@ const Routers = () => {
             <Route path="/bordereaux" element={<Bordereau/>}/>
             <Route path="/updateUser/:id" element={<UpdateUser />} />
             <Route path="/uploadFact" element={<UploadFact />} />
+            <Route path="/fact/:idB" element={<ListFacturesByB />} />
 
         </Routes>
     );
