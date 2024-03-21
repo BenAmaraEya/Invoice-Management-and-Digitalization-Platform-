@@ -396,25 +396,37 @@ validerBudget: async (req,res) =>{
     res.status(500).json({ message: 'Internal server error' });
   }
     },
-rejeterCourriers : async (req,res) =>{
-  try{
-  const {idF} = req.params;
-  const facture = await Facture.findByPk(idF);
-  if(!facture){
-    return res.status(404).json({ message: 'Facture not found' });}
-    const {motifRejete} = req.body; 
-    const date = new Date();
-    const jour = date.getDate().toString().padStart(2, '0'); // Obtient le jour du mois avec padding
-    const mois = (date.getMonth() + 1).toString().padStart(2, '0'); // Obtient le mois (janvier est 0) avec padding
-    const annee = date.getFullYear(); // Obtient l'année
-    const dateVerifi = `${jour}/${mois}/${annee}`;
-    const motifRejeteAvecDate = `${motifRejete}, date de vérification : ${dateVerifi}`;
-    await Facture.update({ status: motifRejeteAvecDate}, { where: { idF } });
-  }
- catch(error){
-  res.status(500).json({ message: 'Internal server error' });
-}
-}
+ rejeterCourriers :async (req, res) => {
+      try {
+        const { idF } = req.params;
+        const { motifRejete } = req.body;
+    
+        // Find the facture by its ID
+        const facture = await Facture.findByPk(idF);
+    
+        // If the facture is not found, return a 404 error
+        if (!facture) {
+          return res.status(404).json({ message: 'Facture not found' });
+        }
+    
+        // Update the facture status with the rejection motif and verification date
+        const date = new Date();
+        const jour = date.getDate().toString().padStart(2, '0');
+        const mois = (date.getMonth() + 1).toString().padStart(2, '0');
+        const annee = date.getFullYear();
+        const dateVerifi = `${jour}/${mois}/${annee}`;
+        const motifRejeteAvecDate = `${motifRejete}, date de vérification : ${dateVerifi}`;
+        await facture.update({ status: motifRejeteAvecDate });
+    
+        // Return a success message
+        res.json({ message: 'Facture status updated successfully' });
+      } catch (error) {
+        // If an error occurs, return a 500 internal server error
+        console.error('Error in rejeterCourriers:', error);
+        res.status(500).json({ message: 'Internal server error' });
+      }
+    }
+    
 };
 // Function to extract information from OCR text
 function extractInfoFromOCR(text) {

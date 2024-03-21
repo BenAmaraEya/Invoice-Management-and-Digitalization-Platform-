@@ -15,6 +15,17 @@ getAllBordereau: async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 },
+getBordereauById:async(req,res)=>{
+const {idB}=req.params;
+
+try{
+    const bordereau =await Bordereau.findByPk(idB);
+    return res.status(200).json({ bordereau });
+}catch(error) {
+    console.error('Error fetching associated factures:', error);
+    return res.status(500).json({ message: "Internal server error" });
+}
+},
 getFacturesByBordereauId: async (req, res) => {
     const { idB } = req.params;
 

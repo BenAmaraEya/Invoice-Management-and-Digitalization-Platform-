@@ -44,6 +44,7 @@ const Routers = () => {
             <Route path="/updateUser/:id" element={<UpdateUser />} />
             <Route path="/uploadFact" element={<UploadFact />} />
             <Route path="/fact/:idB" element={<ListFacturesByB />} />
+            <Route path="/uploadFact/:nature" element={<UploadFact/>}/>
 
         </Routes>
     );

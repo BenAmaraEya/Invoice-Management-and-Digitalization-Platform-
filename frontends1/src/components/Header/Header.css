@@ -87,6 +87,7 @@
 
 .dropdown-item:hover {
   background-color: #f4f4f4;
+
 }
 
 .dropdown-item .icon {
@@ -95,6 +96,13 @@
 
 .dropdown-btn {
   cursor: pointer;
+  color: #fff !important;
+  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+}
+.dropdown-btn:hover{
+  background-color: #0041a8;
 }
 
 /* Apply pointer cursor to the dropdown items */

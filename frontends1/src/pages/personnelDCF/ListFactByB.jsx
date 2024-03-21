@@ -1,29 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
-const ListFactByB = () => {
+import { useParams } from 'react-router-dom';
+const ListFactByB = ({  }) => {
+    const { idB } = useParams();
     const [factures, setFactures] = useState([]);
-    const [idB, setIdB] = useState(null); // Initialize idB as null
 
     useEffect(() => {
-        fetchBordereaux();
-    }, []);
-
-    const fetchBordereaux = async () => {
-        try {
-            const response = await axios.get('http://localhost:3006/bordereaux');
-            const { idB } = response.data; // Extract idB from response data
-            setIdB(idB); // Set idB state
-        } catch (error) {
-            console.error('Error fetching bordereaux:', error);
-        }
-    };
-
-    useEffect(() => {
-        if (idB) { // Check if idB is not null
+        if (idB) {
             fetchFactures(idB);
         }
-    }, [idB]); // Trigger useEffect when idB changes
+    }, [idB]);
 
     const fetchFactures = async (idB) => {
         try {
@@ -33,9 +19,9 @@ const ListFactByB = () => {
             console.error('Error fetching factures:', error);
         }
     };
-
     return (
         <div>
+            <h2>Liste des Factures pour le Bordereau {idB}</h2>
             <table>
                 <thead>
                     <tr>

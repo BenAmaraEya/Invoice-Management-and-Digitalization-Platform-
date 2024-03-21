@@ -14,4 +14,5 @@ router.put('/updateFacture/:idF',factureController.updateFacture);
 router.get('/facturebyId/:idF',factureController.getFactureById);
 router.get('/stat/all',factureController.statfacture);
 router.put('/validerCourriers/:idF',factureController.validerDocument);
+router.put('/rejeteCourrier/:idF',factureController.rejeterCourriers);
 module.exports=router;

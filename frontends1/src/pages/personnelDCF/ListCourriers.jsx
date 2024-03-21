@@ -2,36 +2,34 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { FaTrash } from 'react-icons/fa';
-import { Link,useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import '../../styles/listefacture.css';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const ListeFactures = () => {
-    
-    
     const [pdfPath, setPdfPath] = useState(null);
-   
-        const [factures, setFactures] = useState([]);
-        const [loading, setLoading] = useState(true);
-        const { iderp } = useParams(); 
+    const [motifRejete, setMotifRejete] = useState(''); 
+    const [motifsRejete, setMotifsRejete] = useState({});
+    const [factures, setFactures] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const { iderp } = useParams(); 
     
-        useEffect(() => {
-            const fetchFactures = async () => {
-                try {
-                    const response = await axios.get(`http://localhost:3006/facture/${iderp}`);
-                    setFactures(response.data.factures);
-                    setLoading(false);
-                } catch (error) {
-                    console.error('Error fetching factures:', error);
-                    setLoading(false);
-                }
-            };
-    
-            fetchFactures();
-        }, [iderp]);
-    
+    useEffect(() => {
+        const fetchFactures = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3006/facture/${iderp}`);
+                setFactures(response.data.factures);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching factures:', error);
+                setLoading(false);
+            }
+        };
+
+        fetchFactures();
+    }, [iderp]);
 
     const viewFacturePDF = async (pathpdf) => {
         try {
@@ -45,14 +43,25 @@ const ListeFactures = () => {
             console.error('Error viewing facture PDF:', error);
         }
     };
-const validerDocument = async(idF) =>{
-try{
-await axios.put(`http://localhost:3006/facture/validerCourriers/${idF}`);
 
-}catch(error){
-    console.error('Error valide document: ',error);
-}
-};
+    const validerDocument = async (idF) => {
+        try {
+            await axios.put(`http://localhost:3006/facture/validerCourriers/${idF}`);
+           
+        } catch (error) {
+            console.error('Error valide document: ', error);
+        }
+    };
+
+    const rejeteDocument = async (idF, motifRejete) => {
+        try {
+            await axios.put(`http://localhost:3006/facture/rejeteCourrier/${idF}`, { motifRejete });
+            setMotifsRejete(prevState => ({ ...prevState, [idF]: motifRejete }));
+            window.location.reload();
+        } catch (error) {
+            console.error('Error rejete document: ', error);
+        }
+    };
     return (
         <div>
             <table>
@@ -68,6 +77,7 @@ await axios.put(`http://localhost:3006/facture/validerCourriers/${idF}`);
                         <th>Action</th>
                         <th>PDF</th>
                         <th>valider</th>
+                        <th>Rejete</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -85,8 +95,19 @@ await axios.put(`http://localhost:3006/facture/validerCourriers/${idF}`);
                                 <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
                             </td>
                             <td>
-                            <button className='btn' onClick={() => validerDocument(facture.idF)}> valider
-                                </button>
+                                <button className='btn' onClick={() => validerDocument(facture.idF)}>valider</button>
+                            </td>
+                            <td>
+                            <select 
+                                    name="status" 
+                                    value={motifsRejete[facture.idF] || ''} 
+                                    onChange={(e) => rejeteDocument(facture.idF, e.target.value)}>
+                                    <option value="">Choisir motif de rejet</option>
+                                    <option value="Manque PV">Manque PV</option>
+                                    <option value="Manque BL">Manque BL</option>
+                                    <option value="Manque fiche de présences">Manque fiche de présences</option>
+                                    <option value="Manque copie du PO">Manque copie du PO</option>
+                                </select>
                             </td>
                         </tr>
                     ))}

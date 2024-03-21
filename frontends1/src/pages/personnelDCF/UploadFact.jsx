@@ -6,6 +6,7 @@ import '../../styles/updatefacture.css';
 
 const UploadFacture = () => {
   const navigate = useNavigate();
+  const { nature } = useParams(); // Extract the nature parameter from the URL
 
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
@@ -16,22 +17,22 @@ const UploadFacture = () => {
     montant: '',
     factname: '',
     devise: 'TND',
-    nature: '',
-    objet: '',
+    nature: nature || '', // Set nature to the extracted value, or an empty string if not present
+    objet: 'NOUVELLE FACTURE',
     datereception: new Date().toISOString().split('T')[0],
     pathpdf: '',
     idfiscale: '',
     fournisseur: '',
     iderp: '',
-    piece_name: [], // Ajoutez le state pour les pièces jointes sélectionnées
+    piece_name: [], 
   });
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    if (name === 'iderp') { // Vérifiez si le champ modifié est iderp
+    if (name === 'iderp') {
       setFacture(prevFacture => ({
         ...prevFacture,
-        iderp: value, // Mettez à jour iderp avec la nouvelle valeur
+        iderp: value,
       }));
       informationFournisseur(value);
     } else if (name === 'piece_name') {
@@ -50,11 +51,9 @@ const UploadFacture = () => {
 
   const informationFournisseur = async (iderp) => {
     try {
-        console.log(iderp);
       const result = await axios.get(`http://localhost:3006/fournisseur/${iderp}`);
       const fournisseurIdFiscal = result.data.fournisseur.idfiscale;
       const fournisseur = result.data.fournisseur.User.name;
-      console.log(result);
       
       setFacture(prevFacture => ({
         ...prevFacture,
@@ -70,18 +69,24 @@ const UploadFacture = () => {
     event.preventDefault();
 
     try {
-      //add facture
-      const response = await axios.post(`http://localhost:3006/facture/save/` + facture.iderp, {
-        facture,
+      const token = localStorage.getItem('accessToken');
+      const response = await axios.post(`http://localhost:3006/facture/save/${facture.iderp}`, {
+        ...facture,
         status: "courrier validé par BOF"
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
+
       alert('Facture details updated successfully');
-      const idF = response.data.facture.idF;
-      
-      // add pieces jointes
-      await axios.post(`http://localhost:3006/piecejoint/addpiece/${idF}`, {
+      const factureId = response.data.facture.idF;
+
+      await axios.post('http://localhost:3006/piecejoint/addpiece', {
         piece_name: facture.piece_name,
+        idFacture: factureId,
       });
+
       alert('Pieces jointes updated successfully');
       navigate(`/factures/${facture.iderp}`);
     } catch (error) {
@@ -99,11 +104,11 @@ const UploadFacture = () => {
     try {
       const formData = new FormData();
       formData.append('factureFile', file);
-
+      const token = localStorage.getItem('accessToken');
       const response = await axios.post('http://localhost:3006/facture/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          //Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         },
       });
 
@@ -118,13 +123,13 @@ const UploadFacture = () => {
         montant: extractedInfo.montant || '',
         factname: extractedInfo.factname || '',
         devise: extractedInfo.devise || 'TND',
-        nature: extractedInfo.nature || '',
-        objet: extractedInfo.objet || '',
+        nature: extractedInfo.nature || nature || '', // Set nature to the extracted value, or the default value provided by useParams
+        objet: extractedInfo.objet || 'NOUVELLE FACTURE',
         datereception: extractedInfo.datereception || '',
         pathpdf: filePath || '',
       }));
     } catch (error) {
-      console.log('Error uploading facture');
+      console.error('Error uploading facture:', error);
     }
   };
 
@@ -134,7 +139,7 @@ const UploadFacture = () => {
       <Row>
         <Col lg="8" className="m-auto">
     
-      <h1>Modifier Facture </h1>
+      <h1>Ajouter Facture </h1>
       <div className="facture-container d-flex justify-content-between">
               <div className="facture-form">
       <form onSubmit={handleSubmit}>
@@ -200,12 +205,13 @@ const UploadFacture = () => {
           <input type="text" name="nature" value={facture.nature} onChange={handleChange} required />
         </label>
         </FormGroup>
-                      <FormGroup>
-        <label>
-          Objet:
-          <input type="text" name="objet" value={facture.objet} onChange={handleChange} required />
-        </label>
-        </FormGroup>
+        <FormGroup>
+                        <label className="facture-label">Object:*</label>
+                        <select className="facture-input" name="objet" value={facture.objet} onChange={handleChange} required>
+                          <option value="NOUVELLE FACTURE">Nouvelle Facture</option>
+                          <option value="ancien facture">Ancien Facture</option>
+                        </select>
+                      </FormGroup>
         
                    
                       <FormGroup>
