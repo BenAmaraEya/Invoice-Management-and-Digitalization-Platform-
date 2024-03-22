@@ -1,9 +1,10 @@
 // controllers/PiecesJointeController.js
 const Pieces_jointe = require('../models/PiecesJointe');
 const Facture = require('../models/Facture');
-
+const { authenticateToken } = require('../utils/jwt');
+authorize = authenticateToken(['fournisseur','bof']);
 piecejointController = {
-    addpiecejoint: async (req, res) => {
+    addpiecejoint:[authorize, async (req, res) => {
         try {
             const { piece_name, idFacture } = req.body; 
             const facture = await Facture.findByPk(idFacture);
@@ -22,8 +23,8 @@ piecejointController = {
             console.error(error);
             res.status(500).json({ success: false, message: 'Internal Server Error' });
         }
-    },
-    updatepiecejoint: async (req, res) => {
+    }],
+    updatepiecejoint:[authorize, async (req, res) => {
         try {
             const { piece_name } = req.body;
             const {idF} = req.params;
@@ -59,7 +60,7 @@ piecejointController = {
             console.error(error);
             res.status(500).json({ success: false, message: 'Internal Server Error' });
         }
-    }
+    }]
 };
 
 module.exports = piecejointController;

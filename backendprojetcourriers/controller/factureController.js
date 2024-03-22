@@ -7,7 +7,12 @@ const pdfPoppler = require('pdf-poppler');
 const Bordereau =require('../models/Bordereau');
 const Pieces_jointe = require('../models/PiecesJointe');
 const { authenticateToken } = require('../utils/jwt');
-authorizeSupplier = authenticateToken(['fournisseur','bof']);
+authorizeSupplier = authenticateToken(['fournisseur']);
+authorizePersonnelbof = authenticateToken(['bof']);
+authorizePersonnelFiscaliste = authenticateToken(['personnelfiscalite']);
+authorizeAgent = authenticateToken(['agentTresorerie']);
+authorizePersonnel = authenticateToken(['personnelfiscalite','bof','agentTresorerie']);
+authorize = authenticateToken(['fournisseur','bof']);
 const Excel = require('exceljs');
 require('../AutoBordereaux');
 const path = require('path');
@@ -63,7 +68,7 @@ const generateExcel = async (factures) => {
   return buffer;
 };
 const factureController = {
-  upload:[authorizeSupplier, async (req, res) => {
+  upload:[authorize, async (req, res) => {
     upload(req, res, err => {
       if (err) {
         return res.status(400).json({ message: 'Error uploading file', error: err });
@@ -101,7 +106,7 @@ const factureController = {
   },],
 
 
-  save: [authorizeSupplier,async (req, res) => {
+  save: [authorize,async (req, res) => {
     const { factname, devise, nature, objet, num_po, datereception, num_fact, montant, date_fact,pathpdf } = req.body;
     const iderp = req.params.iderp;
 
@@ -157,7 +162,7 @@ const factureController = {
     }
   }],
 
-  deleteFacture:[authorizeSupplier,async (req, res) => {
+  deleteFacture:[authorize,async (req, res) => {
     try {
         const { fournisseurId, factureId } = req.params;
         const facture = await Facture.findOne({ where: { idF: factureId, iderp: fournisseurId } });
@@ -284,7 +289,7 @@ viewFacturePDF: async (req, res) => {
     res.status(500).json({ message: 'Error viewing facture PDF', error: error });
   }
 },
- updateFacture : async (req, res) => {
+ updateFacture :[authorize, async (req, res) => {
   try {
     const { idF } = req.params;
     const facture = await Facture.findOne({ where: { idF } });
@@ -304,7 +309,7 @@ viewFacturePDF: async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-},
+}],
 statfacture: async (req, res) => {
   try {
     // Query the database to get the required statistics
@@ -336,7 +341,7 @@ statfacture: async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 },
-validerDocument: async (req,res) =>{
+validerDocument:[authorizePersonnelbof, async (req,res) =>{
   try{
 const {idF} = req.params;
 const facture = await Facture.findByPk(idF);
@@ -359,17 +364,17 @@ else {
 } catch(error){
   res.status(500).json({ message: 'Internal server error' });
 }
-},
-validerFiscalité: async (req,res) =>{
+}],
+validerFiscalité:[authorizePersonnelFiscaliste, async (req,res) =>{
   try{
   const {idF} = req.params;
   const facture = await Facture.findByPk(idF);
   if(!facture){
     return res.status(404).json({ message: 'Facture not found' });}
     const date = new Date();
-    const jour = date.getDate().toString().padStart(2, '0'); // Obtient le jour du mois avec padding
+    const jour = date.getDate().toString().padStart(2, '0'); 
     const mois = (date.getMonth() + 1).toString().padStart(2, '0'); // Obtient le mois (janvier est 0) avec padding
-    const annee = date.getFullYear(); // Obtient l'année
+    const annee = date.getFullYear(); 
   
     const dateVerifi = `${jour}/${mois}/${annee}`;
   const validStatut = `courrier validé par Personnel fiscalité, date de vérification : ${dateVerifi}`;
@@ -377,8 +382,8 @@ validerFiscalité: async (req,res) =>{
 } catch(error){
   res.status(500).json({ message: 'Internal server error' });
 }
-  },
-validerBudget: async (req,res) =>{
+  }],
+validerBudget:[authorizeAgent, async (req,res) =>{
   try{
     const {idF} = req.params;
     const facture = await Facture.findByPk(idF);
@@ -395,15 +400,13 @@ validerBudget: async (req,res) =>{
   } catch(error){
     res.status(500).json({ message: 'Internal server error' });
   }
-    },
- rejeterCourriers :async (req, res) => {
+    }],
+ rejeterCourriers : [authorizePersonnel,async (req, res) => {
       try {
         const { idF } = req.params;
         const { motifRejete } = req.body;
-    
         // Find the facture by its ID
         const facture = await Facture.findByPk(idF);
-    
         // If the facture is not found, return a 404 error
         if (!facture) {
           return res.status(404).json({ message: 'Facture not found' });
@@ -417,7 +420,6 @@ validerBudget: async (req,res) =>{
         const dateVerifi = `${jour}/${mois}/${annee}`;
         const motifRejeteAvecDate = `${motifRejete}, date de vérification : ${dateVerifi}`;
         await facture.update({ status: motifRejeteAvecDate });
-    
         // Return a success message
         res.json({ message: 'Facture status updated successfully' });
       } catch (error) {
@@ -425,7 +427,7 @@ validerBudget: async (req,res) =>{
         console.error('Error in rejeterCourriers:', error);
         res.status(500).json({ message: 'Internal server error' });
       }
-    }
+    }]
     
 };
 // Function to extract information from OCR text

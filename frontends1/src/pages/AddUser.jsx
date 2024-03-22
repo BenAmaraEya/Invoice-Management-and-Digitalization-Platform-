@@ -73,7 +73,7 @@ function AddUser() {
                     <option value="">Choisir un profil</option>
                     <option value="fournisseur">Fournisseur</option>
                     <option value="bof">BOF</option>
-                    <option value="agentTrésorerie">Agent Trésorerie </option>
+                    <option value="agentTresorerie">Agent Trésorerie </option>
                     <option value="personnelfiscalite">Personnel fiscalité  </option>
                 </select>
                 <label htmlFor="phone">Numéro Téléphone</label>

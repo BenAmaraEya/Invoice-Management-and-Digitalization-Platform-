@@ -1,10 +1,9 @@
-
-
 const express = require('express');
-
 const Bordereau = require('../models/Bordereau');
 const Facture = require('../models/Facture');
 const { Sequelize } = require('sequelize');
+const { authenticateToken } = require('../utils/jwt');
+authorizePersonnelbof = authenticateToken(['bof']);
 const bordereauController = {
 getAllBordereau: async (req, res) => {
     try {
