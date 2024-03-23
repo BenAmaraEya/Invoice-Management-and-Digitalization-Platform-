@@ -8,7 +8,7 @@ import '../../styles/listefacture.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const ListeFactures = () => {
+const ListeFacturesTresorerie = () => {
     const [pdfPath, setPdfPath] = useState(null);
     const [motifRejete, setMotifRejete] = useState(''); 
     const [motifsRejete, setMotifsRejete] = useState({});
@@ -44,14 +44,11 @@ const ListeFactures = () => {
         }
     };
 
-    const validerDocument = async (idF) => {
+    const validerTresorerie = async (idF) => {
         try {
-            const token=localStorage.getItem("accessToken");
-            await axios.put(`http://localhost:3006/facture/validerCourriers/${idF}`,
-            {headers: {
-                Authorization: `Bearer ${token}`
-            }});
-           
+            
+            await axios.put(`http://localhost:3006/facture/validerTresorerie/${idF}`);
+            window.location.href = window.location.href;
         } catch (error) {
             console.error('Error valide document: ', error);
         }
@@ -85,37 +82,43 @@ const ListeFactures = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {factures.map((facture) => (
-                        <tr key={facture.idF}>
-                            <td>{facture.idF}</td>
-                            <td>{facture.num_fact}</td>
-                            <td>{facture.factname}</td>
-                            <td>{facture.montant}</td>
-                            <td>{facture.status}</td>
-                            <td>{facture.num_po}</td>
-                            <td>{facture.date_fact}</td>
-                            <td></td>
-                            <td>
-                                <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
-                            </td>
-                            <td>
-                                <button className='btn' onClick={() => validerDocument(facture.idF)}>valider</button>
-                            </td>
-                            <td>
-                            <select 
-                                    name="status" 
-                                    value={motifsRejete[facture.idF] || ''} 
-                                    onChange={(e) => rejeteDocument(facture.idF, e.target.value)}>
-                                    <option value="">Choisir motif de rejet</option>
-                                    <option value="Manque PV">Manque PV</option>
-                                    <option value="Manque BL">Manque BL</option>
-                                    <option value="Manque fiche de présences">Manque fiche de présences</option>
-                                    <option value="Manque copie du PO">Manque copie du PO</option>
-                                </select>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
+    {factures
+        .filter(facture =>  facture.status.includes('courrier validé par Personnel fiscalité')|| facture.status.includes('courrier validé par Agent Trésorerie') 
+        || facture.status.includes('Facture sans TVA')
+        ||facture.status.includes('Montant facture non comforme')
+        
+) // Filter to include only factures with BOF validation status
+        .map((facture) => (
+            <tr key={facture.idF}>
+                <td>{facture.idF}</td>
+                <td>{facture.num_fact}</td>
+                <td>{facture.factname}</td>
+                <td>{facture.montant}</td>
+                <td>{facture.status}</td>
+                <td>{facture.num_po}</td>
+                <td>{facture.date_fact}</td>
+                <td></td>
+                <td>
+                    <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
+                </td>
+                <td>
+                    <button className='btn' onClick={() => validerTresorerie(facture.idF)}>valider</button>
+                </td>
+                <td>
+                    <select 
+                        name="status" 
+                        value={motifsRejete[facture.idF] || ''} 
+                        onChange={(e) => rejeteDocument(facture.idF, e.target.value)}>
+                        <option value="">Choisir motif de rejet</option>
+                        <option value="Facture sans TVA">Facture sans TVA</option>
+                        <option value="Montant facture non comforme">Montant facture non comforme</option>
+                        
+                    </select>
+                </td>
+            </tr>
+        ))}
+</tbody>
+
             </table>
 
             {pdfPath && (
@@ -127,4 +130,4 @@ const ListeFactures = () => {
     );
 };
 
-export default ListeFactures;
+export default ListeFacturesTresorerie;

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const ListFournisseur = () => {
     const [fournisseurs, setFournisseurs] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    const userProfile = localStorage.getItem("userProfil");
     useEffect(() => {
         const fetchFournisseurs = async () => {
             try {
@@ -47,9 +47,18 @@ const ListFournisseur = () => {
                                 <td>{fournisseur.User.email}</td>
                                 <td>{fournisseur.User.phone}</td>
                                 <td>
-                                    <Link to={`/listcourriers/${fournisseur.iderp}`}>
-                                        <button>List Factures</button>
-                                    </Link>
+                                   
+                                    <Link
+    to={
+        userProfile === "bof"
+            ? `/listcourriers/${fournisseur.iderp}`
+            : userProfile === "fiscal"
+                ? `/listcourriersfiscal/${fournisseur.iderp}`
+                : `/listcourrierstresorerie/${fournisseur.iderp}`
+    }
+>
+<button>List Factures</button>
+</Link>
                                 </td>
                             </tr>
                         ))}

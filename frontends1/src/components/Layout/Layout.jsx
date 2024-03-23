@@ -36,7 +36,7 @@ const Layout = () => {
             // Check the user's profile from localStorage
             const userProfile = localStorage.getItem("userProfil");
            
-             if (userProfile === "bof") {
+            if (userProfile === "bof" || userProfile === "personnelfiscalite" || userProfile === "agentTresorerie") {
               return <PersonnelHeader />;
             } else {
               return <Header />;

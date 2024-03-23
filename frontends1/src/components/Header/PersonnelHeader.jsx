@@ -8,6 +8,7 @@ import logo from '../../assets/images/TTlogo.png';
 const Header = () => {
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
+  const userProfile = localStorage.getItem("userProfil");
   const [isBordereauMenuOpen, setIsBordereauMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   
@@ -75,35 +76,39 @@ const Header = () => {
             </NavLink>
           </li>
           <li className="nav__item">
-            <NavLink to={`/bordereaux`} activeClassName="active" exact>
-              Bordereaux
-            </NavLink>
-          </li>
-          <li className="nav__item">
             <NavLink to={`/listfournisseur/${userId}`} activeClassName="active" exact>
               Fournisseurs
             </NavLink>
           </li>
          
-         
-         {<li className="nav__item bordereau-item">
-            <div className="dropdown">
-              <div className="dropdown-btn" onClick={handleToggleBordereauMenu} activeClassName="active" exact>
-               deposer
-              </div>
-              {isBordereauMenuOpen && (
-                <div className="dropdown-content">
-                  <button className="dropdown-item" onClick={() => handleNatureSelection('3WMTND')}>
-                    TND
-                  </button>
-                  <button className="dropdown-item" onClick={() => handleNatureSelection('Nature2')}>
-                    Nature 2
-                  </button>
+          {/* Render deposer and bordereau only if user has bof profile */}
+          {userProfile === "bof" && (
+            <>
+              <li className="nav__item bordereau-item">
+                <div className="dropdown">
+                  <div className="dropdown-btn" onClick={handleToggleBordereauMenu} activeClassName="active" exact>
+                   deposer
+                  </div>
+                  {isBordereauMenuOpen && (
+                    <div className="dropdown-content">
+                      <button className="dropdown-item" onClick={() => handleNatureSelection('3WMTND')}>
+                        TND
+                      </button>
+                      <button className="dropdown-item" onClick={() => handleNatureSelection('Nature2')}>
+                        Nature 2
+                      </button>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </li>}
-        
+              </li>
+              <li className="nav__item">
+                <NavLink to={`/bordereaux`} activeClassName="active" exact>
+                  Bordereaux
+                </NavLink>
+              </li>
+            </>
+          )}
+         
           <li className="nav__item user-settings-item">
             <div className="dropdown">
               <div className="dropdown-btn" onClick={handleToggleUserMenu}>

@@ -20,6 +20,8 @@ import Bordereau from "../pages/personnelDCF/BordereauList";
 import UpdateUser from "./../pages/UpdateUser";
 import UploadFact from "../pages/personnelDCF/UploadFact";
 import ListFacturesByB from "../pages/personnelDCF/ListFactByB";
+import ListeFacturesFiscalité from "../pages/personnelDCF/listCourriersFiscalite";
+import ListeFacturesTresorerie from "../pages/personnelDCF/listCourriersTresorerie";
 const Routers = () => {
     return (
         <Routes>
@@ -45,7 +47,8 @@ const Routers = () => {
             <Route path="/uploadFact" element={<UploadFact />} />
             <Route path="/fact/:idB" element={<ListFacturesByB />} />
             <Route path="/uploadFact/:nature" element={<UploadFact/>}/>
-
+            <Route path="/listcourriersfiscal/:iderp" element={<ListeFacturesFiscalité/>}/>
+            <Route path="/listcourrierstresorerie/:iderp" element={<ListeFacturesTresorerie/>}/>
         </Routes>
     );
 };

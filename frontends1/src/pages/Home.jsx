@@ -50,7 +50,7 @@ const Home = () => {
       console.log("profil", profil);
       if (profil === "fournisseur") {
         navigate(`/dashboard/${id}`);
-      } else if (profil === "bof") {
+      } else if (profil === "bof"||profil==="personnelfiscalite" ||profil==="agentTresorerie") {
         navigate(`/dashboardP/${id}`);
       }
     } catch (error) {

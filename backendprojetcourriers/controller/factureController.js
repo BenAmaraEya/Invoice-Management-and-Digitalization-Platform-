@@ -365,7 +365,7 @@ else {
   res.status(500).json({ message: 'Internal server error' });
 }
 }],
-validerFiscalité:[authorizePersonnelFiscaliste, async (req,res) =>{
+validerFiscalité:/*authorizePersonnelFiscaliste,*/ async (req,res) =>{
   try{
   const {idF} = req.params;
   const facture = await Facture.findByPk(idF);
@@ -382,8 +382,8 @@ validerFiscalité:[authorizePersonnelFiscaliste, async (req,res) =>{
 } catch(error){
   res.status(500).json({ message: 'Internal server error' });
 }
-  }],
-validerBudget:[authorizeAgent, async (req,res) =>{
+  },
+validerBudget:/*[authorizeAgent,*/ async (req,res) =>{
   try{
     const {idF} = req.params;
     const facture = await Facture.findByPk(idF);
@@ -400,8 +400,8 @@ validerBudget:[authorizeAgent, async (req,res) =>{
   } catch(error){
     res.status(500).json({ message: 'Internal server error' });
   }
-    }],
- rejeterCourriers : [authorizePersonnel,async (req, res) => {
+    },
+ rejeterCourriers : [/*authorizePersonnel,*/async (req, res) => {
       try {
         const { idF } = req.params;
         const { motifRejete } = req.body;
