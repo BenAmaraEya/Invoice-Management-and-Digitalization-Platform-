@@ -79,12 +79,22 @@ const UpdateFactureDetailsPage = () => {
 
     try {
       //update facture
-      await axios.put(`http://localhost:3006/facture/updateFacture/${idF}`, facture);
+      const token = localStorage.getItem('accessToken');
+      await axios.put(`http://localhost:3006/facture/updateFacture/${idF}`, facture,{
+        headers: {
+         
+          Authorization: `Bearer ${token}`
+        }
+      });
       alert('Facture details updated successfully');
 
       // Update pieces jointes
       await axios.put(`http://localhost:3006/piecejoint/updatepiece/${idF}`, {
-        piece_name: facture.piece_name,
+        headers: {
+          
+          Authorization: `Bearer ${token}`
+        },
+        piece_name: facture.piece_name
       });
       alert('Pieces jointes updated successfully');
       navigate(`/factures/${facture.iderp}`);

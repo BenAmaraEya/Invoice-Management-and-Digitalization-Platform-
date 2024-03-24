@@ -127,7 +127,13 @@ function FactureForm() {
     };
 
     
-    await axios.post('http://localhost:3006/piecejoint/addpiece', requestData);
+    await axios.post('http://localhost:3006/piecejoint/addpiece', requestData,{
+      headers: {
+          
+        Authorization:`Bearer ${token}`
+       
+      }
+    });
   
     console.log('Piece joint added successfully.');
     alert('Piece joint added successfully.');
