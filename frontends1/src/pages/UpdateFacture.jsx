@@ -89,13 +89,14 @@ const UpdateFactureDetailsPage = () => {
       alert('Facture details updated successfully');
 
       // Update pieces jointes
-      await axios.put(`http://localhost:3006/piecejoint/updatepiece/${idF}`, {
-        headers: {
-          
-          Authorization: `Bearer ${token}`
-        },
-        piece_name: facture.piece_name
-      });
+      await axios.put(`http://localhost:3006/piecejoint/updatepiece/${idF}`,{
+        piece_name: facture.piece_name},{
+          headers: {
+         
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
       alert('Pieces jointes updated successfully');
       navigate(`/factures/${facture.iderp}`);
     } catch (error) {

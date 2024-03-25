@@ -47,7 +47,7 @@ const ListeFactures = () => {
     const validerDocument = async (idF) => {
         try {
             const token=localStorage.getItem("accessToken");
-            await axios.put(`http://localhost:3006/facture/validerCourriers/${idF}`,
+            await axios.put(`http://localhost:3006/facture/validerCourriers/${idF}`,null,
             {headers: {
                 Authorization: `Bearer ${token}`
             }});
@@ -59,7 +59,11 @@ const ListeFactures = () => {
 
     const rejeteDocument = async (idF, motifRejete) => {
         try {
-            await axios.put(`http://localhost:3006/facture/rejeteCourrier/${idF}`, { motifRejete });
+            const token=localStorage.getItem("accessToken");
+            await axios.put(`http://localhost:3006/facture/rejeteCourrier/${idF}`, { motifRejete },
+            {headers: {
+                Authorization: `Bearer ${token}`
+            }});
             setMotifsRejete(prevState => ({ ...prevState, [idF]: motifRejete }));
             window.location.reload();
         } catch (error) {

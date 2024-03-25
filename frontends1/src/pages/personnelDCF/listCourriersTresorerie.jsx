@@ -46,8 +46,14 @@ const ListeFacturesTresorerie = () => {
 
     const validerTresorerie = async (idF) => {
         try {
-            
-            await axios.put(`http://localhost:3006/facture/validerTresorerie/${idF}`);
+            const token=localStorage.getItem("accessToken");
+            await axios.put(`http://localhost:3006/facture/validerTresorerie/${idF}`,null,
+            {
+                headers: {
+         
+                    Authorization: `Bearer ${token}`
+                  }
+            });
             window.location.href = window.location.href;
         } catch (error) {
             console.error('Error valide document: ', error);
@@ -56,7 +62,12 @@ const ListeFacturesTresorerie = () => {
 
     const rejeteDocument = async (idF, motifRejete) => {
         try {
-            await axios.put(`http://localhost:3006/facture/rejeteCourrier/${idF}`, { motifRejete });
+            const token=localStorage.getItem("accessToken");
+            await axios.put(`http://localhost:3006/facture/rejeteCourrier/${idF}`, { motifRejete} ,{
+            headers: {
+         
+                Authorization: `Bearer ${token}`
+           }});
             setMotifsRejete(prevState => ({ ...prevState, [idF]: motifRejete }));
             window.location.reload();
         } catch (error) {
@@ -75,7 +86,7 @@ const ListeFacturesTresorerie = () => {
                         <th>Status</th>
                         <th>Numéro PO</th>
                         <th>Date Facture</th>
-                        <th>Action</th>
+                        
                         <th>PDF</th>
                         <th>valider</th>
                         <th>Rejete</th>
@@ -97,7 +108,7 @@ const ListeFacturesTresorerie = () => {
                 <td>{facture.status}</td>
                 <td>{facture.num_po}</td>
                 <td>{facture.date_fact}</td>
-                <td></td>
+                
                 <td>
                     <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
                 </td>

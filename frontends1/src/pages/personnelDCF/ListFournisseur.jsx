@@ -6,13 +6,19 @@ const ListFournisseur = () => {
     const [fournisseurs, setFournisseurs] = useState([]);
     const [loading, setLoading] = useState(true);
     const userProfile = localStorage.getItem("userProfil");
+
     useEffect(() => {
         const fetchFournisseurs = async () => {
             try {
                 const response = await axios.get("http://localhost:3006/fournisseur/");
                 const fournisseursWithStatus = await Promise.all(response.data.map(async fournisseur => {
-                    const statusResponse = await axios.get(`http://localhost:3006/facture/status/${fournisseur.iderp}`);
-                    return { ...fournisseur, status: statusResponse.data };
+                    try {
+                        const statusResponse = await axios.get(`http://localhost:3006/facture/status/${fournisseur.iderp}`);
+                        return { ...fournisseur, status: statusResponse.data };
+                    } catch (error) {
+                        console.error('Error fetching status for fournisseur:', fournisseur.iderp, error);
+                        return fournisseur; // If status fetch fails, return fournisseur without status
+                    }
                 }));
                 setFournisseurs(fournisseursWithStatus);
                 setLoading(false);
@@ -43,22 +49,23 @@ const ListFournisseur = () => {
                     <tbody>
                         {fournisseurs.map(fournisseur => (
                             <tr key={fournisseur.iderp} style={{ backgroundColor: fournisseur.status && fournisseur.status.NBFAttente > 0 ? '#ADD8E6' : 'inherit' }}>
-                                <td>{fournisseur.User.name}</td>
-                                <td>{fournisseur.User.email}</td>
-                                <td>{fournisseur.User.phone}</td>
+                                <td>{fournisseur.User && fournisseur.User.name}</td>
+                                <td>{fournisseur.User && fournisseur.User.email}</td>
+                                <td>{fournisseur.User && fournisseur.User.phone}</td>
                                 <td>
-                                   
                                     <Link
-    to={
-        userProfile === "bof"
-            ? `/listcourriers/${fournisseur.iderp}`
-            : userProfile === "fiscal"
-                ? `/listcourriersfiscal/${fournisseur.iderp}`
-                : `/listcourrierstresorerie/${fournisseur.iderp}`
-    }
->
-<button>List Factures</button>
-</Link>
+                                        to={
+                                            userProfile === "bof"
+                                                ? `/listcourriers/${fournisseur.iderp}`
+                                                : userProfile === "personnelfiscalite"
+                                                    ? `/listcourriersfiscal/${fournisseur.iderp}`
+                                                    : userProfile === "agentTresorerie"
+                                                        ? `/listcourrierstresorerie/${fournisseur.iderp}`
+                                                        : "/defaultDestination" // Provide a default destination
+                                        }
+                                    >
+                                        <button>List Factures</button>
+                                    </Link>
                                 </td>
                             </tr>
                         ))}

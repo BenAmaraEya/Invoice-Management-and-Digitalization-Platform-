@@ -53,7 +53,12 @@ const Login = () => {
       if (profil === 'fournisseur') {
         navigate(`/dashboard/${id}`);
       } else if (profil === 'bof') {
-        navigate(`/dashboardP/${id}`);}
+        navigate(`/dashboardP/${id}`);
+      }else if(profil === 'agentTresorerie'){
+        navigate(`/dashboardP/${id}`);
+      }else if(profil === 'personnelfiscalite'){
+        navigate(`/dashboardP/${id}`);
+      }
         
     } catch (error) {
       setError(error.message);

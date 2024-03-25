@@ -85,10 +85,15 @@ const UploadFacture = () => {
       await axios.post('http://localhost:3006/piecejoint/addpiece', {
         piece_name: facture.piece_name,
         idFacture: factureId,
-      });
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+      );
 
       alert('Pieces jointes updated successfully');
-      navigate(`/factures/${facture.iderp}`);
+      navigate(`/listcourriers/${facture.iderp}`);
     } catch (error) {
       console.error('Error updating facture and pieces jointes:', error);
       alert('Failed to update facture and pieces jointes');
