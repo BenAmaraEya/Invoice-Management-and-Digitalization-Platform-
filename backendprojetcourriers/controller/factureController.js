@@ -21,54 +21,58 @@ const { Sequelize } = require('sequelize');
 
 
 
-// Multer setup for file uploading
+// définit la configuration de Multer pour le téléchargement de fichiers
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads'); // specify the destination folder
+    cb(null, 'uploads'); // specifier la destination de fichier et comment doit etre nommé
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname); // use the original file name
+    cb(null, file.originalname); // utilise le nom original de fichier 
   }
 });
-
+//creation d'instance multer 
 const upload = multer({ storage: storage }).single('factureFile');
-const generateExcel = async (factures) => {
-  const workbook = new Excel.Workbook();
-  const worksheet = workbook.addWorksheet('Factures');
 
-  // Define headers for the Excel file
+
+const generateExcel = async (factures) => {
+  // Création d'un nouveau classeur Excel
+  const workbook = new Excel.Workbook();
+  // Ajout d'une feuille de calcul au classeur avec le nom 'Factures'
+  const worksheet = workbook.addWorksheet('Factures');
+  // Définition des en-têtes pour le fichier Excel
   worksheet.columns = [
-      { header: 'Facture ID', key: 'idF', width: 10 },
-      { header: 'Numéro Facture', key: 'num_fact', width: 20 },
-      { header: 'Facture Name', key: 'factname', width: 30 },
-      { header: 'Montant', key: 'montant', width: 15 },
-      { header: 'Status', key: 'status', width: 15 },
-      { header: 'Numéro PO', key: 'num_po', width: 20 },
-      { header: 'Date Facture', key: 'date_fact', width: 20 }
-      // Add more headers as needed
+    { header: 'Facture ID', key: 'idF', width: 10 },
+    { header: 'Numéro Facture', key: 'num_fact', width: 20 },
+    { header: 'Facture Name', key: 'factname', width: 30 },
+    { header: 'Montant', key: 'montant', width: 15 },
+    { header: 'Status', key: 'status', width: 15 },
+    { header: 'Numéro PO', key: 'num_po', width: 20 },
+    { header: 'Date Facture', key: 'date_fact', width: 20 }
+    
   ];
 
-  // Add data to the Excel file
+  // Ajout des données au fichier Excel
   factures.forEach((facture) => {
-      worksheet.addRow({
-          idF: facture.idF,
-          num_fact: facture.num_fact,
-          factname: facture.factname,
-          montant: facture.montant,
-          status: facture.status,
-          num_po: facture.num_po,
-          date_fact: facture.date_fact
-          // Add more data fields as needed
-      });
+    worksheet.addRow({
+      idF: facture.idF,
+      num_fact: facture.num_fact,
+      factname: facture.factname,
+      montant: facture.montant,
+      status: facture.status,
+      num_po: facture.num_po,
+      date_fact: facture.date_fact
+      
+    });
   });
 
-  // Generate the Excel file buffer
+  // Génération du tampon (buffer) du fichier Excel
   const buffer = await workbook.xlsx.writeBuffer();
 
   return buffer;
 };
 const factureController = {
   upload:[authorize, async (req, res) => {
+    //appel de l'upload qui est linstance de multer 
     upload(req, res, err => {
       if (err) {
         return res.status(400).json({ message: 'Error uploading file', error: err });
@@ -76,21 +80,21 @@ const factureController = {
       if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
       }
-      console.log(req.file); // Check if req.file is populated
+      console.log(req.file); 
       console.log(req.file.originalname);
-      // Convert PDF to images
+      // Convertir pdf en image
       const pdfFilePath = req.file.path;
       const outputImagePath = './uploads/';
       pdfPoppler.convert(pdfFilePath, { format: 'png', out_dir: outputImagePath, prefix: 'uploads' })
         .then(() => {
-          // Perform OCR using Tesseract.js on the first page of the PDF
+          // 
           Tesseract.recognize(`${outputImagePath}uploads-1.png`, 'fra', {
             logger: m => console.log(m)
           }).then(({ data: { text } }) => {
-            // Extracting necessary information from OCR text
+            // Extraire les information necessaire de l'ORC
             const extractedInfo = extractInfoFromOCR(text);
             
-            // Send the extracted information back to the client for validation
+            //renvoir les information au client pour leur validation
             res.json({ success: true, extractedInfo });
           }).catch(err => {
             console.error(err);
@@ -113,7 +117,7 @@ const factureController = {
     try {
         console.log('Received request to save facture:', req.body);
 
-        // Create the facture
+        // Créer une facture
         const facture = await Facture.create({
             iderp,
             factname,
@@ -128,11 +132,11 @@ const factureController = {
             pathpdf
         });
 
-         //Find or create the associated bordereau
+         //trouver ou crée un bordereau associé
          const [bordereau, created] = await Bordereau.findOrCreate({
           where: { nature, date: datereception },
       });
-        // Associate the facture with the bordereau
+        // Associer la facture avec un bordereau
         await facture.setBordereau(bordereau);
 
         const { idF } = facture;
@@ -145,7 +149,7 @@ const factureController = {
 }],
 
 
-  displayFacture: [authorizeSupplier,async (req, res) => {
+ /* displayFacture: [authorizeSupplier,async (req, res) => {
     try {
       const { id } = req.params;
       const facture = await Facture.findByPk(id);
@@ -153,14 +157,12 @@ const factureController = {
       if (!facture) {
         return res.status(404).json({ message: 'Facture not found' });
       }
-
-      // Return the facture object with its pathpdf
       res.json({ success: true, facture });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error displaying facture', error: error });
     }
-  }],
+  }],*/
 
   deleteFacture:[authorize,async (req, res) => {
     try {
@@ -169,7 +171,7 @@ const factureController = {
         if (!facture) {
             return res.status(404).json({ message: 'Facture not found for this Fournisseur' });
         } 
-        if (!facture.pathpdf) {
+        if (facture.pathpdf) {
             fs.unlinkSync(facture.pathpdf);
            
         }
@@ -215,13 +217,13 @@ const factureController = {
 },
 ExportFacturetoExcel:[authorizeSupplier, async (req, res) => {
   try {
-      // Retrieve facture data from the database or request body
-      const factures = req.body.factures; // Adjust this according to your implementation
+      
+      const factures = req.body.factures; 
 
-      // Generate the Excel file buffer
+      
       const excelBuffer = await generateExcel(factures);
 
-      // Send the Excel file buffer back to the client
+   
       res.status(200)
           .attachment('factures.xlsx')
           .send(excelBuffer);
@@ -230,13 +232,13 @@ ExportFacturetoExcel:[authorizeSupplier, async (req, res) => {
       res.status(500).json({ message: 'Error generating Excel file', error: error });
   }
 }],
-// Contrôleur des factures
+
 
 getFacturesCountByStatus: async (req, res) => {
   try {
       // Récupérer les données des factures de fournisseur
       const {iderp}=req.params;
-      const factures = await Facture.findAll({where:{ iderp } }); // Change this line
+      const factures = await Facture.findAll({where:{ iderp } }); 
       console.log("Factures found:", factures);
       // Initialiser les compteurs pour chaque catégorie de factures
       let NBFValide = 0;
@@ -292,15 +294,19 @@ viewFacturePDF: async (req, res) => {
  updateFacture :[authorize, async (req, res) => {
   try {
     const { idF } = req.params;
+
     const facture = await Facture.findOne({ where: { idF } });
     if (!facture) {
       return res.status(404).json({ message: 'Facture not found' });
     }
-    const { pathpdf: newFilePath, ...factureData } = req.body; 
+    const { pathpdf: newFilePath, ...factureData } = req.body;
+
     if (facture.status === 'Attente') {
         const oldFilePath = facture.pathpdf; 
+
       // Mettre à jour les autres données de la facture
       await Facture.update({ pathpdf: newFilePath, ...factureData }, { where: { idF } }); 
+
       if (newFilePath !== oldFilePath) {
         fs.unlinkSync(oldFilePath); // Supprimez l'ancien fichier PDF
       }
@@ -312,16 +318,17 @@ viewFacturePDF: async (req, res) => {
 }],
 statfacture: async (req, res) => {
   try {
-    // Query the database to get the required statistics
-    const nbFactureParType = await Facture.count(); // Count all factures
+    // Interroger la base de données pour obtenir les statistiques requises
+    const nbFactureParType = await Facture.count(); 
+    // Compter toutes les factures
     const nbFactureRecuHier = await Facture.count({ 
       where: { 
         createdAt: { 
           [Sequelize.Op.gte]: new Date(new Date().setDate(new Date().getDate() - 1)) 
         } 
       } 
-    }); // Count factures received in the last 24 hours
-    // Adjust the following query based on your data model
+    }); // Compter les factures reçues au cours des dernières 24 heures
+    // Ajuster la requête suivante en fonction de votre modèle de données
     const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     const nbFactureMoisEnCours = await Facture.count({ 
       where: { 
@@ -329,18 +336,19 @@ statfacture: async (req, res) => {
           [Sequelize.Op.gte]: startOfMonth 
         } 
       } 
-    }); // Count factures created in the current month
-    // Send the statistics as JSON response
+    }); // Compter les factures créées dans le mois en cours
+    // Envoyer les statistiques en tant que réponse JSON
     res.json({
       nbFactureParType,
       nbFactureRecuHier,
       nbFactureMoisEnCours
     });
   } catch (error) {
-    console.error('Error fetching facture stats:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Erreur lors de la récupération des statistiques de facturation:', error);
+    res.status(500).json({ message: 'Erreur interne du serveur' });
   }
-},
+}
+,
 validerDocument:[authorizePersonnelbof, async (req,res) =>{
   try{
 const {idF} = req.params;
@@ -349,7 +357,7 @@ if(!facture){
   return res.status(404).json({ message: 'Facture not found' });
 }
 if(facture.status== 'Attente'){
-  const date = new Date();
+  const date = new Date();//a modifier
   const jour = date.getDate().toString().padStart(2, '0'); // Obtient le jour du mois avec padding
   const mois = (date.getMonth() + 1).toString().padStart(2, '0'); // Obtient le mois (janvier est 0) avec padding
   const annee = date.getFullYear(); // Obtient l'année
@@ -430,23 +438,23 @@ validerBudget:[authorizeAgent,async (req,res) =>{
     }]
     
 };
-// Function to extract information from OCR text
+// Fonction pour extraire les information de l'ORC
 function extractInfoFromOCR(text) {
-    // Regular expressions for extracting specific information from the OCR text
-    const num_factRegex = /Numéro\s*de\s*facture\s*(\d+)/i;
+    
+    const num_factRegex = /(?:N°\s*facture|Numéro\s*facture|Facture\s*N°)\s*(\d+)/i;
     const dateFactRegex = /(?:Date\s*:\s*|Date\s*de\s*facture\s*:\s*)(\w+)/i;
     const montantRegex = /(?:Montant\s*Total\s*TTC\s*|Montant\s*:\s*)(\d+(\.\d{1,2})?)/i;
   
-    // Extracting information using regular expressions
+    
     const num_factMatch = text.match(num_factRegex);
     const dateFactMatch = text.match(dateFactRegex);
     const montantMatch = text.match(montantRegex);
   
-    // Check if matches are found and extract the values
+   
     const num_fact = num_factMatch ? num_factMatch[1] : null;
     const date_fact= dateFactMatch ? dateFactMatch[1] : null;
     const montant= montantMatch ? parseFloat(montantMatch[1]) : null
-    // Extract more details similarly
+   
     console.log(text);
     return { num_fact, date_fact, montant };
     
