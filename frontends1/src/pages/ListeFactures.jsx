@@ -6,6 +6,7 @@ import { FaTrash, FaFileExcel } from 'react-icons/fa';
 import { Document, Page, pdfjs } from 'react-pdf';
 import './../styles/listefacture.css';
 
+//
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const ListeFactures = () => {
@@ -74,11 +75,11 @@ const ListeFactures = () => {
 */const viewFacturePDF = async (pathpdf) => {
     try {
         const response = await axios.get(`http://localhost:3006/facture/view-pdf/${pathpdf}`, {
-            responseType: 'blob' // Set the response type to blob to handle PDF files
+            responseType: 'blob' //specifier le type de réponse 
         });
         const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-        const pdfUrl = URL.createObjectURL(pdfBlob);
-        window.open(pdfUrl); // Open the PDF in a new tab
+        const pdfUrl = URL.createObjectURL(pdfBlob);// Crée une URL objet à partir du blob, qui peut être utilisée pour accéder au contenu du blob dans le navigateur.
+        window.open(pdfUrl); // ouvrir une nouvelle fenêtre
     } catch (error) {
         console.error('Error viewing facture PDF:', error);
     }
@@ -95,14 +96,21 @@ const ListeFactures = () => {
                 responseType: 'blob',
             });
 
-            const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'factures.xlsx');
-            document.body.appendChild(link);
-            link.click();
-            link.parentNode.removeChild(link);
+           // Créer un objet Blob à partir des données de la réponse avec le type MIME approprié pour Excel
+        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+        // Créer une URL pour l'objet Blob afin de créer un lien de téléchargement
+        const url = window.URL.createObjectURL(blob);
+
+        // Créer un élément <a> pour le lien de téléchargement
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'factures.xlsx'); // Spécifier le nom du fichier à télécharger
+
+        // Ajouter le lien au corps du document HTML, déclencher le téléchargement, puis supprimer le lien
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link)
         } catch (error) {
             console.error('Error exporting factures to Excel:', error);
         }

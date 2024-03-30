@@ -136,15 +136,15 @@ const UpdateFactureDetailsPage = () => {
       setFacture(prevFacture => ({
         ...prevFacture,
         num_fact: extractedInfo.num_fact || facture.num_fact || '',
-        num_po: extractedInfo.num_po || facture.num_po ||'',
+        //num_po: extractedInfo.num_po || facture.num_po ||'',
         date_fact: extractedInfo.date_fact ||facture.date_fact || '',
         montant: extractedInfo.montant || facture.montant ||'',
-        factname: extractedInfo.factname || facture.factname ||'',
+       /* factname: extractedInfo.factname || facture.factname ||'',
         devise: extractedInfo.devise ||facture.devise || 'TND',
         nature: extractedInfo.nature ||facture.nature || '',
         objet: extractedInfo.objet ||facture.objet || '',
         datereception: extractedInfo.datereception || facture.datereception ||'',
-        pathpdf: filePath || '', 
+        pathpdf: filePath || '',*/ 
       }));
     } catch (error) {
       console.log('Error uploading facture');

@@ -1,9 +1,7 @@
-// FactureUploader.jsx
-
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import './../styles/uploadfacture.css'; // Import CSS file for styling
+import './../styles/uploadfacture.css'; 
 
 function FactureUploader() {
   const navigate = useNavigate();
@@ -35,6 +33,7 @@ function FactureUploader() {
       });
 
       const filePath = `uploads/${fileName}`;
+      //transmettre des données a la  route de navigation
       navigate('/facture-form', { state: { extractedInfo: response.data.extractedInfo, filePath: filePath } });
     } catch (error) {
       setError('Error uploading facture');
