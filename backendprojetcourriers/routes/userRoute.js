@@ -13,6 +13,7 @@ router.delete('/delete/:id',UserController.deleteUser);
 router.post('/acces/:id',UserController.access);
 // route mettre a jour mot passe
 router.put('/updatePass/:id',UserController.updatePassword);
-
+// recherche utilisateur par nom
+router.get('/recherche/parnom',UserController.recherche);
 
 module.exports = router;

@@ -2,6 +2,8 @@ const { DataTypes } = require('sequelize');
 const  {sequelize } = require('../database');
 const User = require('./User');
 const Facture =  require('./Facture');
+const Reclamation = require('./Reclamation');
+
 const Fournisseur = sequelize.define('Fournisseur', {
     iderp:{
         type: DataTypes.INTEGER,
@@ -24,5 +26,7 @@ const Fournisseur = sequelize.define('Fournisseur', {
 });
 Fournisseur.hasMany(Facture, { as: 'Factures', foreignKey: 'iderp',onDelete: 'CASCADE' });
 Fournisseur.belongsTo(User, { onDelete: 'CASCADE' });
+Fournisseur.hasMany(Reclamation, { as: 'Reclamations', foreignKey: 'iderp',onDelete: 'CASCADE' });
+
 
 module.exports = Fournisseur;

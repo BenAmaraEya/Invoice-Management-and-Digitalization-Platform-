@@ -14,6 +14,8 @@ const ListeFactures = () => {
     const [iderp, setIdErp] = useState(null);
     const [pdfPath, setPdfPath] = useState(null);
     const [pdfError, setPdfError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
 
     useEffect(() => {
         const fetchFournisseurByUserId = async () => {
@@ -115,9 +117,74 @@ const ListeFactures = () => {
             console.error('Error exporting factures to Excel:', error);
         }
     };
+    const SearchByNumFact = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3006/facture/recherche/parNumFact?num_fact=${searchTerm}`);
+            setSearchResults(response.data);
+            console.log(response.data)
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        }
+    };
 
     return (
         <div>
+            <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Rechercher par numéro facture..."
+            />
+            <button onClick={SearchByNumFact}>Rechercher</button>
+            {/* Rendu des résultats de recherche */}
+            {searchResults.length > 0 && (
+                <div>
+                    <h3>Résultats de la recherche</h3>
+                    <table>
+                <thead>
+                    <tr>
+                        <th>Facture ID</th>
+                        <th>Numéro Facture</th>
+                        <th>Facture Name</th>
+                        <th>Montant</th>
+                        <th>Status</th>
+                        <th>Numéro PO</th>
+                        <th>Date Facture</th>
+                        <th>Action</th>
+                        <th>PDF</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {searchResults.map((data) => (
+                        <tr key={data.idF}>
+                            <td>{data.idF}</td>
+                            <td>{data.num_fact}</td>
+                            <td>{data.factname}</td>
+                            <td>{data.montant}</td>
+                            <td>{data.status}</td>
+                            <td>{data.num_po}</td>
+                            <td>{data.date_fact}</td>
+                            <td>
+                                <button className='delete-btn' onClick={() => deleteFacture(data.iderp, data.idF)}>
+                                    <FaTrash />
+                                </button>
+                               
+                           <Link to={`/updatefacture/${data.idF}`}>
+                                    <Button className='update-facture'>Update</Button>
+                                </Link>
+                           </td>
+                            <td>
+                            <button onClick={() => viewFacturePDF(data.pathpdf)}>View PDF</button>
+                               
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            </div>
+            )}
+              {!searchResults.length > 0 && (
+                <div>
             <table>
                 <thead>
                     <tr>
@@ -171,6 +238,8 @@ const ListeFactures = () => {
                 <Document file={pdfPath} error="PDF loading error">
                     <Page pageNumber={1} />
                 </Document>
+            )}
+            </div>
             )}
         </div>
     );

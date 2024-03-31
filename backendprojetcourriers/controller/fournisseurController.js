@@ -1,6 +1,6 @@
 const Fournisseur=require('../models/Fournisseur');
 const User = require('../models/User');
-
+const { Op } = require('sequelize');
 const FournisseurController={
 
     //ajouter un nouveau fournisseur
@@ -150,7 +150,26 @@ deletefournisseur: async (req, res, next) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 },
-
+rechercheParIdentifiant: async (req, res) => {
+    try {
+        const { iderp } = req.query; 
+        const fournisseurs = await Fournisseur.findAll({
+            where: {
+                iderp: {
+                    [Op.like]: `%${iderp}%`
+                }
+            },
+            include: {
+                model: User
+            }
+        });
+        console.log(fournisseurs);
+        res.json(fournisseurs);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Erreur de serveur');
+    }
+},
 };
 
 module.exports=FournisseurController;

@@ -435,7 +435,39 @@ validerBudget:[authorizeAgent,async (req,res) =>{
         console.error('Error in rejeterCourriers:', error);
         res.status(500).json({ message: 'Internal server error' });
       }
-    }]
+    }],
+rechercheParNumFact: async (req, res) => {
+      try {
+          const { num_fact } = req.query; 
+          const factures = await Facture.findOne({
+              where: {
+                num_fact: num_fact
+              },
+              include: { model: Pieces_jointe, as: 'Pieces_jointes' }
+          });
+          console.log(factures);
+          res.json(factures);
+      } catch (error) {
+          console.error(error);
+          res.status(500).send('Erreur de serveur');
+      }
+  },
+recherchePardate: async (req, res) => {
+    try {
+        const { dateReception } = req.query; 
+        const factures = await Facture.findAll({
+            where: {
+              datereception: dateReception
+            },
+            include: { model: Pieces_jointe, as: 'Pieces_jointes' }
+        });
+        console.log(factures);
+        res.json(factures);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Erreur de serveur');
+    }
+},
     
 };
 // Fonction pour extraire les information de l'ORC

@@ -4,24 +4,13 @@ import { Link } from "react-router-dom";
 import "../styles/ListUser.css";
 import '@fortawesome/fontawesome-free/css/all.css';
 function ListUser() {
-    const [fournisseur, setFounisseur] = useState([]);
     const [user, setUser] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
 
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('http://localhost:3006/fournisseur/');
-                setFounisseur(response.data);
-            } catch (error) {
-                setError(error);
-                console.error('Error fetching fournisseurs:', error);
-            }
-        };
-    
-        fetchData();
-    }, []);
+   
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -35,16 +24,7 @@ function ListUser() {
     
         fetchData();
     }, []);
-    //Supprimer Fournisseur
-    const DeleteFournisseur = async (iderp) => {
-        try {
-            await axios.delete(`http://localhost:3006/fournisseur/${iderp}`);
-            setFounisseur(prevFournisseurs => prevFournisseurs.filter(fournisseur => fournisseur.iderp !== iderp));
-            console.log('Fournisseur supprimé avec succès');
-        } catch (error) {
-            console.error('Erreur lors de la suppression du fournisseur:', error);
-        }
-    };
+  
      //Supprimer personnel
      const DeleteUser = async (id) => {
         try {
@@ -64,59 +44,79 @@ function ListUser() {
             console.error('Erreur :', error);
         }
     };
+    const SearchName = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3006/user/recherche/parnom?name=${searchTerm}`);
+            const filteredResults = response.data.filter(user => user.profil !== "fournisseur");
+            setSearchResults(filteredResults);
+            console.log(filteredResults);
+        } catch (error) {
+            setError(error);
+            console.error('Error fetching search results:', error);
+        }
+    };
+    const filteredList = searchResults.length > 0 ? searchResults : user;
     return (
         <div>
+           <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Rechercher par nom..."
+            />
+            <button onClick={SearchName}>Rechercher</button>
+            {/* Rendu des résultats de recherche */}
+            {searchResults.length > 0 && (
+                <div>
+                    <h3>Résultats de la recherche</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Active</th>
+                                <th>Dernière Connexion</th>
+                                <th>Téléphone</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {searchResults.map((data, i) => (
+                                <tr key={i}>
+                                    <td>{data.name}</td>
+                                    <td>{data.username}</td>
+                                    <td>{data.email}</td>
+                                    <td>
+                                        {data.isActive ? (
+                                            <div>
+                                                <i className="fas fa-check-circle"></i> Connecté
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <i className="fas fa-times-circle"></i> Déconnecté
+                                            </div>
+                                        )}
+                                    </td>
+                                    <td>{data.last_login}</td>
+                                    <td>{data.phone}</td>
+                                    <td>
+                                        <button>
+                                            <Link className="update-link" to={`../updateUser/${data.id}`}>Modifier</Link>
+                                        </button>
+                                        <button onClick={() => DeleteUser(data.id)} className="delete-button">Supprimer</button>
+                                        <button className="access-button" onClick={() => Acesse(data.id)}>Accès</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+              {!searchResults.length > 0 && (
+                <div>
 <Link to="/addUser" className="add-user-link">Ajouter Utilisateur</Link>   
-<h3 className="list-fournisseur">Liste Fournisseurs</h3>    
-     <table>
-    
-                <thead>
-                    <tr>
-                        <th>iderp</th>
-                        <th>Nom</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Active</th>
-                        <th>dernière connexion</th>
-                        <th>Télephone</th>
-                        <th>adresse</th>
-                        <th>actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {fournisseur.map((data, i) => (
-                        <tr key={i}>
-                            <td>{data.iderp}</td>
-                            <td>{data.User.name}</td>
-                            <td>{data.User.username}</td>
-                            <td>{data.User.email}</td>
-                            <td>
-    {data.User.isActive ? (
-        <div>
-            <i className="fas fa-check-circle"></i> Connecté
-        </div>
-    ) : (
-        <div>
-            <i className="fas fa-times-circle"></i> Déconnecté
-        </div>
-    )}
-</td>
-                            <td>{data.User.last_login}</td>
-                            <td>{data.User.phone}</td>
-                            <td>{data.adresse}</td>
-                        <td>
-                            <button>
-                            <Link className="update-link"to={`../updateFournisseur/${data.iderp}`} >Modifier</Link>
-                            </button>
-                            <button onClick={() => DeleteFournisseur(data.iderp)} className="delete-button">Supprimer</button>
-                            <button className="access-button" onClick={() => Acesse(data.User.id)}>Accés</button>
-
-                        </td>
-                    
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+             
             <h3 className="list-fournisseur">Liste BOF</h3>    
      <table>
     
@@ -164,6 +164,8 @@ function ListUser() {
 
                 </tbody>
             </table>
+            </div>
+            )}
         </div>
     );
 }

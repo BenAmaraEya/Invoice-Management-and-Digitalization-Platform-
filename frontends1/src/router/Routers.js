@@ -22,6 +22,7 @@ import UploadFact from "../pages/personnelDCF/UploadFact";
 import ListFacturesByB from "../pages/personnelDCF/ListFactByB";
 import ListeFacturesFiscalité from "../pages/personnelDCF/listCourriersFiscalite";
 import ListeFacturesTresorerie from "../pages/personnelDCF/listCourriersTresorerie";
+import ListSupplier from "../pages/ListSupplier";
 const Routers = () => {
     return (
         <Routes>
@@ -31,6 +32,7 @@ const Routers = () => {
             <Route path="/logout/:id" element={<Logout />} />
             <Route path="/dashboard/:id" element={<Dashboard />} />
             <Route path="/listUser" element={<ListUser />} />
+            <Route path="/listSupplier" element={<ListSupplier />} />
             <Route path="/addUser" element={<AddUser />} />
             <Route path="/updateFournisseur/:iderp" element={<UpdateFournisseur />} />
             <Route path="/updatepass/:id" element={<UpdatePasswordForm />} />

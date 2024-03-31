@@ -1,7 +1,7 @@
 const { generateToken } = require('../utils/jwt');
 const bcrypt = require('bcrypt');
 const axios=require ('axios');
-
+const { Op } = require('sequelize');
 const User = require("../models/User");
 const Fournisseur=require("../models/Fournisseur");
 const nodemailer = require('nodemailer');
@@ -212,7 +212,23 @@ const UserController = {
             res.status(500).json({ message: 'Internal server error' });
         }
     },
-
+recherche: async (req, res, next) => {
+        try {
+            const name = req.query.name; 
+            const users = await User.findAll({
+                where: {
+                    name: {
+                        [Op.like]: `%${name}%`
+                    }
+                }
+            });
+            console.log(users);
+            res.json(users);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Erreur de serveur');
+        }
+    },
     /*updatePassword: async (req, res, next) => {
         try {
             const userId = req.params.id;
@@ -256,7 +272,8 @@ const UserController = {
         console.error('Error updating password:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-}
+},
+
 
 };
 

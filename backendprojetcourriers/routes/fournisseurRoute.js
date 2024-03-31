@@ -15,4 +15,6 @@ router.post('/addfournisseur',FournisseurController.addfournisseur);
 router.put('/:iderp',FournisseurController.updateFournisseur)
 
 router.delete('/:iderp',FournisseurController.deletefournisseur);
+// recherche fournisseur par iderp
+router.get('/recherche/ParIdentifiant',FournisseurController.rechercheParIdentifiant);
 module.exports = router;
