@@ -16,6 +16,9 @@ const ListeFactures = () => {
     const [pdfError, setPdfError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const [searchDateTerm, setSearchDateTerm] = useState('');
+    const [searchResultsDate, setSearchResultsDate] = useState([]);
+
 
     useEffect(() => {
         const fetchFournisseurByUserId = async () => {
@@ -120,8 +123,24 @@ const ListeFactures = () => {
     const SearchByNumFact = async () => {
         try {
             const response = await axios.get(`http://localhost:3006/facture/recherche/parNumFact?num_fact=${searchTerm}`);
-            setSearchResults(response.data);
-            console.log(response.data)
+            console.log('Response data:', response.data);
+
+        setSearchResults(response.data);
+        console.log('Search results:', searchResults);
+           
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        }
+    };
+    const searchByDate = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3006/facture/recherche/parDateReception?datereception=${searchDateTerm}`);
+            const filteredResults = response.data.filter(facture => facture.iderp == iderp);
+            setSearchResultsDate(filteredResults);
+            console.log(response.data);
+            if (response.data == ''){
+                alert("Aucun facture trouvé avec cet date.");
+            }
         } catch (error) {
             console.error('Error fetching search results:', error);
         }
@@ -136,6 +155,13 @@ const ListeFactures = () => {
                 placeholder="Rechercher par numéro facture..."
             />
             <button onClick={SearchByNumFact}>Rechercher</button>
+            <input
+                type="date"
+                value={searchDateTerm}
+                onChange={(e) => setSearchDateTerm(e.target.value)}
+                placeholder="Rechercher par date de réception.."
+            />
+            <button onClick={searchByDate}>Rechercher</button>
             {/* Rendu des résultats de recherche */}
             {searchResults.length > 0 && (
                 <div>
@@ -183,7 +209,53 @@ const ListeFactures = () => {
             </table>
             </div>
             )}
-              {!searchResults.length > 0 && (
+            {searchResultsDate.length > 0 && (
+                <div>
+                    <h3>Résultats de la recherche</h3>
+                    <table>
+                <thead>
+                    <tr>
+                        <th>Facture ID</th>
+                        <th>Numéro Facture</th>
+                        <th>Facture Name</th>
+                        <th>Montant</th>
+                        <th>Status</th>
+                        <th>Numéro PO</th>
+                        <th>Date Facture</th>
+                        <th>Action</th>
+                        <th>PDF</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {searchResultsDate.map((data) => (
+                        <tr key={data.idF}>
+                            <td>{data.idF}</td>
+                            <td>{data.num_fact}</td>
+                            <td>{data.factname}</td>
+                            <td>{data.montant}</td>
+                            <td>{data.status}</td>
+                            <td>{data.num_po}</td>
+                            <td>{data.date_fact}</td>
+                            <td>
+                                <button className='delete-btn' onClick={() => deleteFacture(data.iderp, data.idF)}>
+                                    <FaTrash />
+                                </button>
+                               
+                           <Link to={`/updatefacture/${data.idF}`}>
+                                    <Button className='update-facture'>Update</Button>
+                                </Link>
+                           </td>
+                            <td>
+                            <button onClick={() => viewFacturePDF(data.pathpdf)}>View PDF</button>
+                               
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            </div>
+            )}
+              {!searchResults.length > 0 && !searchResultsDate.length > 0 &&(
                 <div>
             <table>
                 <thead>

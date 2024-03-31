@@ -199,6 +199,15 @@ const factureController = {
       res.status(500).json({ message: 'Error fetching facture by ID', error: error });
     }
   },
+getAllFacture: async (req, res) => {
+    try {
+      const factures = await Facture.findAll({ include: { model: Pieces_jointe, as: 'Pieces_jointes' } });
+      res.json({ success: true, factures });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching facture', error: error });
+    }
+  },
    
   getFactureBySupplierId: async (req, res) => {
     try {
@@ -454,10 +463,10 @@ rechercheParNumFact: async (req, res) => {
   },
 recherchePardate: async (req, res) => {
     try {
-        const { dateReception } = req.query; 
+        const { datereception } = req.query; 
         const factures = await Facture.findAll({
             where: {
-              datereception: dateReception
+              datereception: datereception
             },
             include: { model: Pieces_jointe, as: 'Pieces_jointes' }
         });

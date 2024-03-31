@@ -15,11 +15,14 @@ const ListeFacturesFiscalité = () => {
     const [factures, setFactures] = useState([]);
     const [loading, setLoading] = useState(true);
     const { iderp } = useParams(); 
-    
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchDateTerm, setSearchDateTerm] = useState('');
+    const [searchResultsDate, setSearchResultsDate] = useState([]);
     useEffect(() => {
         const fetchFactures = async () => {
             try {
-                const response = await axios.get(`http://localhost:3006/facture/${iderp}`);
+                const response = await axios.get(`http://localhost:3006/facture`);
                 setFactures(response.data.factures);
                 setLoading(false);
             } catch (error) {
@@ -29,7 +32,7 @@ const ListeFacturesFiscalité = () => {
         };
 
         fetchFactures();
-    }, [iderp]);
+    });
 
     const viewFacturePDF = async (pathpdf) => {
         try {
@@ -72,67 +75,119 @@ const ListeFacturesFiscalité = () => {
             console.error('Error rejete document: ', error);
         }
     };
+    const SearchByNumFact = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3006/facture/recherche/parNumFact?num_fact=${searchTerm}`);
+            console.log('Response data:', response.data);
+
+        setSearchResults(response.data);
+        console.log('Search results:', searchResults);
+           
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        }
+    };
+    const searchByDate = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3006/facture/recherche/parDateReception?datereception=${searchDateTerm}`);
+            setSearchResultsDate(response.data);
+            console.log(response.data);
+            if (response.data == ''){
+                alert("Aucun facture trouvé avec cet date.");
+            }
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        }
+    };
+    const renderFactureTable = (factures) => (
+        <table>
+            <thead>
+                <tr>
+                    <th>Facture ID</th>
+                    <th>Numéro Facture</th>
+                    <th>Facture Name</th>
+                    <th>Montant</th>
+                    <th>Status</th>
+                    <th>Numéro PO</th>
+                    <th>Date Facture</th>
+                    <th>PDF</th>
+                    <th>valider</th>
+                    <th>Rejete</th>
+                </tr>
+            </thead>
+            <tbody>
+            {factures
+        .filter(facture => facture.status.includes('courrier validé par BOF') || facture.status.includes('courrier validé par Personnel fiscalité')|| facture.status.includes('Id Fiscale Invalide') || facture.status.includes('Manque') 
+        ).map((facture) => (
+                    <tr key={facture.idF}>
+                        <td>{facture.idF}</td>
+                        <td>{facture.num_fact}</td>
+                        <td>{facture.factname}</td>
+                        <td>{facture.montant}</td>
+                        <td>{facture.status}</td>
+                        <td>{facture.num_po}</td>
+                        <td>{facture.date_fact}</td>
+                        <td>
+                            <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
+                        </td>
+                        <td>
+                            <button className='btn' onClick={() => validerFiscalité(facture.idF)}>valider</button>
+                        </td>
+                        <td>
+                            <select 
+                                name="status" 
+                                value={motifsRejete[facture.idF] || ''} 
+                                onChange={(e) => rejeteDocument(facture.idF, e.target.value)}>
+                                <option value="">Choisir motif de rejet</option>
+                                <option value="Id Fiscale Invalide">Id Fiscale Invalide </option>
+                                <option value="Manque BL">Manque BL</option>
+                                <option value="Manque fiche de présences">Manque fiche de présences</option>
+                                <option value="Manque copie du PO">Manque copie du PO</option>
+                            </select>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
     return (
         <div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Facture ID</th>
-                        <th>Numéro Facture</th>
-                        <th>Facture Name</th>
-                        <th>Montant</th>
-                        <th>Status</th>
-                        <th>Numéro PO</th>
-                        <th>Date Facture</th>
-                       
-                        <th>PDF</th>
-                        <th>valider</th>
-                        <th>Rejete</th>
-                    </tr>
-                </thead>
-                <tbody>
-    {factures
-        .filter(facture => facture.status.includes('courrier validé par BOF') || facture.status.includes('courrier validé par Personnel fiscalité')|| facture.status.includes('Id Fiscale Invalide') || facture.status.includes('Manque de ') 
-        
-) // Filter to include only factures with BOF validation status
-        .map((facture) => (
-            <tr key={facture.idF}>
-                <td>{facture.idF}</td>
-                <td>{facture.num_fact}</td>
-                <td>{facture.factname}</td>
-                <td>{facture.montant}</td>
-                <td>{facture.status}</td>
-                <td>{facture.num_po}</td>
-                <td>{facture.date_fact}</td>
-                
-                <td>
-                    <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
-                </td>
-                <td>
-                    <button className='btn' onClick={() => validerFiscalité(facture.idF)}>valider</button>
-                </td>
-                <td>
-                    <select 
-                        name="status" 
-                        value={motifsRejete[facture.idF] || ''} 
-                        onChange={(e) => rejeteDocument(facture.idF, e.target.value)}>
-                        <option value="">Choisir motif de rejet</option>
-                        <option value="Id Fiscale Invalide">Id Fiscale Invalide </option>
-                        <option value="Manque BL">Manque BL</option>
-                        <option value="Manque fiche de présences">Manque fiche de présences</option>
-                        <option value="Manque copie du PO">Manque copie du PO</option>
-                    </select>
-                </td>
-            </tr>
-        ))}
-</tbody>
-
-            </table>
+                 <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Rechercher par numéro facture..."
+            />
+            <button onClick={SearchByNumFact}>Rechercher</button>
+            <input
+                type="date"
+                value={searchDateTerm}
+                onChange={(e) => setSearchDateTerm(e.target.value)}
+                placeholder="Rechercher par date de réception.."
+            />
+            <button onClick={searchByDate}>Rechercher</button>
+            {searchResults.length > 0 && (
+                <div>
+                    <h3>Résultats de la recherche</h3>
+                    {renderFactureTable(searchResults)}
+                    </div>
+            )}
+             {searchResultsDate.length > 0 && (
+                <div>
+                    <h3>Résultats de la recherche</h3>
+                    {renderFactureTable(searchResultsDate)}
+            </div>
+            )}
+             {!searchResults.length > 0 && !searchResultsDate.length > 0 &&(
+               <div> 
+       {renderFactureTable(factures)}
 
             {pdfPath && (
                 <Document file={pdfPath} error="PDF loading error">
                     <Page pageNumber={1} />
                 </Document>
+            )}
+              </div>
             )}
         </div>
     );

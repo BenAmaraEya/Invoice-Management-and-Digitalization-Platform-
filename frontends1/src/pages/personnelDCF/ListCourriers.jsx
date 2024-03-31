@@ -15,7 +15,10 @@ const ListeFactures = () => {
     const [factures, setFactures] = useState([]);
     const [loading, setLoading] = useState(true);
     const { iderp } = useParams(); 
-    
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchDateTerm, setSearchDateTerm] = useState('');
+    const [searchResultsDate, setSearchResultsDate] = useState([]);
     useEffect(() => {
         const fetchFactures = async () => {
             try {
@@ -70,9 +73,33 @@ const ListeFactures = () => {
             console.error('Error rejete document: ', error);
         }
     };
-    return (
-        <div>
-            <table>
+    const SearchByNumFact = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3006/facture/recherche/parNumFact?num_fact=${searchTerm}`);
+            console.log('Response data:', response.data);
+
+        setSearchResults(response.data);
+        console.log('Search results:', searchResults);
+           
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        }
+    };
+    const searchByDate = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3006/facture/recherche/parDateReception?datereception=${searchDateTerm}`);
+            const filteredResults = response.data.filter(facture => facture.iderp == iderp);
+            setSearchResultsDate(filteredResults);
+            console.log(response.data);
+            if (response.data == ''){
+                alert("Aucun facture trouvé avec cet date.");
+            }
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        }
+    };
+    const renderFactureTable = (factures) => (
+        <table>
                 <thead>
                     <tr>
                         <th>Facture ID</th>
@@ -122,10 +149,45 @@ const ListeFactures = () => {
                 </tbody>
             </table>
 
+
+        );
+    return (
+        <div>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Rechercher par numéro facture..."
+            />
+            <button onClick={SearchByNumFact}>Rechercher</button>
+            <input
+                type="date"
+                value={searchDateTerm}
+                onChange={(e) => setSearchDateTerm(e.target.value)}
+                placeholder="Rechercher par date de réception.."
+            />
+            <button onClick={searchByDate}>Rechercher</button>
+            {searchResults.length > 0 && (
+                <div>
+                    <h3>Résultats de la recherche</h3>
+                    {renderFactureTable(searchResults)}
+                    </div>
+            )}
+             {searchResultsDate.length > 0 && (
+                <div>
+                    <h3>Résultats de la recherche</h3>
+                    {renderFactureTable(searchResultsDate)}
+            </div>
+            )}
+             {!searchResults.length > 0 && !searchResultsDate.length > 0 &&(
+               <div> 
+       {renderFactureTable(factures)}
             {pdfPath && (
                 <Document file={pdfPath} error="PDF loading error">
                     <Page pageNumber={1} />
                 </Document>
+            )}
+                </div>
             )}
         </div>
     );

@@ -5,6 +5,10 @@ import { Link } from 'react-router-dom';
 const ListFournisseur = () => {
     const [fournisseurs, setFournisseurs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchNameTerm, setSearchNameTerm] = useState('');
+    const [searchIderpTerm, setSearchIderpTerm] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchResultsIderp, setSearchResultsIderp] = useState([]);
     const userProfile = localStorage.getItem("userProfil");
 
     useEffect(() => {
@@ -30,9 +34,46 @@ const ListFournisseur = () => {
 
         fetchFournisseurs();
     }, []);
-
+    const searchByName = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3006/user/recherche/parnom?name=${searchNameTerm}`);
+            const filteredResults = response.data.filter(user => user.profil == "fournisseur");
+            setSearchResults(filteredResults);
+            console.log(filteredResults);
+            if (filteredResults == ''){
+                alert("Aucun fournisseur trouvé avec cet nom.");
+            }
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        }
+    };
+    const searchByIderp = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3006/fournisseur/recherche/ParIdentifiant?iderp=${searchIderpTerm}`);
+            setSearchResultsIderp(response.data);
+            if (response.data == ''){
+                alert("Aucun fournisseur trouvé avec cet iderp.");
+            }
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        }
+    };
     return (
         <div>
+                  <input
+                type="text"
+                value={searchNameTerm}
+                onChange={(e) => setSearchNameTerm(e.target.value)}
+                placeholder="Rechercher par nom..."
+            />
+            <button onClick={searchByName}>Rechercher</button>
+            <input
+                type="number"
+                value={searchIderpTerm}
+                onChange={(e) => setSearchIderpTerm(e.target.value)}
+                placeholder="Rechercher par iderp..."
+            />
+            <button onClick={searchByIderp}>Rechercher par identifiant</button>
             <h2>Liste des Fournisseurs</h2>
             {loading ? (
                 <p>Loading...</p>
@@ -57,10 +98,7 @@ const ListFournisseur = () => {
                                         to={
                                             userProfile === "bof"
                                                 ? `/listcourriers/${fournisseur.iderp}`
-                                                : userProfile === "personnelfiscalite"
-                                                    ? `/listcourriersfiscal/${fournisseur.iderp}`
-                                                    : userProfile === "agentTresorerie"
-                                                        ? `/listcourrierstresorerie/${fournisseur.iderp}`
+                                                
                                                         : "/defaultDestination" // Provide a default destination
                                         }
                                     >
