@@ -21,7 +21,7 @@ const ListFournisseur = () => {
                         return { ...fournisseur, status: statusResponse.data };
                     } catch (error) {
                         console.error('Error fetching status for fournisseur:', fournisseur.iderp, error);
-                        return fournisseur; // If status fetch fails, return fournisseur without status
+                        return fournisseur; 
                     }
                 }));
                 setFournisseurs(fournisseursWithStatus);
@@ -37,25 +37,31 @@ const ListFournisseur = () => {
     const searchByName = async () => {
         try {
             const response = await axios.get(`http://localhost:3006/user/recherche/parnom?name=${searchNameTerm}`);
-            const filteredResults = response.data.filter(user => user.profil == "fournisseur");
+            console.log("Search by name response:", response.data); // Log response data for debugging
+            const filteredResults = response.data.filter(user => user.profil === "fournisseur");
+            console.log("Filtered results by name:", filteredResults); // Log filtered results for debugging
             setSearchResults(filteredResults);
-            console.log(filteredResults);
-            if (filteredResults == ''){
+            if (filteredResults.length === 0) {
                 alert("Aucun fournisseur trouvé avec cet nom.");
             }
         } catch (error) {
-            console.error('Error fetching search results:', error);
+            console.error('Error fetching search results by name:', error);
         }
     };
+    
     const searchByIderp = async () => {
         try {
             const response = await axios.get(`http://localhost:3006/fournisseur/recherche/ParIdentifiant?iderp=${searchIderpTerm}`);
-            setSearchResultsIderp(response.data);
-            if (response.data == ''){
+            console.log("Search by iderp response:", response.data); // Log response data for debugging
+            if (response.data) {
+                // Update the factures state with the filtered facture data
+                setSearchResultsIderp([response.data]);
+            }
+            if (response.data.length === 0) {
                 alert("Aucun fournisseur trouvé avec cet iderp.");
             }
         } catch (error) {
-            console.error('Error fetching search results:', error);
+            console.error('Error fetching search results by iderp:', error);
         }
     };
     return (
@@ -98,8 +104,12 @@ const ListFournisseur = () => {
                                         to={
                                             userProfile === "bof"
                                                 ? `/listcourriers/${fournisseur.iderp}`
+                                                : userProfile === "personnelfiscalite"
+                                                    ? `/listcourriersfiscal/${fournisseur.iderp}`
+                                                    : userProfile === "agentTresorerie"
+                                                        ? `/listcourrierstresorerie/${fournisseur.iderp}`
                                                 
-                                                        : "/defaultDestination" // Provide a default destination
+                                                        : "/defaultDestination" 
                                         }
                                     >
                                         <button>List Factures</button>

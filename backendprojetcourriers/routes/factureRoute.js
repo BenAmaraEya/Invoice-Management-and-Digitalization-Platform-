@@ -18,6 +18,7 @@ router.put('/validerCourriers/:idF',factureController.validerDocument);
 router.put('/rejeteCourrier/:idF',factureController.rejeterCourriers);
 router.put('/validerfiscalite/:idF',factureController.validerFiscalité);
 router.put('/validerTresorerie/:idF',factureController.validerBudget);
-router.get('/recherche/parNumFact',factureController.rechercheParNumFact);
-router.get('/recherche/parDateReception',factureController.recherchePardate);
+/*router.get('/recherche/parNumFact',factureController.rechercheParNumFact);
+router.get('/recherche/parDateReception',factureController.recherchePardate);*/
+router.get('/recherche/ParDATEetNUM',factureController.rechercheFacture);
 module.exports=router;

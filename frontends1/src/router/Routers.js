@@ -23,6 +23,7 @@ import ListFacturesByB from "../pages/personnelDCF/ListFactByB";
 import ListeFacturesFiscalité from "../pages/personnelDCF/listCourriersFiscalite";
 import ListeFacturesTresorerie from "../pages/personnelDCF/listCourriersTresorerie";
 import ListSupplier from "../pages/ListSupplier";
+import ReclamationForm from "../pages/reclamation";
 const Routers = () => {
     return (
         <Routes>
@@ -49,8 +50,9 @@ const Routers = () => {
             <Route path="/uploadFact" element={<UploadFact />} />
             <Route path="/fact/:idB" element={<ListFacturesByB />} />
             <Route path="/uploadFact/:nature" element={<UploadFact/>}/>
-            <Route path="/listcourriersfiscal" element={<ListeFacturesFiscalité/>}/>
-            <Route path="/listcourrierstresorerie" element={<ListeFacturesTresorerie/>}/>
+            <Route path="/listcourriersfiscal/:iderp" element={<ListeFacturesFiscalité/>}/>
+            <Route path="/listcourrierstresorerie/:iderp" element={<ListeFacturesTresorerie/>}/>
+            <Route path ="/reclamation/:id"element={<ReclamationForm/>}/>
         </Routes>
     );
 };

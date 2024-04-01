@@ -6,9 +6,9 @@ import { Link, useParams } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import '../../styles/listefacture.css';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const ListeFactures = () => {
+const ListCourriers = () => {
     const [pdfPath, setPdfPath] = useState(null);
     const [motifRejete, setMotifRejete] = useState(''); 
     const [motifsRejete, setMotifsRejete] = useState({});
@@ -19,6 +19,8 @@ const ListeFactures = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [searchDateTerm, setSearchDateTerm] = useState('');
     const [searchResultsDate, setSearchResultsDate] = useState([]);
+    const [searchParams, setSearchParams] = useState({ num_fact: '', datereception: '' }); // Define searchParams state
+
     useEffect(() => {
         const fetchFactures = async () => {
             try {
@@ -73,124 +75,135 @@ const ListeFactures = () => {
             console.error('Error rejete document: ', error);
         }
     };
-    const SearchByNumFact = async () => {
+    const deleteFacture = async (idF) => {
         try {
-            const response = await axios.get(`http://localhost:3006/facture/recherche/parNumFact?num_fact=${searchTerm}`);
-            console.log('Response data:', response.data);
-
-        setSearchResults(response.data);
-        console.log('Search results:', searchResults);
-           
-        } catch (error) {
-            console.error('Error fetching search results:', error);
-        }
-    };
-    const searchByDate = async () => {
-        try {
-            const response = await axios.get(`http://localhost:3006/facture/recherche/parDateReception?datereception=${searchDateTerm}`);
-            const filteredResults = response.data.filter(facture => facture.iderp == iderp);
-            setSearchResultsDate(filteredResults);
-            console.log(response.data);
-            if (response.data == ''){
-                alert("Aucun facture trouvé avec cet date.");
+            const token = localStorage.getItem('accessToken');
+            const response = await axios.delete(`http://localhost:3006/facture/fournisseur/${iderp}/facture/${idF}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (response.data.success) {
+                setFactures(factures.filter(facture => facture.idF !== idF));
+                console.log(response.data.message);
             }
         } catch (error) {
-            console.error('Error fetching search results:', error);
+            console.error('Error deleting facture:', error);
         }
     };
+    const rechercheFacture = async () => {
+        try {
+            const response = await axios.get('http://localhost:3006/facture/recherche/ParDATEetNUM', {
+                params: searchParams
+            });
+            // Handle the response data here, update state accordingly
+            if (response.data) {
+                // Update the factures state with the filtered facture data
+                setFactures([response.data]);
+            }
+        } catch (error) {
+            console.error('Error searching for facture:', error);
+        }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setSearchParams(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
     const renderFactureTable = (factures) => (
         <table>
-                <thead>
-                    <tr>
-                        <th>Facture ID</th>
-                        <th>Numéro Facture</th>
-                        <th>Facture Name</th>
-                        <th>Montant</th>
-                        <th>Status</th>
-                        <th>Numéro PO</th>
-                        <th>Date Facture</th>
-                        <th>Action</th>
-                        <th>PDF</th>
-                        <th>valider</th>
-                        <th>Rejete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {factures.map((facture) => (
-                        <tr key={facture.idF}>
-                            <td>{facture.idF}</td>
-                            <td>{facture.num_fact}</td>
-                            <td>{facture.factname}</td>
-                            <td>{facture.montant}</td>
-                            <td>{facture.status}</td>
-                            <td>{facture.num_po}</td>
-                            <td>{facture.date_fact}</td>
-                            <td></td>
-                            <td>
-                                <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
+            <thead>
+                <tr>
+                    <th>Facture ID</th>
+                    <th>Numéro Facture</th>
+                    <th>Facture Name</th>
+                    <th>Montant</th>
+                    <th>Status</th>
+                    <th>Numéro PO</th>
+                    <th>Date Facture</th>
+                    <th>Action</th>
+                    <th>PDF</th>
+                    <th>valider</th>
+                    <th>Rejete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {factures.map((facture) => (
+                    <tr key={facture.idF}>
+                        <td>{facture.idF}</td>
+                        <td>{facture.num_fact}</td>
+                        <td>{facture.factname}</td>
+                        <td>{facture.montant}</td>
+                        <td>{facture.status}</td>
+                        <td>{facture.num_po}</td>
+                        <td>{facture.date_fact}</td>
+                        <td>
+                                <button className='delete-btn' onClick={() => deleteFacture(facture.idF)}>
+                                    <FaTrash />
+                                </button>
+                                <Link to={`/updatefacture/${facture.idF}`}>
+                                    <Button className='update-facture'>Update</Button>
+                                </Link>
                             </td>
-                            <td>
-                                <button className='btn' onClick={() => validerDocument(facture.idF)}>valider</button>
-                            </td>
-                            <td>
+                        <td>
+                            <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
+                        </td>
+                        <td>
+                            <button className='btn' onClick={() => validerDocument(facture.idF)}>valider</button>
+                        </td>
+                        <td>
                             <select 
-                                    name="status" 
-                                    value={motifsRejete[facture.idF] || ''} 
-                                    onChange={(e) => rejeteDocument(facture.idF, e.target.value)}>
-                                    <option value="">Choisir motif de rejet</option>
-                                    <option value="Manque PV">Manque PV</option>
-                                    <option value="Manque BL">Manque BL</option>
-                                    <option value="Manque fiche de présences">Manque fiche de présences</option>
-                                    <option value="Manque copie du PO">Manque copie du PO</option>
-                                </select>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                                name="status" 
+                                value={motifsRejete[facture.idF] || ''} 
+                                onChange={(e) => rejeteDocument(facture.idF, e.target.value)}>
+                                <option value="">Choisir motif de rejet</option>
+                                <option value="Manque PV">Manque PV</option>
+                                <option value="Manque BL">Manque BL</option>
+                                <option value="Manque fiche de présences">Manque fiche de présences</option>
+                                <option value="Manque copie du PO">Manque copie du PO</option>
+                            </select>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
 
-
-        );
     return (
         <div>
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Rechercher par numéro facture..."
-            />
-            <button onClick={SearchByNumFact}>Rechercher</button>
-            <input
-                type="date"
-                value={searchDateTerm}
-                onChange={(e) => setSearchDateTerm(e.target.value)}
-                placeholder="Rechercher par date de réception.."
-            />
-            <button onClick={searchByDate}>Rechercher</button>
+            <div>
+                <input type="text" name="num_fact" placeholder="Numéro Facture" value={searchParams.num_fact} onChange={handleInputChange} />
+                <input type="date" name="datereception" placeholder="Date de Réception (yyyy-mm-dd)" value={searchParams.datereception} onChange={handleInputChange} />
+                <button onClick={rechercheFacture}>Rechercher</button>
+            </div>
             {searchResults.length > 0 && (
                 <div>
                     <h3>Résultats de la recherche</h3>
                     {renderFactureTable(searchResults)}
-                    </div>
+                </div>
             )}
-             {searchResultsDate.length > 0 && (
+            {searchResultsDate.length > 0 && (
                 <div>
                     <h3>Résultats de la recherche</h3>
                     {renderFactureTable(searchResultsDate)}
-            </div>
+                </div>
             )}
-             {!searchResults.length > 0 && !searchResultsDate.length > 0 &&(
-               <div> 
-       {renderFactureTable(factures)}
-            {pdfPath && (
-                <Document file={pdfPath} error="PDF loading error">
-                    <Page pageNumber={1} />
-                </Document>
-            )}
+            {!searchResults.length > 0 && !searchResultsDate.length > 0 && (
+                <div>
+                    {renderFactureTable(factures)}
+                    {pdfPath && (
+                        <Document file={pdfPath} error="PDF loading error">
+                            <Page pageNumber={1} />
+                        </Document>
+                    )}
                 </div>
             )}
         </div>
     );
 };
 
-export default ListeFactures;
+export default ListCourriers;

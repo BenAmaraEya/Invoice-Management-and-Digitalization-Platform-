@@ -6,7 +6,6 @@ import { FaTrash, FaFileExcel } from 'react-icons/fa';
 import { Document, Page, pdfjs } from 'react-pdf';
 import './../styles/listefacture.css';
 
-//
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const ListeFactures = () => {
@@ -14,11 +13,7 @@ const ListeFactures = () => {
     const [iderp, setIdErp] = useState(null);
     const [pdfPath, setPdfPath] = useState(null);
     const [pdfError, setPdfError] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
-    const [searchDateTerm, setSearchDateTerm] = useState('');
-    const [searchResultsDate, setSearchResultsDate] = useState([]);
-
+    const [searchParams, setSearchParams] = useState({ num_fact: '', datereception: '' });
 
     useEffect(() => {
         const fetchFournisseurByUserId = async () => {
@@ -67,28 +62,19 @@ const ListeFactures = () => {
         }
     };
 
-   /* const openPdf = async (facture) => {
+    const viewFacturePDF = async (pathpdf) => {
         try {
-            const pdfPath = facture.pathpdf;
-            setPdfPath(pdfPath);
-            setPdfError(null);
+            const response = await axios.get(`http://localhost:3006/facture/view-pdf/${pathpdf}`, {
+                responseType: 'blob'
+            });
+            const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+            window.open(pdfUrl);
         } catch (error) {
-            console.error('Error fetching PDF:', error);
-            setPdfError('Error fetching PDF');
+            console.error('Error viewing facture PDF:', error);
         }
     };
-*/const viewFacturePDF = async (pathpdf) => {
-    try {
-        const response = await axios.get(`http://localhost:3006/facture/view-pdf/${pathpdf}`, {
-            responseType: 'blob' //specifier le type de réponse 
-        });
-        const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-        const pdfUrl = URL.createObjectURL(pdfBlob);// Crée une URL objet à partir du blob, qui peut être utilisée pour accéder au contenu du blob dans le navigateur.
-        window.open(pdfUrl); // ouvrir une nouvelle fenêtre
-    } catch (error) {
-        console.error('Error viewing facture PDF:', error);
-    }
-};
+
     const exportToExcel = async () => {
         try {
             const token = localStorage.getItem('accessToken');
@@ -101,162 +87,49 @@ const ListeFactures = () => {
                 responseType: 'blob',
             });
 
-           // Créer un objet Blob à partir des données de la réponse avec le type MIME approprié pour Excel
-        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-        // Créer une URL pour l'objet Blob afin de créer un lien de téléchargement
-        const url = window.URL.createObjectURL(blob);
-
-        // Créer un élément <a> pour le lien de téléchargement
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'factures.xlsx'); // Spécifier le nom du fichier à télécharger
-
-        // Ajouter le lien au corps du document HTML, déclencher le téléchargement, puis supprimer le lien
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode.removeChild(link)
+            const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'factures.xlsx');
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
         } catch (error) {
             console.error('Error exporting factures to Excel:', error);
         }
     };
-    const SearchByNumFact = async () => {
-        try {
-            const response = await axios.get(`http://localhost:3006/facture/recherche/parNumFact?num_fact=${searchTerm}`);
-            console.log('Response data:', response.data);
 
-        setSearchResults(response.data);
-        console.log('Search results:', searchResults);
-           
-        } catch (error) {
-            console.error('Error fetching search results:', error);
-        }
-    };
-    const searchByDate = async () => {
+    const rechercheFacture = async () => {
         try {
-            const response = await axios.get(`http://localhost:3006/facture/recherche/parDateReception?datereception=${searchDateTerm}`);
-            const filteredResults = response.data.filter(facture => facture.iderp == iderp);
-            setSearchResultsDate(filteredResults);
-            console.log(response.data);
-            if (response.data == ''){
-                alert("Aucun facture trouvé avec cet date.");
+            const response = await axios.get('http://localhost:3006/facture/recherche/ParDATEetNUM', {
+                params: searchParams
+            });
+            // Handle the response data here, update state accordingly
+            if (response.data) {
+                // Update the factures state with the filtered facture data
+                setFactures([response.data]);
             }
         } catch (error) {
-            console.error('Error fetching search results:', error);
+            console.error('Error searching for facture:', error);
         }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setSearchParams(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
     };
 
     return (
         <div>
-            <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Rechercher par numéro facture..."
-            />
-            <button onClick={SearchByNumFact}>Rechercher</button>
-            <input
-                type="date"
-                value={searchDateTerm}
-                onChange={(e) => setSearchDateTerm(e.target.value)}
-                placeholder="Rechercher par date de réception.."
-            />
-            <button onClick={searchByDate}>Rechercher</button>
-            {/* Rendu des résultats de recherche */}
-            {searchResults.length > 0 && (
-                <div>
-                    <h3>Résultats de la recherche</h3>
-                    <table>
-                <thead>
-                    <tr>
-                        <th>Facture ID</th>
-                        <th>Numéro Facture</th>
-                        <th>Facture Name</th>
-                        <th>Montant</th>
-                        <th>Status</th>
-                        <th>Numéro PO</th>
-                        <th>Date Facture</th>
-                        <th>Action</th>
-                        <th>PDF</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {searchResults.map((data) => (
-                        <tr key={data.idF}>
-                            <td>{data.idF}</td>
-                            <td>{data.num_fact}</td>
-                            <td>{data.factname}</td>
-                            <td>{data.montant}</td>
-                            <td>{data.status}</td>
-                            <td>{data.num_po}</td>
-                            <td>{data.date_fact}</td>
-                            <td>
-                                <button className='delete-btn' onClick={() => deleteFacture(data.iderp, data.idF)}>
-                                    <FaTrash />
-                                </button>
-                               
-                           <Link to={`/updatefacture/${data.idF}`}>
-                                    <Button className='update-facture'>Update</Button>
-                                </Link>
-                           </td>
-                            <td>
-                            <button onClick={() => viewFacturePDF(data.pathpdf)}>View PDF</button>
-                               
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <div>
+                <input type="text" name="num_fact" placeholder="Numéro Facture" value={searchParams.num_fact} onChange={handleInputChange} />
+                <input type="date" name="datereception" placeholder="Date de Réception (yyyy-mm-dd)" value={searchParams.datereception} onChange={handleInputChange} />
+                <button onClick={rechercheFacture}>Rechercher</button>
             </div>
-            )}
-            {searchResultsDate.length > 0 && (
-                <div>
-                    <h3>Résultats de la recherche</h3>
-                    <table>
-                <thead>
-                    <tr>
-                        <th>Facture ID</th>
-                        <th>Numéro Facture</th>
-                        <th>Facture Name</th>
-                        <th>Montant</th>
-                        <th>Status</th>
-                        <th>Numéro PO</th>
-                        <th>Date Facture</th>
-                        <th>Action</th>
-                        <th>PDF</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {searchResultsDate.map((data) => (
-                        <tr key={data.idF}>
-                            <td>{data.idF}</td>
-                            <td>{data.num_fact}</td>
-                            <td>{data.factname}</td>
-                            <td>{data.montant}</td>
-                            <td>{data.status}</td>
-                            <td>{data.num_po}</td>
-                            <td>{data.date_fact}</td>
-                            <td>
-                                <button className='delete-btn' onClick={() => deleteFacture(data.iderp, data.idF)}>
-                                    <FaTrash />
-                                </button>
-                               
-                           <Link to={`/updatefacture/${data.idF}`}>
-                                    <Button className='update-facture'>Update</Button>
-                                </Link>
-                           </td>
-                            <td>
-                            <button onClick={() => viewFacturePDF(data.pathpdf)}>View PDF</button>
-                               
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            </div>
-            )}
-              {!searchResults.length > 0 && !searchResultsDate.length > 0 &&(
-                <div>
             <table>
                 <thead>
                     <tr>
@@ -285,15 +158,12 @@ const ListeFactures = () => {
                                 <button className='delete-btn' onClick={() => deleteFacture(facture.iderp, facture.idF)}>
                                     <FaTrash />
                                 </button>
-                               
-                           
-                           <Link to={`/updatefacture/${facture.idF}`}>
+                                <Link to={`/updatefacture/${facture.idF}`}>
                                     <Button className='update-facture'>Update</Button>
                                 </Link>
-                           </td>
+                            </td>
                             <td>
-                            <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
-                               
+                                <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
                             </td>
                         </tr>
                     ))}
@@ -305,13 +175,10 @@ const ListeFactures = () => {
                     <Button className='ajouter-btn'>Ajouter Factures</Button>
                 </Link>
             </div>
-            
             {pdfPath && (
                 <Document file={pdfPath} error="PDF loading error">
                     <Page pageNumber={1} />
                 </Document>
-            )}
-            </div>
             )}
         </div>
     );

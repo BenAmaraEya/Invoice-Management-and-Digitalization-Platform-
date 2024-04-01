@@ -80,6 +80,7 @@ const UpdateFactureDetailsPage = () => {
     try {
       //update facture
       const token = localStorage.getItem('accessToken');
+      const userProfil=localStorage.getItem('userProfil');
       await axios.put(`http://localhost:3006/facture/updateFacture/${idF}`, facture,{
         headers: {
          
@@ -98,7 +99,11 @@ const UpdateFactureDetailsPage = () => {
         }
       );
       alert('Pieces jointes updated successfully');
-      navigate(`/factures/${facture.iderp}`);
+      if (userProfil === "fournisseur"){
+      navigate(`/factures/${facture.iderp}`);}
+      else{
+        navigate(`/listcourriers/${facture.iderp}`);
+      }
     } catch (error) {
       console.error('Error updating facture and pieces jointes:', error);
       alert('Failed to update facture and pieces jointes');

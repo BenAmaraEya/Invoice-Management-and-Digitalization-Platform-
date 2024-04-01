@@ -15,6 +15,11 @@ const Reclamation = sequelize.define('Reclamation', {
       type:DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
+    },
+    isNew:{
+      type:DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     }
    
   });

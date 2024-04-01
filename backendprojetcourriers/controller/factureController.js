@@ -171,7 +171,7 @@ const factureController = {
         if (!facture) {
             return res.status(404).json({ message: 'Facture not found for this Fournisseur' });
         } 
-        if (facture.pathpdf) {
+        if (!facture.pathpdf) {
             fs.unlinkSync(facture.pathpdf);
            
         }
@@ -445,7 +445,7 @@ validerBudget:[authorizeAgent,async (req,res) =>{
         res.status(500).json({ message: 'Internal server error' });
       }
     }],
-rechercheParNumFact: async (req, res) => {
+/*rechercheParNumFact: async (req, res) => {
       try {
           const { num_fact } = req.query; 
           const factures = await Facture.findOne({
@@ -476,7 +476,38 @@ recherchePardate: async (req, res) => {
         console.error(error);
         res.status(500).send('Erreur de serveur');
     }
-},
+},*/
+rechercheFacture: async (req, res) => {
+  try {
+      const { num_fact, datereception } = req.query;
+      let whereClause = {};
+
+      if (num_fact && datereception) {
+          // If both invoice number and date of receipt are provided
+          whereClause = {
+              num_fact: num_fact,
+              datereception: datereception
+          };
+      } else if (num_fact) {
+          // If only invoice number is provided
+          whereClause = { num_fact: num_fact };
+      } else if (datereception) {
+          // If only date of receipt is provided
+          whereClause = { datereception: datereception };
+      }
+
+      const facture = await Facture.findOne({
+          where: whereClause,
+          include: { model: Pieces_jointe, as: 'Pieces_jointes' }
+      });
+
+      console.log(facture);
+      res.json(facture);
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Erreur de serveur');
+  }
+}
     
 };
 // Fonction pour extraire les information de l'ORC

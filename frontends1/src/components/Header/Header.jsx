@@ -31,6 +31,9 @@ const Header = () => {
     navigate(`/updatePass/${userId}`);
     setIsUserMenuOpen(false); // Close the menu after selecting an option
   };
+  const handleReclamation =()=>{
+    navigate(`/reclamation/${userId}`)
+  }
 
   const handleLogout = async () => {
     try {
@@ -105,7 +108,7 @@ const Header = () => {
               </div>
               {isUserMenuOpen && (
                 <div className="dropdown-content">
-                   <button className="dropdown-item" >
+                   <button className="dropdown-item" onClick={handleReclamation}>
                     Réclamations
                   </button>
                   <button className="dropdown-item" onClick={handleUpdatePassword}>

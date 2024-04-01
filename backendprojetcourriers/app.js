@@ -10,6 +10,7 @@ const fournisseurRoute = require('./routes/fournisseurRoute');
 const factureRoute = require('./routes/factureRoute');
 const piecejointRoute= require ('./routes/piecejointRoute');
 const bordereauRoute =require('./routes/bordereauxRoute');
+const reclamationRoute =require('./routes/reclamationRoute');
 connectDB();
 app.set('trust proxy', true);
 app.use(express.json());
@@ -32,7 +33,8 @@ app.use('/user', userRoute); // User-related routes
 app.use('/fournisseur', fournisseurRoute); // Fournisseur routes
 app.use('/facture',factureRoute);
 app.use('/piecejoint',piecejointRoute);
-app.use('/bordereaux',bordereauRoute)
+app.use('/bordereaux',bordereauRoute);
+app.use('/reclamation',reclamationRoute);
 
 // Start server
 const PORT = process.env.PORT || 3006;

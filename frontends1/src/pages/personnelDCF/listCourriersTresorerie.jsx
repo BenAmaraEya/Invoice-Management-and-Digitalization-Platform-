@@ -20,6 +20,7 @@ const ListeFacturesTresorerie = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [searchDateTerm, setSearchDateTerm] = useState('');
     const [searchResultsDate, setSearchResultsDate] = useState([]);
+    const [searchParams, setSearchParams] = useState({ num_fact: '', datereception: '' });
     useEffect(() => {
         const fetchFactures = async () => {
             try {
@@ -78,29 +79,27 @@ const ListeFacturesTresorerie = () => {
             console.error('Error rejete document: ', error);
         }
     };
-    const SearchByNumFact = async () => {
+    const rechercheFacture = async () => {
         try {
-            const response = await axios.get(`http://localhost:3006/facture/recherche/parNumFact?num_fact=${searchTerm}`);
-            console.log('Response data:', response.data);
-
-        setSearchResults(response.data);
-        console.log('Search results:', searchResults);
-           
-        } catch (error) {
-            console.error('Error fetching search results:', error);
-        }
-    };
-    const searchByDate = async () => {
-        try {
-            const response = await axios.get(`http://localhost:3006/facture/recherche/parDateReception?datereception=${searchDateTerm}`);
-            setSearchResultsDate(response.data);
-            console.log(response.data);
-            if (response.data == ''){
-                alert("Aucun facture trouvé avec cet date.");
+            const response = await axios.get('http://localhost:3006/facture/recherche/ParDATEetNUM', {
+                params: searchParams
+            });
+            // Handle the response data here, update state accordingly
+            if (response.data) {
+                // Update the factures state with the filtered facture data
+                setFactures([response.data]);
             }
         } catch (error) {
-            console.error('Error fetching search results:', error);
+            console.error('Error searching for facture:', error);
         }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setSearchParams(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
     };
     const renderFactureTable = (factures) => (
         <table>
@@ -120,7 +119,7 @@ const ListeFacturesTresorerie = () => {
             </thead>
             <tbody>
             {factures
-        .filter(facture => facture.status.includes('courrier validé par BOF') 
+        .filter(facture => facture.status.includes('courrier validé par BOF') || facture.status.includes('courrier validé par Personnel fiscalité')|| facture.status.includes('Id Fiscale Invalide') || facture.status.includes('Manque')
         ).map((facture) => (
                     <tr key={facture.idF}>
                         <td>{facture.idF}</td>
@@ -154,42 +153,32 @@ const ListeFacturesTresorerie = () => {
     );
     return (
         <div>
-             <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Rechercher par numéro facture..."
-            />
-            <button onClick={SearchByNumFact}>Rechercher</button>
-            <input
-                type="date"
-                value={searchDateTerm}
-                onChange={(e) => setSearchDateTerm(e.target.value)}
-                placeholder="Rechercher par date de réception.."
-            />
-            <button onClick={searchByDate}>Rechercher</button>
+            <div>
+                <input type="text" name="num_fact" placeholder="Numéro Facture" value={searchParams.num_fact} onChange={handleInputChange} />
+                <input type="date" name="datereception" placeholder="Date de Réception (yyyy-mm-dd)" value={searchParams.datereception} onChange={handleInputChange} />
+                <button onClick={rechercheFacture}>Rechercher</button>
+            </div>
             {searchResults.length > 0 && (
                 <div>
                     <h3>Résultats de la recherche</h3>
                     {renderFactureTable(searchResults)}
-            </div>
+                </div>
             )}
-             {searchResultsDate.length > 0 && (
+            {searchResultsDate.length > 0 && (
                 <div>
                     <h3>Résultats de la recherche</h3>
                     {renderFactureTable(searchResultsDate)}
-            </div>
+                </div>
             )}
-            {!searchResults.length > 0 && !searchResultsDate.length > 0 &&(
-               <div> 
-           {renderFactureTable(factures)}
-        
-            {pdfPath && (
-                <Document file={pdfPath} error="PDF loading error">
-                    <Page pageNumber={1} />
-                </Document>
-            )}
-            </div>
+            {!searchResults.length > 0 && !searchResultsDate.length > 0 && (
+                <div>
+                    {renderFactureTable(factures)}
+                    {pdfPath && (
+                        <Document file={pdfPath} error="PDF loading error">
+                            <Page pageNumber={1} />
+                        </Document>
+                    )}
+                </div>
             )}
         </div>
     );
