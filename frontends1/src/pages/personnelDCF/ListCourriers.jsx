@@ -20,6 +20,7 @@ const ListCourriers = () => {
     const [searchDateTerm, setSearchDateTerm] = useState('');
     const [searchResultsDate, setSearchResultsDate] = useState([]);
     const [searchParams, setSearchParams] = useState({ num_fact: '', datereception: '' }); // Define searchParams state
+    const [etat, setEtat] = useState({});
 
     useEffect(() => {
         const fetchFactures = async () => {
@@ -129,6 +130,7 @@ const ListCourriers = () => {
                     <th>PDF</th>
                     <th>valider</th>
                     <th>Rejete</th>
+                    <th>mise à jour Etat</th>
                 </tr>
             </thead>
             <tbody>
@@ -167,12 +169,35 @@ const ListCourriers = () => {
                                 <option value="Manque copie du PO">Manque copie du PO</option>
                             </select>
                         </td>
+                        <td>
+                        <select 
+                                name="etat" 
+                                value={etat[facture.idF] || ''} 
+                                onChange={(e) => updateProcessus(facture.idF, e.target.value)}>
+                                <option value="">choisir etat facture</option>
+                                <option value="Envoye Finanace">Envoye Finanace</option>
+                                <option value="Envoye Fiscalité">Envoyé Fiscalité</option>
+                                <option value="paiement">paiement</option>
+                                <option value="cloture">cloturé</option>
+                            </select> 
+                        </td>
                     </tr>
                 ))}
             </tbody>
         </table>
     );
-
+const updateProcessus= async (idF, etat) => {
+    try {
+        //const token=localStorage.getItem("accessToken");
+        await axios.post(`http://localhost:3006/etat/add/${idF}`, { etat },
+       /* {headers: {
+            Authorization: `Bearer ${token}`
+        }}*/);
+        setEtat(prevState => ({ ...prevState, [idF]: etat }));
+    } catch (error) {
+        console.error('Error : ', error);
+    }
+};
     return (
         <div>
             <div>

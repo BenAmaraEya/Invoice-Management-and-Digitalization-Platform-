@@ -6,6 +6,7 @@ const Facture = require('../models/Facture');
 const pdfPoppler = require('pdf-poppler');
 const Bordereau =require('../models/Bordereau');
 const Pieces_jointe = require('../models/PiecesJointe');
+const Etat = require('../models/Etat');
 const { authenticateToken } = require('../utils/jwt');
 authorizeSupplier = authenticateToken(['fournisseur']);
 authorizePersonnelbof = authenticateToken(['bof']);
@@ -140,6 +141,7 @@ const factureController = {
         await facture.setBordereau(bordereau);
 
         const { idF } = facture;
+        await Etat.create({idF: idF });
         res.json({ success: true, facture: { ...facture.toJSON(), idF } });
         console.log('Facture saved successfully.');
     } catch (error) {
@@ -366,14 +368,10 @@ if(!facture){
   return res.status(404).json({ message: 'Facture not found' });
 }
 if(facture.status== 'Attente'){
-  const date = new Date();//a modifier
-  const jour = date.getDate().toString().padStart(2, '0'); // Obtient le jour du mois avec padding
-  const mois = (date.getMonth() + 1).toString().padStart(2, '0'); // Obtient le mois (janvier est 0) avec padding
-  const annee = date.getFullYear(); // Obtient l'année
-
-  const dateVerifi= `${jour}/${mois}/${annee}`;
+  const dateVerifi = new Date().toISOString().slice(0, 10);
   const validStatut = `courrier validé par BOF, date de vérification : ${dateVerifi}`;
 await Facture.update({ status: validStatut,}, { where: { idF } });
+await Etat.create({ etat:validStatut, idF: idF, date: dateVerifi });
 }
 else {
   console.log("Le courrier a déjà été examiné.")
@@ -388,14 +386,10 @@ validerFiscalité:[authorizePersonnelFiscaliste, async (req,res) =>{
   const facture = await Facture.findByPk(idF);
   if(!facture){
     return res.status(404).json({ message: 'Facture not found' });}
-    const date = new Date();
-    const jour = date.getDate().toString().padStart(2, '0'); 
-    const mois = (date.getMonth() + 1).toString().padStart(2, '0'); // Obtient le mois (janvier est 0) avec padding
-    const annee = date.getFullYear(); 
-  
-    const dateVerifi = `${jour}/${mois}/${annee}`;
+    const dateVerifi = new Date().toISOString().slice(0, 10);
   const validStatut = `courrier validé par Personnel fiscalité, date de vérification : ${dateVerifi}`;
   await Facture.update({ status: validStatut,}, { where: { idF } });
+  await Etat.create({ etat:validStatut, idF: idF, date: dateVerifi });
 } catch(error){
   res.status(500).json({ message: 'Internal server error' });
 }
@@ -406,14 +400,10 @@ validerBudget:[authorizeAgent,async (req,res) =>{
     const facture = await Facture.findByPk(idF);
     if(!facture){
       return res.status(404).json({ message: 'Facture not found' });}
-      const date = new Date();
-      const jour = date.getDate().toString().padStart(2, '0'); // Obtient le jour du mois avec padding
-      const mois = (date.getMonth() + 1).toString().padStart(2, '0'); // Obtient le mois (janvier est 0) avec padding
-      const annee = date.getFullYear(); // Obtient l'année
-    
-      const dateVerifi = `${jour}/${mois}/${annee}`;
+      const dateVerifi = new Date().toISOString().slice(0, 10);
     const validStatut = `courrier validé par Agent Trésorerie, date de vérification : ${dateVerifi}`;
     await Facture.update({ status: validStatut,}, { where: { idF } });
+    await Etat.create({ etat:validStatut, idF: idF, date: dateVerifi });
   } catch(error){
     res.status(500).json({ message: 'Internal server error' });
   }
@@ -430,13 +420,10 @@ validerBudget:[authorizeAgent,async (req,res) =>{
         }
     
         // Update the facture status with the rejection motif and verification date
-        const date = new Date();
-        const jour = date.getDate().toString().padStart(2, '0');
-        const mois = (date.getMonth() + 1).toString().padStart(2, '0');
-        const annee = date.getFullYear();
-        const dateVerifi = `${jour}/${mois}/${annee}`;
+        const dateVerifi = new Date().toISOString().slice(0, 10);
         const motifRejeteAvecDate = `${motifRejete}, date de vérification : ${dateVerifi}`;
         await facture.update({ status: motifRejeteAvecDate });
+        await Etat.create({ etat:motifRejete, idF: idF, date: dateVerifi });
         // Return a success message
         res.json({ message: 'Facture status updated successfully' });
       } catch (error) {

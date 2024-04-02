@@ -44,6 +44,7 @@ const ListFournisseur = () => {
             if (filteredResults.length === 0) {
                 alert("Aucun fournisseur trouvé avec cet nom.");
             }
+            console.log(searchResults);
         } catch (error) {
             console.error('Error fetching search results by name:', error);
         }
@@ -55,36 +56,18 @@ const ListFournisseur = () => {
             console.log("Search by iderp response:", response.data); // Log response data for debugging
             if (response.data) {
                 // Update the factures state with the filtered facture data
-                setSearchResultsIderp([response.data]);
+                setSearchResultsIderp([response.data.User]);
             }
             if (response.data.length === 0) {
                 alert("Aucun fournisseur trouvé avec cet iderp.");
             }
+            console.log(response.data.User);
         } catch (error) {
             console.error('Error fetching search results by iderp:', error);
         }
     };
-    return (
-        <div>
-                  <input
-                type="text"
-                value={searchNameTerm}
-                onChange={(e) => setSearchNameTerm(e.target.value)}
-                placeholder="Rechercher par nom..."
-            />
-            <button onClick={searchByName}>Rechercher</button>
-            <input
-                type="number"
-                value={searchIderpTerm}
-                onChange={(e) => setSearchIderpTerm(e.target.value)}
-                placeholder="Rechercher par iderp..."
-            />
-            <button onClick={searchByIderp}>Rechercher par identifiant</button>
-            <h2>Liste des Fournisseurs</h2>
-            {loading ? (
-                <p>Loading...</p>
-            ) : (
-                <table>
+const renderSupplierTable = (data) => (
+<table>
                     <thead>
                         <tr>
                             <th>Nom</th>
@@ -94,11 +77,21 @@ const ListFournisseur = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {fournisseurs.map(fournisseur => (
-                            <tr key={fournisseur.iderp} style={{ backgroundColor: fournisseur.status && fournisseur.status.NBFAttente > 0 ? '#ADD8E6' : 'inherit' }}>
-                                <td>{fournisseur.User && fournisseur.User.name}</td>
-                                <td>{fournisseur.User && fournisseur.User.email}</td>
-                                <td>{fournisseur.User && fournisseur.User.phone}</td>
+                    {data.map(fournisseur => (
+                    <tr key={fournisseur.iderp} style={{ backgroundColor: fournisseur.status && fournisseur.status.NBFAttente > 0 ? '#ADD8E6' : 'inherit' }}>
+                        {fournisseur.User ? (
+                            <>
+                                <td>{fournisseur.User.name}</td>
+                                <td>{fournisseur.User.email}</td>
+                                <td>{fournisseur.User.phone}</td>
+                            </>
+                        ) : (
+                            <>
+                                <td>{fournisseur.name}</td>
+                                <td>{fournisseur.email}</td>
+                                <td>{fournisseur.phone}</td>
+                            </>
+                        )}
                                 <td>
                                     <Link
                                         to={
@@ -119,6 +112,42 @@ const ListFournisseur = () => {
                         ))}
                     </tbody>
                 </table>
+);
+    return (
+        <div>
+                  <input
+                type="text"
+                value={searchNameTerm}
+                onChange={(e) => setSearchNameTerm(e.target.value)}
+                placeholder="Rechercher par nom..."
+            />
+            <button onClick={searchByName}>Rechercher</button>
+            <input
+                type="number"
+                value={searchIderpTerm}
+                onChange={(e) => setSearchIderpTerm(e.target.value)}
+                placeholder="Rechercher par iderp..."
+            />
+            <button onClick={searchByIderp}>Rechercher par identifiant</button>
+            {searchResults.length > 0 && (
+                    <div>
+                        <h3>Résultats de la recherche</h3>
+                        {renderSupplierTable(searchResults)}
+                    </div>
+                )}
+                   {searchResultsIderp.length > 0 && (
+                    <div>
+                        <h3>Résultats de la recherche</h3>
+                        {renderSupplierTable(searchResultsIderp)}
+                    </div>
+                )
+                }
+                 {!searchResults.length > 0 && !searchResultsIderp.length >0 && (
+                     <div>
+            <h2>Liste des Fournisseurs</h2>
+           
+            {renderSupplierTable(fournisseurs)}
+            </div>
             )}
         </div>
     );

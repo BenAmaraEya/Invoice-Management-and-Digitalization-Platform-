@@ -49,6 +49,9 @@ function ListUser() {
             const response = await axios.get(`http://localhost:3006/user/recherche/parnom?name=${searchTerm}`);
             const filteredResults = response.data.filter(user => user.profil !== "fournisseur");
             setSearchResults(filteredResults);
+            if(filteredResults ==''){
+                alert("Aucun personnel trouvé avec ce nom.");
+            }
             console.log(filteredResults);
         } catch (error) {
             setError(error);
@@ -56,20 +59,8 @@ function ListUser() {
         }
     };
     const filteredList = searchResults.length > 0 ? searchResults : user;
-    return (
-        <div>
-           <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Rechercher par nom..."
-            />
-            <button onClick={SearchName}>Rechercher</button>
-            {/* Rendu des résultats de recherche */}
-            {searchResults.length > 0 && (
-                <div>
-                    <h3>Résultats de la recherche</h3>
-                    <table>
+   const renderUserTable = (user) => (
+<table>
                         <thead>
                             <tr>
                                 <th>Nom</th>
@@ -82,58 +73,7 @@ function ListUser() {
                             </tr>
                         </thead>
                         <tbody>
-                            {searchResults.map((data, i) => (
-                                <tr key={i}>
-                                    <td>{data.name}</td>
-                                    <td>{data.username}</td>
-                                    <td>{data.email}</td>
-                                    <td>
-                                        {data.isActive ? (
-                                            <div>
-                                                <i className="fas fa-check-circle"></i> Connecté
-                                            </div>
-                                        ) : (
-                                            <div>
-                                                <i className="fas fa-times-circle"></i> Déconnecté
-                                            </div>
-                                        )}
-                                    </td>
-                                    <td>{data.last_login}</td>
-                                    <td>{data.phone}</td>
-                                    <td>
-                                        <button>
-                                            <Link className="update-link" to={`../updateUser/${data.id}`}>Modifier</Link>
-                                        </button>
-                                        <button onClick={() => DeleteUser(data.id)} className="delete-button">Supprimer</button>
-                                        <button className="access-button" onClick={() => Acesse(data.id)}>Accès</button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
-              {!searchResults.length > 0 && (
-                <div>
-<Link to="/addUser" className="add-user-link">Ajouter Utilisateur</Link>   
-             
-            <h3 className="list-fournisseur">Liste BOF</h3>    
-     <table>
-    
-                <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Active</th>
-                        <th>dernière connexion</th>
-                        <th>Télephone</th>
-                        
-                        <th>actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {user.map((data, i) => (
+                        {user.map((data, i) => (
     data.profil === "bof" && (
         <tr key={i}>
             <td>{data.name}</td>
@@ -161,9 +101,31 @@ function ListUser() {
         </tr>
     )
 ))}
-
-                </tbody>
-            </table>
+                        </tbody>
+                    </table>
+   );
+    return (
+        <div>
+           <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Rechercher par nom..."
+            />
+            <button onClick={SearchName}>Rechercher</button>
+            {/* Rendu des résultats de recherche */}
+            {searchResults.length > 0 && (
+                <div>
+                    <h3>Résultats de la recherche</h3>
+                    {renderUserTable(searchResults)}
+                </div>
+            )}
+              {!searchResults.length > 0 && (
+                <div>
+<Link to="/addUser" className="add-user-link">Ajouter Utilisateur</Link>   
+             
+            <h3 className="list-fournisseur">Liste BOF</h3>    
+            {renderUserTable(user)}
             </div>
             )}
         </div>
