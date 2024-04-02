@@ -54,9 +54,10 @@ const ListFournisseur = () => {
         try {
             const response = await axios.get(`http://localhost:3006/fournisseur/recherche/ParIdentifiant?iderp=${searchIderpTerm}`);
             console.log("Search by iderp response:", response.data); // Log response data for debugging
-            if (response.data) {
-                // Update the factures state with the filtered facture data
-                setSearchResultsIderp([response.data.User]);
+            if (response.data.length > 0) {
+                const userData = response.data[0].User; // Accéder aux données de l'utilisateur du premier fournisseur trouvé
+                setSearchResultsIderp(userData);
+                console.log(userData); // Assurez-vous que les données de l'utilisateur sont correctement renvoyées ici
             }
             if (response.data.length === 0) {
                 alert("Aucun fournisseur trouvé avec cet iderp.");
@@ -78,7 +79,7 @@ const renderSupplierTable = (data) => (
                     </thead>
                     <tbody>
                     {data.map(fournisseur => (
-                    <tr key={fournisseur.iderp} style={{ backgroundColor: fournisseur.status && fournisseur.status.NBFAttente > 0 ? '#ADD8E6' : 'inherit' }}>
+                    <tr key={fournisseur.iderp}>
                         {fournisseur.User ? (
                             <>
                                 <td>{fournisseur.User.name}</td>
@@ -135,13 +136,12 @@ const renderSupplierTable = (data) => (
                         {renderSupplierTable(searchResults)}
                     </div>
                 )}
-                   {searchResultsIderp.length > 0 && (
-                    <div>
-                        <h3>Résultats de la recherche</h3>
-                        {renderSupplierTable(searchResultsIderp)}
-                    </div>
-                )
-                }
+                            {searchResultsIderp && Object.keys(searchResultsIderp).length > 0 && (
+    <div>
+        <h3>Résultats de la recherche par iderp</h3>
+        {renderSupplierTable([searchResultsIderp])} 
+    </div>
+)}
                  {!searchResults.length > 0 && !searchResultsIderp.length >0 && (
                      <div>
             <h2>Liste des Fournisseurs</h2>

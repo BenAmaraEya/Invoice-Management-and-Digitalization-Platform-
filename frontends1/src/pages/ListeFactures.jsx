@@ -158,9 +158,11 @@ const ListeFactures = () => {
                                 <button className='delete-btn' onClick={() => deleteFacture(facture.iderp, facture.idF)}>
                                     <FaTrash />
                                 </button>
-                                <Link to={`/updatefacture/${facture.idF}`}>
-                                    <Button className='update-facture'>Update</Button>
-                                </Link>
+                                 {facture.status === 'Attente' && (
+        <Link to={`/updatefacture/${facture.idF}`}>
+          <Button className='update-facture'>Update</Button>
+        </Link>
+      )}
                             </td>
                             <td>
                                 <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>

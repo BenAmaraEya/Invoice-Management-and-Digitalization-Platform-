@@ -33,7 +33,7 @@ const archiveController = {
           }
 
           const oldPath = path.join(__dirname, '..', facture.pathpdf);
-          const newPath = path.join(archiveDir, `${facture.id}.pdf`);
+          const newPath = path.join(archiveDir, `${facture.name}.pdf`);
           fs.renameSync(oldPath, newPath);
         }
       }

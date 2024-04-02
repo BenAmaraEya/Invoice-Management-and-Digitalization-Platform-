@@ -153,28 +153,30 @@ function ListUser() {
                 placeholder="Rechercher par iderp..."
             />
             <button onClick={searchByIderp}>Rechercher par identifiant</button>
-<p>{searchResultsIderp.name}</p>
             {/* Rendu des résultats de recherche */}
-            {searchResultsIderp.length > 0 && (
-                <div>
-                    <h3>Résultats de la recherche</h3>
-                    {renderSupplierTable(searchResultsIderp)}
-                </div>
-            )}
+            {searchResultsIderp && Object.keys(searchResultsIderp).length > 0 && (
+    <div>
+        <h3>Résultats de la recherche par iderp</h3>
+        {renderSupplierTable([searchResultsIderp])} 
+    </div>
+)}
             {searchResults.length > 0 && (
                 <div>
-                    <h3>Résultats de la recherche</h3>
+                    <h3>Résultats de la recherche par nom</h3>
                     {renderSupplierTable(searchResults)}
                 </div>
             )}
 
-            
-
-            {!searchResults.length > 0 && !searchResultsIderp.length > 0 && fournisseur.length > 0 && (
+            {!searchResults.length > 0 && fournisseur.length > 0 && (
                 <div>
                     <Link to="/addUser" className="add-user-link">Ajouter Fournisseur</Link>   
                     <h3 className="list-fournisseur">Liste Fournisseurs</h3>    
                     {renderSupplierTable(fournisseur)}
+                </div>
+            )}
+               {searchResults.length == 0 && !fournisseur.length > 0  &&(
+                <div>
+                    <h3 className="list-fournisseur">Liste vide</h3>    
                 </div>
             )}
         </div>

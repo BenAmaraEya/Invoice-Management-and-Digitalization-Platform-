@@ -141,7 +141,7 @@ const factureController = {
         await facture.setBordereau(bordereau);
 
         const { idF } = facture;
-        await Etat.create({idF: idF });
+        await Etat.create({idF: idF,date:new Date() });
         res.json({ success: true, facture: { ...facture.toJSON(), idF } });
         console.log('Facture saved successfully.');
     } catch (error) {
@@ -312,16 +312,16 @@ viewFacturePDF: async (req, res) => {
     }
     const { pathpdf: newFilePath, ...factureData } = req.body;
 
-    if (facture.status === 'Attente') {
+  
         const oldFilePath = facture.pathpdf; 
 
       // Mettre à jour les autres données de la facture
-      await Facture.update({ pathpdf: newFilePath, ...factureData }, { where: { idF } }); 
+      await Facture.update({ pathpdf: newFilePath,status: "Attente", ...factureData }, { where: { idF } }); 
 
       if (newFilePath !== oldFilePath) {
         fs.unlinkSync(oldFilePath); // Supprimez l'ancien fichier PDF
       }
-}
+
     res.json({ message: 'Facture updated successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -500,7 +500,7 @@ rechercheFacture: async (req, res) => {
 // Fonction pour extraire les information de l'ORC
 function extractInfoFromOCR(text) {
     
-    const num_factRegex = /(?:N°\s*facture|Numéro\s*facture|Facture\s*N°)\s*(\d+)/i;
+  const num_factRegex = /(?:N°\s*facture|Numéro\s*facture|Facture\s*N°|N°\s*facture|Numéro\s*de\s*facture)\s*(\d+)/i;
     const dateFactRegex = /(?:Date\s*:\s*|Date\s*de\s*facture\s*:\s*)(\w+)/i;
     const montantRegex = /(?:Montant\s*Total\s*TTC\s*|Montant\s*:\s*)(\d+(\.\d{1,2})?)/i;
   

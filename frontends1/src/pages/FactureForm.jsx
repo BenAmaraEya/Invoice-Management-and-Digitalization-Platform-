@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useLocation, useParams,Link } from 'react-router-dom';
+import { useLocation, useParams,Link, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, FormGroup, Button } from "reactstrap";
 
 import '../styles/factureform.css';
 
 function FactureForm() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { iderp ,nature} = useParams();
   const id = localStorage.getItem("userId");
   const [formData, setFormData] = useState({
@@ -138,7 +139,7 @@ function FactureForm() {
     console.log('Piece joint added successfully.');
     alert('Piece joint added successfully.');
 
-
+navigate(`/factures/${id}`);
     } catch (error) {
       console.error('Error submitting form:', error);
     }

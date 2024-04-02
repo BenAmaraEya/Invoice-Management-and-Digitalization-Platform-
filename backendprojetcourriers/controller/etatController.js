@@ -1,5 +1,6 @@
 const Facture = require('../models/Facture');
 const Etat = require('../models/Etat');
+const archiveController = require('../controller/archiveControlleur');
 const etatController ={
     add: async (req,res) =>{
         try {
@@ -13,6 +14,9 @@ const etatController ={
                
             const etats = await Etat.create({ etat, idF: idF, date: new Date });
             res.status(201).json(etats);
+            if (etat === 'cloture') {
+              await archiveController.archiver(req, res);
+            }
           } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Erreur lors de la création de la Etat' });
