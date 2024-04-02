@@ -63,20 +63,20 @@ function ListUser() {
     const searchByIderp = async () => {
         try {
             const response = await axios.get(`http://localhost:3006/fournisseur/recherche/ParIdentifiant?iderp=${searchIderpTerm}`);
-            if (response.data.User) {
-                setSearchResultsIderp(response.data.User);
-                console.log(response.data.User); // Assurez-vous que les données sont correctement renvoyées ici
-            }
-            if (response.data.length === 0) {
+            if (response.data.length > 0) {
+                const userData = response.data[0].User; // Accéder aux données de l'utilisateur du premier fournisseur trouvé
+                setSearchResultsIderp(userData);
+                console.log(userData); // Assurez-vous que les données de l'utilisateur sont correctement renvoyées ici
+            } else {
                 alert("Aucun fournisseur trouvé avec cet iderp.");
             }
             console.log(response.data);
-            console.log(response.data.User);
         } catch (error) {
             setError(error);
             console.error('Error fetching search results:', error);
         }
     };
+    
 
     const filteredList = searchResults.length > 0 ? searchResults : fournisseur;
 
@@ -153,8 +153,14 @@ function ListUser() {
                 placeholder="Rechercher par iderp..."
             />
             <button onClick={searchByIderp}>Rechercher par identifiant</button>
-
+<p>{searchResultsIderp.name}</p>
             {/* Rendu des résultats de recherche */}
+            {searchResultsIderp.length > 0 && (
+                <div>
+                    <h3>Résultats de la recherche</h3>
+                    {renderSupplierTable(searchResultsIderp)}
+                </div>
+            )}
             {searchResults.length > 0 && (
                 <div>
                     <h3>Résultats de la recherche</h3>
@@ -162,12 +168,7 @@ function ListUser() {
                 </div>
             )}
 
-            {searchResultsIderp.length > 0 && (
-                <div>
-                    <h3>Résultats de la recherche</h3>
-                    {renderSupplierTable(searchResultsIderp)}
-                </div>
-            )}
+            
 
             {!searchResults.length > 0 && !searchResultsIderp.length > 0 && fournisseur.length > 0 && (
                 <div>

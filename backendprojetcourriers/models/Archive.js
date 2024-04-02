@@ -18,5 +18,6 @@ const Archive = sequelize.define('Archive', {
     }
    
   });
+Archive.hasMany(Facture, {foreignKey: 'id',onDelete: 'CASCADE' });
 
   module.exports = Archive;
