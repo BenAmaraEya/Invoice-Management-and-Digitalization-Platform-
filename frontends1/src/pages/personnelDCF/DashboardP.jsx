@@ -14,34 +14,52 @@ const DashboardP = () => {
     const userProfile = localStorage.getItem("userProfil");
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const factureStatsResponse = await axios.get('http://localhost:3006/facture/stat/all');
-                const reclamationsResponse = await axios.get('http://localhost:3006/reclamation');
-
-                setFactureStats(factureStatsResponse.data);
-
-              
-                        const fournisseurResponse = await axios.get('http://localhost:3006/fournisseur/');
-                       
-                       setFournisseur(fournisseurResponse.data)
-
-                   
-
-                setReclamations(reclamationsResponse.data);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                setLoading(false);
-            }
-        };
-
         fetchData();
     }, []);
 
-    const sendEmail = (email) => {
-        const subject = encodeURIComponent('Réponse de réclamation');
-        window.location.href = `mailto:${email}?subject=${subject}`;
+    const fetchData = async () => {
+        try {
+            const [factureStatsResponse, reclamationsResponse, fournisseurResponse] = await Promise.all([
+                axios.get('http://localhost:3006/facture/stat/all'),
+                axios.get('http://localhost:3006/reclamation'),
+                axios.get('http://localhost:3006/fournisseur/')
+            ]);
+            setFactureStats(factureStatsResponse.data);
+            setFournisseur(fournisseurResponse.data);
+            setReclamations(reclamationsResponse.data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setLoading(false);
+        }
+    };
+
+    const sendEmailAndDeleteReclamation = async (email, reclamationId) => {
+        try {
+            const subject = encodeURIComponent('Réponse de réclamation');
+            window.location.href = `mailto:${email}?subject=${subject}`;
+            
+            const confirmationResult = window.confirm('Confirmez-vous que vous avez envoyé le mail?');
+        
+            if (confirmationResult) {
+                deleteReclamation(reclamationId);
+            } else {
+                console.log('Operation canceled');
+            }
+            
+           
+        } catch (error) {
+            console.error('Error sending email and deleting reclamation:', error);
+        }
+    };
+
+    const deleteReclamation = async (reclamationId) => {
+        try {
+            await axios.delete(`http://localhost:3006/reclamation/${reclamationId}`);
+            setReclamations(reclamations.filter(reclamation => reclamation.id !== reclamationId));
+        } catch (error) {
+            console.error('Error deleting reclamation:', error);
+        }
     };
 
     return (
@@ -60,7 +78,7 @@ const DashboardP = () => {
                     <p>{factureStats.nbFactureMoisEnCours}</p>
                 </div>
             </div>
-            {userProfile === "bof" && ( // Render the section only for bof users
+            {userProfile === "bof" && (
                 <div>
                     <h3>Liste des Réclamations</h3>
                     {loading ? (
@@ -75,24 +93,19 @@ const DashboardP = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                            {reclamations.map((reclamation) => (
-    <tr key={reclamation.id}>
-        <td>{reclamation.contenu}</td>
-        <td>{reclamation.iderp}</td>
-        <td>
-            {fournisseur.map((fournisseurItem) => {
-                console.log(fournisseurItem.User)
-                if (fournisseurItem.iderp === reclamation.iderp && fournisseurItem.User) {
-                    return (
-                        <button key={fournisseurItem.id} onClick={() => sendEmail(fournisseurItem.User.email)}>Répondre</button>
-                    );
-                }
-                return null;
-            })}
-        </td>
-    </tr>
-))}
-                              
+                                {reclamations.map((reclamation) => (
+                                    <tr key={reclamation.id}>
+                                        <td>{reclamation.contenu}</td>
+                                        <td>{reclamation.iderp}</td>
+                                        <td>
+                                            {fournisseur.map((fournisseurItem) => (
+                                                fournisseurItem.iderp === reclamation.iderp && fournisseurItem.User ? (
+                                                    <button key={fournisseurItem.id} onClick={() => sendEmailAndDeleteReclamation(fournisseurItem.User.email, reclamation.id)}>Répondre</button>
+                                                ) : null
+                                            ))}
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     )}

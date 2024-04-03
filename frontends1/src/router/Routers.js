@@ -24,6 +24,8 @@ import ListeFacturesFiscalité from "../pages/personnelDCF/listCourriersFiscalit
 import ListeFacturesTresorerie from "../pages/personnelDCF/listCourriersTresorerie";
 import ListSupplier from "../pages/ListSupplier";
 import ReclamationForm from "../pages/reclamation";
+import ReclamationDetails from "../pages/personnelDCF/reclamationbyid";
+import ReclamationList from "../pages/ListReclamation";
 const Routers = () => {
     return (
         <Routes>
@@ -53,6 +55,8 @@ const Routers = () => {
             <Route path="/listcourriersfiscal/:iderp" element={<ListeFacturesFiscalité/>}/>
             <Route path="/listcourrierstresorerie/:iderp" element={<ListeFacturesTresorerie/>}/>
             <Route path ="/reclamation/:id"element={<ReclamationForm/>}/>
+            <Route path ="/reclam/:id"element={<ReclamationDetails/>}/>
+            <Route path ="/listreclamation/:id"element={<ReclamationList/>}/>
         </Routes>
     );
 };

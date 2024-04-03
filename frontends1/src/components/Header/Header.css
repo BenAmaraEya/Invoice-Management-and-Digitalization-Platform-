@@ -74,7 +74,25 @@
   padding: 10px;
   z-index: 1;
 }
+.notification-badge-container {
+  position: absolute;
+bottom:34px;
+  left: 45px;
+  display: inline-block;
 
+}
+.notif-icon {
+  
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px !important;
+}
 .dropdown-item {
   display: flex;
   align-items: center;
@@ -100,6 +118,7 @@
   text-decoration: none;
   padding: 10px 15px;
   border-radius: 5px;
+  position: relative;
 }
 .dropdown-btn:hover{
   background-color: #0041a8;
