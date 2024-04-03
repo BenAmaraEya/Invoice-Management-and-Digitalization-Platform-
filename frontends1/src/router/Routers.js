@@ -26,6 +26,8 @@ import ListSupplier from "../pages/ListSupplier";
 import ReclamationForm from "../pages/reclamation";
 import ReclamationDetails from "../pages/personnelDCF/reclamationbyid";
 import ReclamationList from "../pages/ListReclamation";
+import ArchiveList from "../pages/personnelDCF/Archive";
+import DetailFacture from "../pages/personnelDCF/DetailFacture";
 const Routers = () => {
     return (
         <Routes>
@@ -57,6 +59,10 @@ const Routers = () => {
             <Route path ="/reclamation/:id"element={<ReclamationForm/>}/>
             <Route path ="/reclam/:id"element={<ReclamationDetails/>}/>
             <Route path ="/listreclamation/:id"element={<ReclamationList/>}/>
+            <Route path ="/listArchive"element={<ArchiveList/>}/>
+            <Route path ="/detailsFacture/:idF"element={<DetailFacture/>}/>
+
+
         </Routes>
     );
 };

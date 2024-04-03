@@ -91,6 +91,18 @@ getArchiveByYear: async (req, res) => {
       res.status(500).send('Erreur lors de l\'accès des factures archivées.');
     }
   },
+  getArchive: async (req, res) => {
+    try {
+      const archive = await Archive.findAll({
+        include: { model: Facture }, 
+      });
+      res.json(archive);
+    } catch (error) {
+      console.error('Erreur lors de l\'accès des factures archivées :', error);
+      res.status(500).send('Erreur lors de l\'accès des factures archivées.');
+    }
+  },
+
 };
 
 module.exports = archiveController;

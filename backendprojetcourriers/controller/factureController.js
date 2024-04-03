@@ -189,7 +189,7 @@ const factureController = {
   getFactureById: async (req, res) => {
     try {
       const { idF } = req.params;
-      const facture = await Facture.findOne({ where: { idF: idF }, include: { model: Pieces_jointe, as: 'Pieces_jointes' } });
+      const facture = await Facture.findOne({ where: { idF: idF }, include: [{ model: Pieces_jointe, as: 'Pieces_jointes'} , {model:Etat}] });
 
       if (!facture) {
         return res.status(404).json({ message: 'Facture not found' });
