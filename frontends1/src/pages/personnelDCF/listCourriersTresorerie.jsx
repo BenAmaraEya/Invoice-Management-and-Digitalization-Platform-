@@ -5,11 +5,10 @@ import { FaTrash } from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import '../../styles/listefacture.css';
-import { faC } from '@fortawesome/free-solid-svg-icons';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const ListeFacturesTresorerie = () => {
+const ListeFacturesFiscalité = () => {
     const [pdfPath, setPdfPath] = useState(null);
     const [motifRejete, setMotifRejete] = useState(''); 
     const [motifsRejete, setMotifsRejete] = useState({});
@@ -21,11 +20,16 @@ const ListeFacturesTresorerie = () => {
     const [searchDateTerm, setSearchDateTerm] = useState('');
     const [searchResultsDate, setSearchResultsDate] = useState([]);
     const [searchParams, setSearchParams] = useState({ num_fact: '', datereception: '' });
+
     useEffect(() => {
         const fetchFactures = async () => {
             try {
                 const response = await axios.get(`http://localhost:3006/facture`);
-                setFactures(response.data.factures);
+                if (response.data && response.data.factures) {
+                    setFactures(response.data.factures);
+                } else {
+                    console.error('Invalid response from server:', response);
+                }
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching factures:', error);
@@ -34,7 +38,7 @@ const ListeFacturesTresorerie = () => {
         };
 
         fetchFactures();
-    },);
+    }, []);
 
     const viewFacturePDF = async (pathpdf) => {
         try {
@@ -49,15 +53,13 @@ const ListeFacturesTresorerie = () => {
         }
     };
 
-    const validerTresorerie = async (idF) => {
+    const validerFiscalité = async (idF) => {
         try {
-            const token=localStorage.getItem("accessToken");
-            await axios.put(`http://localhost:3006/facture/validerTresorerie/${idF}`,null,
-            {
+            const token = localStorage.getItem("accessToken");
+            await axios.put(`http://localhost:3006/facture/validerfiscalite/${idF}`, null, {
                 headers: {
-         
                     Authorization: `Bearer ${token}`
-                  }
+                }
             });
             window.location.href = window.location.href;
         } catch (error) {
@@ -67,27 +69,35 @@ const ListeFacturesTresorerie = () => {
 
     const rejeteDocument = async (idF, motifRejete) => {
         try {
-            const token=localStorage.getItem("accessToken");
-            await axios.put(`http://localhost:3006/facture/rejeteCourrier/${idF}`, { motifRejete} ,{
-            headers: {
-         
-                Authorization: `Bearer ${token}`
-           }});
+            const token = localStorage.getItem("accessToken");
+            await axios.put(`http://localhost:3006/facture/rejeteCourrier/${idF}`, { motifRejete }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             setMotifsRejete(prevState => ({ ...prevState, [idF]: motifRejete }));
             window.location.reload();
         } catch (error) {
             console.error('Error rejete document: ', error);
         }
     };
+
     const rechercheFacture = async () => {
         try {
+            console.log("Search Parameters:", searchParams); // Log the search parameters
             const response = await axios.get('http://localhost:3006/facture/recherche/ParDATEetNUM', {
-                params: searchParams
+                params: {
+                    ...searchParams,
+                    status: ['courrier validé par Personnel fiscalité', 'courrier validé par Agent Trésorerie', 'Facture sans TVA', 'Montant facture non comforme']
+                }
             });
+            console.log("Server Response:", response); // Log the server response
             // Handle the response data here, update state accordingly
             if (response.data) {
-                // Update the factures state with the filtered facture data
+                // Update the factures state with the facture data from the response
                 setFactures([response.data]);
+            } else {
+                console.error('Invalid response from server:', response);
             }
         } catch (error) {
             console.error('Error searching for facture:', error);
@@ -101,56 +111,67 @@ const ListeFacturesTresorerie = () => {
             [name]: value
         }));
     };
-    const renderFactureTable = (factures) => (
-        <table>
-            <thead>
-                <tr>
-                    <th>Facture ID</th>
-                    <th>Numéro Facture</th>
-                    <th>Facture Name</th>
-                    <th>Montant</th>
-                    <th>Status</th>
-                    <th>Numéro PO</th>
-                    <th>Date Facture</th>
-                    <th>PDF</th>
-                    <th>valider</th>
-                    <th>Rejete</th>
-                </tr>
-            </thead>
-            <tbody>
-            {factures
-        .filter(facture => facture.status.includes('courrier validé par BOF') || facture.status.includes('courrier validé par Personnel fiscalité')|| facture.status.includes('Id Fiscale Invalide') || facture.status.includes('Manque')
-        ).map((facture) => (
-                    <tr key={facture.idF}>
-                        <td>{facture.idF}</td>
-                        <td>{facture.num_fact}</td>
-                        <td>{facture.factname}</td>
-                        <td>{facture.montant}</td>
-                        <td>{facture.status}</td>
-                        <td>{facture.num_po}</td>
-                        <td>{facture.date_fact}</td>
-                        <td>
-                            <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
-                        </td>
-                        <td>
-                            <button className='btn' onClick={() => validerTresorerie(facture.idF)}>valider</button>
-                        </td>
-                        <td>
+
+    const renderFactureTable = (factures) => {
+        // Ensure factures is an array before filtering
+        const facturesArray = Array.isArray(factures) ? factures : [];
+
+        return (
+            <table>
+                <thead>
+                    <tr>
+                        <th>Facture ID</th>
+                        <th>Numéro Facture</th>
+                        <th>Facture Name</th>
+                        <th>Montant</th>
+                        <th>Status</th>
+                        <th>Numéro PO</th>
+                        <th>Date Facture</th>
+                        <th>PDF</th>
+                        <th>valider</th>
+                        <th>Rejete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                    {facturesArray
+                        .filter(facture =>  facture.status.includes('courrier validé par Personnel fiscalité')|| facture.status.includes('courrier validé par Agent Trésorerie') 
+                        || facture.status.includes('Facture sans TVA')
+                        ||facture.status.includes('Montant facture non comforme'))
+                        .map((facture) => (
+                            <tr key={facture.idF}>
+                               <td>{facture.idF}</td>
+                <td>{facture.num_fact}</td>
+                <td>{facture.factname}</td>
+                <td>{facture.montant}</td>
+                <td>{facture.status}</td>
+                <td>{facture.num_po}</td>
+                <td>{facture.date_fact}</td>
+                <td>
+                    <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
+                </td>
+                <td>
+                    <button className='btn' onClick={() => validerFiscalité(facture.idF)}>valider</button>
+                </td>
+                <td>
                     <select 
                         name="status" 
                         value={motifsRejete[facture.idF] || ''} 
                         onChange={(e) => rejeteDocument(facture.idF, e.target.value)}>
                         <option value="">Choisir motif de rejet</option>
-                        <option value="Facture sans TVA">Facture sans TVA</option>
-                        <option value="Montant facture non comforme">Montant facture non comforme</option>
-                        
+                        <option value="Id Fiscale Invalide">Id Fiscale Invalide </option>
+                        <option value="Manque BL">Manque BL</option>
+                        <option value="Manque fiche de présences">Manque fiche de présences</option>
+                        <option value="Manque copie du PO">Manque copie du PO</option>
                     </select>
                 </td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
-    );
+                            </tr>
+                        ))}
+                </tbody>
+            </table>
+        );
+    };
+
     return (
         <div>
             <div>
@@ -184,4 +205,4 @@ const ListeFacturesTresorerie = () => {
     );
 };
 
-export default ListeFacturesTresorerie;
+export default ListeFacturesFiscalité;

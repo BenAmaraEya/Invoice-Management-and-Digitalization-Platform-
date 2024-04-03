@@ -8,9 +8,10 @@ const DashboardP = () => {
         nbFactureRecuHier: 0,
         nbFactureMoisEnCours: 0
     });
-
+    const [fournisseur, setFournisseur] = useState([]);
     const [reclamations, setReclamations] = useState([]);
     const [loading, setLoading] = useState(true);
+    const userProfile = localStorage.getItem("userProfil");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -20,19 +21,14 @@ const DashboardP = () => {
 
                 setFactureStats(factureStatsResponse.data);
 
-                const reclamationsWithUserData = await Promise.all(reclamationsResponse.data.map(async reclamation => {
-                    try {
-                        const fournisseurResponse = await axios.get(`http://localhost:3006/fournisseur/${reclamation.fournisseurId}`);
-                        const userResponse = await axios.get(`http://localhost:3006/user/`);
-                        const fournisseurWithUser = { ...fournisseurResponse.data, user: userResponse.data };
-                        return { ...reclamation, fournisseur: fournisseurWithUser };
-                    } catch (error) {
-                        console.error('Error fetching user for fournisseur:', reclamation.fournisseurId, error);
-                        return reclamation;
-                    }
-                }));
+              
+                        const fournisseurResponse = await axios.get('http://localhost:3006/fournisseur/');
+                       
+                       setFournisseur(fournisseurResponse.data)
 
-                setReclamations(reclamationsWithUserData);
+                   
+
+                setReclamations(reclamationsResponse.data);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -44,7 +40,8 @@ const DashboardP = () => {
     }, []);
 
     const sendEmail = (email) => {
-        window.location.href = `mailto:${email}?subject=reponse de reclamation`;
+        const subject = encodeURIComponent('Réponse de réclamation');
+        window.location.href = `mailto:${email}?subject=${subject}`;
     };
 
     return (
@@ -63,35 +60,44 @@ const DashboardP = () => {
                     <p>{factureStats.nbFactureMoisEnCours}</p>
                 </div>
             </div>
-            <div>
-                <h3>Liste des Réclamations</h3>
-                {loading ? (
-                    <p>Loading...</p>
-                ) : (
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Contenu de la Réclamation</th>
-                                <th>id fournisseur</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {reclamations.map((reclamation) => (
-                                <tr key={reclamation.id}>
-                                    <td>{reclamation.contenu}</td>
-                                    <td>{reclamation.iderp}</td>
-                                    <td>
-                                        {reclamation.fournisseur && reclamation.fournisseur.user && (
-                                            <button onClick={() => sendEmail(reclamation.fournisseur.user.email)}>Répondre</button>
-                                        )}
-                                    </td>
+            {userProfile === "bof" && ( // Render the section only for bof users
+                <div>
+                    <h3>Liste des Réclamations</h3>
+                    {loading ? (
+                        <p>Loading...</p>
+                    ) : (
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Contenu de la Réclamation</th>
+                                    <th>id fournisseur</th>
+                                    <th>Action</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                )}
-            </div>
+                            </thead>
+                            <tbody>
+                            {reclamations.map((reclamation) => (
+    <tr key={reclamation.id}>
+        <td>{reclamation.contenu}</td>
+        <td>{reclamation.iderp}</td>
+        <td>
+            {fournisseur.map((fournisseurItem) => {
+                console.log(fournisseurItem.User)
+                if (fournisseurItem.iderp === reclamation.iderp && fournisseurItem.User) {
+                    return (
+                        <button key={fournisseurItem.id} onClick={() => sendEmail(fournisseurItem.User.email)}>Répondre</button>
+                    );
+                }
+                return null;
+            })}
+        </td>
+    </tr>
+))}
+                              
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

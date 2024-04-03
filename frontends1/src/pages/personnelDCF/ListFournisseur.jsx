@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 const ListFournisseur = () => {
     const [fournisseurs, setFournisseurs] = useState([]);
@@ -9,6 +9,9 @@ const ListFournisseur = () => {
     const [searchIderpTerm, setSearchIderpTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [searchResultsIderp, setSearchResultsIderp] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [iderp,setiderp]=useState([]);
+    
     const userProfile = localStorage.getItem("userProfil");
 
     useEffect(() => {
@@ -34,6 +37,7 @@ const ListFournisseur = () => {
 
         fetchFournisseurs();
     }, []);
+
     const searchByName = async () => {
         try {
             const response = await axios.get(`http://localhost:3006/user/recherche/parnom?name=${searchNameTerm}`);
@@ -41,113 +45,100 @@ const ListFournisseur = () => {
             const filteredResults = response.data.filter(user => user.profil === "fournisseur");
             console.log("Filtered results by name:", filteredResults); // Log filtered results for debugging
             setSearchResults(filteredResults);
+           
             if (filteredResults.length === 0) {
                 alert("Aucun fournisseur trouvé avec cet nom.");
             }
-            console.log(searchResults);
+            
         } catch (error) {
             console.error('Error fetching search results by name:', error);
         }
     };
-    
+
     const searchByIderp = async () => {
         try {
-            const response = await axios.get(`http://localhost:3006/fournisseur/recherche/ParIdentifiant?iderp=${searchIderpTerm}`);
+            const response = await axios.get(`http://localhost:3006/fournisseur?iderp=${searchIderpTerm}`);
             console.log("Search by iderp response:", response.data); // Log response data for debugging
-            if (response.data.length > 0) {
-                const userData = response.data[0].User; // Accéder aux données de l'utilisateur du premier fournisseur trouvé
-                setSearchResultsIderp(userData);
-                console.log(userData); // Assurez-vous que les données de l'utilisateur sont correctement renvoyées ici
+            const filteredResultsIderp = response.data.filter(fournisseur => fournisseur.iderp.toString() === searchIderpTerm.toString());
+            setSearchResultsIderp(filteredResultsIderp);
+            setSearchResults([]); // Clear search by name results
+            if (filteredResultsIderp.length === 0) {
+                alert("Aucun fournisseur trouvé avec cet identifiant.");
             }
-            if (response.data.length === 0) {
-                alert("Aucun fournisseur trouvé avec cet iderp.");
-            }
-            console.log(response.data.User);
         } catch (error) {
             console.error('Error fetching search results by iderp:', error);
         }
     };
-const renderSupplierTable = (data) => (
-<table>
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {data.map(fournisseur => (
-                    <tr key={fournisseur.iderp}>
-                        {fournisseur.User ? (
-                            <>
-                                <td>{fournisseur.User.name}</td>
-                                <td>{fournisseur.User.email}</td>
-                                <td>{fournisseur.User.phone}</td>
-                            </>
-                        ) : (
-                            <>
-                                <td>{fournisseur.name}</td>
-                                <td>{fournisseur.email}</td>
-                                <td>{fournisseur.phone}</td>
-                            </>
-                        )}
-                                <td>
-                                    <Link
-                                        to={
-                                            userProfile === "bof"
-                                                ? `/listcourriers/${fournisseur.iderp}`
-                                                : userProfile === "personnelfiscalite"
-                                                    ? `/listcourriersfiscal/${fournisseur.iderp}`
-                                                    : userProfile === "agentTresorerie"
-                                                        ? `/listcourrierstresorerie/${fournisseur.iderp}`
-                                                
-                                                        : "/defaultDestination" 
-                                        }
-                                    >
-                                        <button>List Factures</button>
-                                    </Link>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-);
+    const renderSupplierTable = (data) => (
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {data.map(fournisseur => (
+                    <tr key={fournisseur.iderp} style={{ backgroundColor: fournisseur.status && fournisseur.status.NBFAttente > 0 ? '#ADD8E6' : 'inherit' }}>
+                        <td>{fournisseur.User ? fournisseur.User.name : fournisseur.name}</td>
+                        <td>{fournisseur.User ? fournisseur.User.email : fournisseur.email}</td>
+                        <td>{fournisseur.User ? fournisseur.User.phone : fournisseur.phone}</td>
+                        <td>
+                            <Link
+                                to={
+                                    userProfile === "bof" ? `/listcourriers/${fournisseur.iderp}` :
+                                    userProfile === "personnelfiscalite" ? `/listcourriersfiscal/${fournisseur.iderp}` :
+                                    userProfile === "agentTresorerie" ? `/listcourrierstresorerie/${fournisseur.iderp}` :
+                                    "/defaultDestination"
+                                }
+                            >
+                                <button>List Factures</button>
+                            </Link>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
+
     return (
         <div>
-                  <input
+            <input
                 type="text"
                 value={searchNameTerm}
                 onChange={(e) => setSearchNameTerm(e.target.value)}
                 placeholder="Rechercher par nom..."
             />
-            <button onClick={searchByName}>Rechercher</button>
+            <button onClick={searchByName}>Rechercher par nom</button>
             <input
                 type="number"
                 value={searchIderpTerm}
                 onChange={(e) => setSearchIderpTerm(e.target.value)}
-                placeholder="Rechercher par iderp..."
+                placeholder="Rechercher par identifiant..."
             />
             <button onClick={searchByIderp}>Rechercher par identifiant</button>
+
             {searchResults.length > 0 && (
-                    <div>
-                        <h3>Résultats de la recherche</h3>
-                        {renderSupplierTable(searchResults)}
-                    </div>
-                )}
-                            {searchResultsIderp && Object.keys(searchResultsIderp).length > 0 && (
-    <div>
-        <h3>Résultats de la recherche par iderp</h3>
-        {renderSupplierTable([searchResultsIderp])} 
-    </div>
-)}
-                 {!searchResults.length > 0 && !searchResultsIderp.length >0 && (
-                     <div>
-            <h2>Liste des Fournisseurs</h2>
-           
-            {renderSupplierTable(fournisseurs)}
-            </div>
+                <div>
+                    <h3>Résultats de la recherche par nom</h3>
+                    {renderSupplierTable(searchResults)}
+                </div>
+            )}
+
+            {searchResultsIderp.length > 0 && (
+                <div>
+                    <h3>Résultats de la recherche par identifiant</h3>
+                    {renderSupplierTable(searchResultsIderp)}
+                </div>
+            )}
+
+            {!searchResults.length > 0 && !searchResultsIderp.length > 0 && (
+                <div>
+                    <h2>Liste des Fournisseurs</h2>
+                    {renderSupplierTable(fournisseurs)}
+                </div>
             )}
         </div>
     );

@@ -43,7 +43,8 @@ const UpdateFactureDetailsPage = () => {
             objet: fetchedFacture.objet || '',
             datereception: fetchedFacture.datereception || '',
             pathpdf: fetchedFacture.pathpdf || '',
-            piece_name: fetchedFacture.Pieces_jointes.map(piece => piece.piece_name) || [], // Récupère les noms des pièces jointes existantes
+            piece_name: fetchedFacture.Pieces_jointes.map(piece => piece.piece_name) || [],
+            iderp: fetchedFacture.iderp || ''  // Récupère les noms des pièces jointes existantes
           }));
         } else {
           console.error('Facture data not found in response');
