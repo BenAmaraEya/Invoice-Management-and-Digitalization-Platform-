@@ -330,12 +330,22 @@ viewFacturePDF: async (req, res) => {
 statfacture: async (req, res) => {
   try {
     // Interroger la base de données pour obtenir les statistiques requises
-    const nbFactureParType = await Facture.count(); 
+    const  nbFactureParNature = await Facture.count({
+      attributes: ['nature'], // Group by the 'nature' field
+      group: ['nature'] // Count by distinct 'nature' values
+    });
+    const nbFactureParType=await Facture.count();
     // Compter toutes les factures
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1); // Set the date to yesterday
+    
+    const startOfYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 0, 0, 0); // Start of yesterday
+    const endOfYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59); // End of yesterday
+    
     const nbFactureRecuHier = await Facture.count({ 
       where: { 
         createdAt: { 
-          [Sequelize.Op.gte]: new Date(new Date().setDate(new Date().getDate() - 1)) 
+          [Sequelize.Op.between]: [startOfYesterday, endOfYesterday] // Fetch records between start and end of yesterday
         } 
       } 
     }); // Compter les factures reçues au cours des dernières 24 heures
@@ -350,6 +360,7 @@ statfacture: async (req, res) => {
     }); // Compter les factures créées dans le mois en cours
     // Envoyer les statistiques en tant que réponse JSON
     res.json({
+      nbFactureParNature,
       nbFactureParType,
       nbFactureRecuHier,
       nbFactureMoisEnCours
@@ -359,6 +370,7 @@ statfacture: async (req, res) => {
     res.status(500).json({ message: 'Erreur interne du serveur' });
   }
 }
+
 ,
 validerDocument:[authorizePersonnelbof, async (req,res) =>{
   try{

@@ -23,7 +23,7 @@ const ReclamationList = () => {
     const timer = setTimeout(() => {
       const updatedReclamations = reclamations.filter(reclamation => !reclamation.lue);
       setReclamations(updatedReclamations);
-    }, 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+    }, 24 * 60 * 60 * 1000); 
 
     return () => clearTimeout(timer);
   }, [reclamations]);

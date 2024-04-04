@@ -22,21 +22,25 @@ const Header = () => {
   const [fournisseur, setFournisseur] = useState([]);
 
   useEffect(() => {
+    
+    const storedNotifications = JSON.parse(localStorage.getItem("notifications")) || [];
+    setNotifications(storedNotifications);
     const socket = io('http://localhost:3006');
-
     socket.on('newReclamation', async (reclamation) => {
       try {
         const response = await axios.get('http://localhost:3006/fournisseur/');
         setFournisseur(response.data);
 
         // Add new notification to the array
-        setNotifications(prevNotifications => [
-          ...prevNotifications,
-          {
-            id: reclamation.id,
-            message: `Nouvelle réclamation`
-          }
-        ]);
+        const newNotification = {
+          id: reclamation.id,
+          message: `Nouvelle réclamation`
+        };
+        setNotifications(prevNotifications => {
+          const updatedNotifications = [...prevNotifications, newNotification];
+          localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
+          return updatedNotifications;
+        });
       } catch (error) {
         console.error("Error fetching fournisseur:", error);
       }
@@ -133,6 +137,9 @@ const Header = () => {
                       <button className="dropdown-item" onClick={() => handleNatureSelection('Nature2')}>
                         Nature 2
                       </button>
+                      <button className="dropdown-item" onClick={() => handleNatureSelection('Nature3')}>
+                        Nature 3
+                      </button>
                     </div>
                   )}
                 </div>
@@ -158,6 +165,10 @@ const Header = () => {
                   <button className="dropdown-item" onClick={handleLogout}>
                     Logout
                   </button>
+                  <NavLink to={`/listArchive`} activeClassName="active" exact>
+                  listArchive
+                </NavLink>
+                  
                 </div>
               )}
             </div>
