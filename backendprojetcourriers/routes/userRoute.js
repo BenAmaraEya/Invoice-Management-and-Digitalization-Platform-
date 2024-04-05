@@ -3,6 +3,7 @@ const router = express.Router();
 const UserController = require('../controller/userController');
 
 router.get('/',UserController.getUser);
+router.get('/check/:password', UserController.checkadmin);
 router.get('/:id',UserController.getUserById);
 // Route ajout utilisateur
 router.post('/adduser',UserController.adduser);

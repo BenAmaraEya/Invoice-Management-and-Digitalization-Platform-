@@ -1,22 +1,11 @@
 
 
-.dashboard-boxes {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
-}
 
-.dashboard-box {
-  background-color: #007bff; /* Blue */
-  color: white;
-  padding: 20px;
-  border-radius: 5px;
-  text-align: center;
-}
+
 .pie-chart-container {
   position: relative;
-  width: 300px; /* Adjust width as needed */
-  height: 300px; /* Adjust height as needed */
+  width: 50%; /* Adjust width as needed */
+  height: 50%; /* Adjust height as needed */
 }
 
 .pie-segment {
@@ -29,16 +18,21 @@
   align-items: center;
 }
 
-.pie-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-weight: bold;
-  font-size: 14px; /* Adjust font size as needed */
-}
 
+
+
+
+
+
+.dashboard-box p {
+  font-size: 24px;
+  font-weight: bold;
+}
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 .pie-label {
   position: absolute;
   top: 50%;
@@ -47,17 +41,76 @@
   color: black;
   font-size: 14px; /* Adjust font size as needed */
 }
-
-
-.dashboard-box:nth-child(2) {
-  background-color: #28a745; /* Green */
+.boxes-container {
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
 }
 
-.dashboard-box:nth-child(3) {
-  background-color: #ffc107; /* Yellow */
+.dashboard-box {
+  background-color: lightgrey;
+  color: black;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+  flex: 1;
+  justify-content: space-between !important;
 }
 
-.dashboard-box p {
-  font-size: 24px;
-  font-weight: bold;
+.border-left-primary {
+  border-left: 5px solid #007bff;
+}
+
+.border-left-success {
+  border-left: 5px solid #28a745;
+}
+
+.border-left-warning {
+  border-left: 5px solid #ffc107;
+}
+
+.dashboard-box h4 {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.second-container {
+  display: flex;
+  gap: 20px;
+}
+
+.reclamations-container {
+  flex: 1;
+  width: 20%;
+}
+
+.pie-chart-container {
+  flex: 1;
+  margin-top: 80px;
+}
+
+
+.third-container {
+  /* Styles for the third container */
+}
+
+
+.dashboard-box {
+  background-color: lightgrey;
+  color: black;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+  flex: 1;
+  margin: 0 10px; /* Add margin for space between boxes */
+}
+
+/* Add margin for space between boxes */
+.boxes-container {
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  margin-bottom: 20px; /* Add margin bottom for space between boxes and other containers */
 }

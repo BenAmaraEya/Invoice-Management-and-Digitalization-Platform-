@@ -94,6 +94,7 @@ function ListUser() {
             <td>{data.phone}</td>
             <td>
             <button onClick={() => DeleteUser(data.id)} className="delete-button">Supprimer</button>
+            <button onClick={() => Acesse(data.id)} className="access">Access</button>
             <button>
                  <Link className="update-link"to={`../updateUser/${data.id}`} >Modifier</Link>
              </button>

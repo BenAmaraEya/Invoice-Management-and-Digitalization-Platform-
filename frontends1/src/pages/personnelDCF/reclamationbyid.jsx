@@ -11,6 +11,7 @@ const ReclamationDetails = () => {
   // State to store the details of the filtered reclamation
   const [reclamation, setReclamation] = useState(null);
   const [fournisseur, setFournisseur] = useState([]);
+  
 
   // Fetch reclamation details based on the ID
   useEffect(() => {
@@ -30,9 +31,34 @@ const ReclamationDetails = () => {
     // Call the fetchReclamation function
     fetchReclamation();
   }, [id]); // Re-run effect when ID changes
-  const sendEmail = (email) => {
-    const subject = encodeURIComponent('Réponse de réclamation');
-    window.location.href = `mailto:${email}?subject=${subject}`;
+ 
+
+const sendEmailAndDeleteReclamation = async (email, reclamationId) => {
+  try {
+      const subject = encodeURIComponent('Réponse de réclamation');
+      window.location.href = `mailto:${email}?subject=${subject}`;
+      
+      const confirmationResult = window.confirm('Confirmez-vous que vous avez envoyé le mail?');
+  
+      if (confirmationResult) {
+          deleteReclamation(reclamationId);
+      } else {
+          console.log('Operation canceled');
+      }
+      
+     
+  } catch (error) {
+      console.error('Error sending email and deleting reclamation:', error);
+  }
+};
+
+const deleteReclamation = async (reclamationId) => {
+  try {
+      await axios.delete(`http://localhost:3006/reclamation/${reclamationId}`);
+      setReclamation(reclamation.filter(reclamation => reclamation.id !== reclamationId));
+  } catch (error) {
+      console.error('Error deleting reclamation:', error);
+  }
 };
   // Render the reclamation details
   return (
@@ -55,7 +81,7 @@ const ReclamationDetails = () => {
                 {fournisseur.map((fournisseurItem) => {
                   if (fournisseurItem.iderp === reclamation.iderp && fournisseurItem.User) {
                     return (
-                      <button key={fournisseurItem.id} onClick={() => sendEmail(fournisseurItem.User.email)}>Répondre</button>
+                      <button key={fournisseurItem.id} onClick={() => sendEmailAndDeleteReclamation(fournisseurItem.User.email, reclamation.id)}>Répondre</button>
                     );
                   }
                   return null;

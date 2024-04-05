@@ -93,7 +93,31 @@ const UserController = {
             res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
         }
     },
-
+    checkadmin: async (req, res, next) => {
+        const { password } = req.params;
+        const { profil } = req.query;
+    
+        try {
+            // Check if profil is defined
+            if (!profil) {
+                return res.status(400).json({ error: 'Profil is required' });
+            }
+    
+            // Find user by profil and password
+            const user = await User.findOne({ where: { profil, password } });
+    
+            // If user is not found or profile is not 'admin', return failure
+            if (!user || user.profil !== 'admin') {
+                return res.status(401).json({ error: 'Unauthorized' }); // or 403 Forbidden if you prefer
+            }
+    
+            // If user profile is 'admin' and password matches, return success
+            return res.json({ isAdmin: true });
+        } catch (error) {
+            console.error('Error checking admin password:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    },
     getUserById: async (req, res, next) => {
         const id = req.params.id;
         try {
@@ -253,7 +277,9 @@ recherche: async (req, res, next) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-
+        /*if (newPassword.length < 8) {
+            return res.status(400).json({ error: 'New password must be at least 8 characters long' });
+        }*/
         // Vérifiez si l'ancien mot de passe fourni correspond au mot de passe actuel de l'utilisateur
         const isMatch = await bcrypt.compare(req.body.oldPassword, user.password);
 

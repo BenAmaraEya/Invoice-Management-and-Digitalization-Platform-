@@ -146,61 +146,62 @@ const DashboardP = () => {
         return (r * 299 + g * 587 + b * 114) / 1000;
     };
     return (
-        <div>
-           
-            <div className="dashboard-boxes">
-                <div className="dashboard-box">
-                    <h3>Nombre de Factures </h3>
-                    <p>{factureStats.nbFactureParType}</p>
-                </div>
-                <div className="dashboard-box">
-                    <h3>Nombre de Factures Reçues Hier</h3>
-                    <p>{factureStats.nbFactureRecuHier}</p>
-                </div>
-                <div className="dashboard-box">
-                    <h3>Nombre de Factures ce Mois</h3>
-                    <p>{factureStats.nbFactureMoisEnCours}</p>
-                </div>
-                <div className="pie-chart-container">
-                    <h3>Nombre de Factures par Nature</h3>
-                   { renderPieChart()}
-                </div>
+        <div className="dashboard-container">
+        <div className="boxes-container">
+            <div className="dashboard-box border-left-primary">
+                <h4>Nombre de Factures </h4>
+                <p>{factureStats.nbFactureParType}</p>
             </div>
-            {userProfile === "bof" && (
-                <div>
-                    <h3>Liste des Réclamations</h3>
-                    {loading ? (
-                        <p>Loading...</p>
-                    ) : (
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Contenu de la Réclamation</th>
-                                    <th>id fournisseur</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {reclamations.map((reclamation) => (
-                                    <tr key={reclamation.id}>
-                                        <td>{reclamation.contenu}</td>
-                                        <td>{reclamation.iderp}</td>
-                                        <td>
-                                            {fournisseur.map((fournisseurItem) => (
-                                                fournisseurItem.iderp === reclamation.iderp && fournisseurItem.User ? (
-                                                    <button key={fournisseurItem.id} onClick={() => sendEmailAndDeleteReclamation(fournisseurItem.User.email, reclamation.id)}>Répondre</button>
-                                                ) : null
-                                            ))}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
-                </div>
-            )}
+            <div className="dashboard-box border-left-success">
+                <h4>Nombre de Factures Reçues Hier</h4>
+                <p>{factureStats.nbFactureRecuHier}</p>
+            </div>
+            <div className="dashboard-box border-left-warning">
+                <h4>Nombre de Factures ce Mois</h4>
+                <p>{factureStats.nbFactureMoisEnCours}</p>
+            </div>
         </div>
-    );
+        <div className="second-container">
+            <div className="reclamations-container">
+                <h3>Liste des Réclamations</h3>
+                {loading ? (
+                    <p>Loading...</p>
+                ) : (
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Contenu de la Réclamation</th>
+                                <th>id fournisseur</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {reclamations.map((reclamation) => (
+                                <tr key={reclamation.id}>
+                                    <td>{reclamation.contenu}</td>
+                                    <td>{reclamation.iderp}</td>
+                                    <td>
+                                        {fournisseur.map((fournisseurItem) => (
+                                            fournisseurItem.iderp === reclamation.iderp && fournisseurItem.User ? (
+                                                <button key={fournisseurItem.id} onClick={() => sendEmailAndDeleteReclamation(fournisseurItem.User.email, reclamation.id)}>
+                                                    <i className="fas fa-envelope"></i>
+                                                </button>
+                                            ) : null
+                                        ))}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+            </div>
+            {renderPieChart()}
+        </div>
+        <div className="third-container">
+            {/* Add your segment pie chart here */}
+        </div>
+    </div>
+);
 };
 
 export default DashboardP;
