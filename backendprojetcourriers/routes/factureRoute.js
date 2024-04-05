@@ -2,7 +2,7 @@ const express =require('express');
 const router =express.Router();
 const factureController= require('../controller/factureController');
 const path = require('path');
-
+module.exports = (io) => {
 router.post('/upload',factureController.upload);
 router.post('/save/:iderp',factureController.save);
 router.get('/:iderp', factureController.getFactureBySupplierId);
@@ -22,4 +22,7 @@ router.put('/validerTresorerie/:idF',factureController.validerBudget);
 /*router.get('/recherche/parNumFact',factureController.rechercheParNumFact);
 router.get('/recherche/parDateReception',factureController.recherchePardate);*/
 router.get('/recherche/ParDATEetNUM',factureController.rechercheFacture);
-module.exports=router;
+factureController.setIo(io);
+
+  return router;
+}

@@ -50,6 +50,7 @@ function AddUser() {
             const fournisseurResponse = await axios.post('http://localhost:3006/fournisseur/addfournisseur', fournisseurData);
             console.log('Fournisseur ajouté avec succès:', fournisseurResponse.data);
         }
+        
             navigate('/listUser');
             
 

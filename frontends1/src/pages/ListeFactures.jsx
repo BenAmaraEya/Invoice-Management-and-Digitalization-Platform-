@@ -56,6 +56,7 @@ const ListeFactures = () => {
             if (response.data.success) {
                 setFactures(factures.filter(facture => facture.idF !== factureId));
                 console.log(response.data.message);
+                alert(`Facture deleted successfully.`);
             }
         } catch (error) {
             console.error('Error deleting facture:', error);

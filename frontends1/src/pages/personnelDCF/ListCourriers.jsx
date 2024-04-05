@@ -57,7 +57,8 @@ const ListCourriers = () => {
             {headers: {
                 Authorization: `Bearer ${token}`
             }});
-           
+           alert("Validation réussie pour la facture.");
+           window.location.reload();
         } catch (error) {
             console.error('Error valide document: ', error);
         }
@@ -71,6 +72,8 @@ const ListCourriers = () => {
                 Authorization: `Bearer ${token}`
             }});
             setMotifsRejete(prevState => ({ ...prevState, [idF]: motifRejete }));
+            alert("La facture a été rejetée.");
+
             window.location.reload();
         } catch (error) {
             console.error('Error rejete document: ', error);
@@ -194,6 +197,9 @@ const updateProcessus= async (idF, etat) => {
             Authorization: `Bearer ${token}`
         }}*/);
         setEtat(prevState => ({ ...prevState, [idF]: etat }));
+        alert(`L'état de la facture a été changé en ${etat}.`);
+
+        window.location.reload();
     } catch (error) {
         console.error('Error : ', error);
     }

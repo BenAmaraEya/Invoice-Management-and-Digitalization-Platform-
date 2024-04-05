@@ -61,7 +61,7 @@ function UpdateUser() {
         try {
             await axios.put(`http://localhost:3006/fournisseur/${iderp}`, formData);
             console.log('Utilisateur modifié avec succès');
-            navigate('/listUser');
+            navigate('/listSupplier');
                 } catch (error) {
             console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
         }

@@ -19,7 +19,7 @@ require('../AutoBordereaux');
 const path = require('path');
 const { where } = require('sequelize');
 const { Sequelize } = require('sequelize');
-
+let io;
 
 
 // définit la configuration de Multer pour le téléchargement de fichiers
@@ -384,6 +384,8 @@ if(facture.status== 'Attente'){
   const validStatut = `courrier validé par BOF, date de vérification : ${dateVerifi}`;
 await Facture.update({ status: validStatut,}, { where: { idF } });
 await Etat.create({ etat:validStatut, idF: idF, date: dateVerifi });
+factureController.sendNotificationToSupplier(validStatut,facture.num_fact);
+
 }
 else {
   console.log("Le courrier a déjà été examiné.")
@@ -402,6 +404,8 @@ validerFiscalité:[authorizePersonnelFiscaliste, async (req,res) =>{
   const validStatut = `courrier validé par Personnel fiscalité, date de vérification : ${dateVerifi}`;
   await Facture.update({ status: validStatut,}, { where: { idF } });
   await Etat.create({ etat:validStatut, idF: idF, date: dateVerifi });
+  factureController.sendNotificationToSupplier(validStatut,facture.num_fact);
+
 } catch(error){
   res.status(500).json({ message: 'Internal server error' });
 }
@@ -416,6 +420,8 @@ validerBudget:[authorizeAgent,async (req,res) =>{
     const validStatut = `courrier validé par Agent Trésorerie, date de vérification : ${dateVerifi}`;
     await Facture.update({ status: validStatut,}, { where: { idF } });
     await Etat.create({ etat:validStatut, idF: idF, date: dateVerifi });
+    factureController.sendNotificationToSupplier(validStatut,facture.num_fact);
+
   } catch(error){
     res.status(500).json({ message: 'Internal server error' });
   }
@@ -436,6 +442,7 @@ validerBudget:[authorizeAgent,async (req,res) =>{
         const motifRejeteAvecDate = `${motifRejete}, date de vérification : ${dateVerifi}`;
         await facture.update({ status: motifRejeteAvecDate });
         await Etat.create({ etat:motifRejete, idF: idF, date: dateVerifi });
+        factureController.sendNotificationToSupplier(motifRejeteAvecDate,facture.num_fact);
         // Return a success message
         res.json({ message: 'Facture status updated successfully' });
       } catch (error) {
@@ -506,8 +513,13 @@ rechercheFacture: async (req, res) => {
       console.error(error);
       res.status(500).send('Erreur de serveur');
   }
-}
-    
+},
+sendNotificationToSupplier: (statuts, num) => {
+  io.emit('newStatuts', { statuts, num });
+},
+setIo: (socketIo) => {
+  io = socketIo;
+}   
 };
 // Fonction pour extraire les information de l'ORC
 function extractInfoFromOCR(text) {

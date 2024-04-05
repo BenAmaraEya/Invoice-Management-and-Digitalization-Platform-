@@ -79,7 +79,7 @@ const UploadFacture = () => {
         }
       });
 
-      alert('Facture details updated successfully');
+    
       const factureId = response.data.facture.idF;
 
       await axios.post('http://localhost:3006/piecejoint/addpiece', {
@@ -91,12 +91,11 @@ const UploadFacture = () => {
         }
       }
       );
-
-      alert('Pieces jointes updated successfully');
+      alert('Facture and pieces jointes save successfully');
       navigate(`/listcourriers/${facture.iderp}`);
     } catch (error) {
-      console.error('Error updating facture and pieces jointes:', error);
-      alert('Failed to update facture and pieces jointes');
+      console.error('Error save facture and pieces jointes:', error);
+      alert('Failed to save facture and pieces jointes');
     }
   };
 

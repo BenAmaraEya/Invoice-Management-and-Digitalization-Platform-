@@ -40,7 +40,7 @@ app.use(express.static(publicPath));
 app.use('/auth', authRoute);
 app.use('/user', userRoute);
 app.use('/fournisseur', fournisseurRoute);
-app.use('/facture', factureRoute);
+app.use('/facture', factureRoute(io));
 app.use('/piecejoint', piecejointRoute);
 app.use('/bordereaux', bordereauRoute);
 app.use('/reclamation', reclamationRoute(io)); // Pass io instance to reclamationRoute

@@ -61,7 +61,9 @@ const ListeFacturesFiscalité = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            window.location.href = window.location.href;
+            alert('Validation réussie pour la facture.');
+            window.location.reload();
+           // window.location.href = window.location.href;
         } catch (error) {
             console.error('Error valide document: ', error);
         }
@@ -76,6 +78,8 @@ const ListeFacturesFiscalité = () => {
                 }
             });
             setMotifsRejete(prevState => ({ ...prevState, [idF]: motifRejete }));
+            alert('La facture a été rejetée.');
+
             window.location.reload();
         } catch (error) {
             console.error('Error rejete document: ', error);

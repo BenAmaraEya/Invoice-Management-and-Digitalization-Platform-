@@ -17,7 +17,6 @@ const etatController ={
             if (etat === 'cloture') {
               await archiveController.archiver(req, res);
             }
-            res.status(201).json(etats);
           } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Erreur lors de la création de la Etat' });

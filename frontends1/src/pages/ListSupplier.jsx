@@ -31,6 +31,8 @@ function ListUser() {
             await axios.delete(`http://localhost:3006/fournisseur/${iderp}`);
             setFournisseur(prevFournisseurs => prevFournisseurs.filter(fournisseur => fournisseur.iderp !== iderp));
             console.log('Fournisseur supprimé avec succès');
+            alert(`Fournisseur ${fournisseur.iderp} deleted successfully.`);
+
         } catch (error) {
             console.error('Erreur lors de la suppression du fournisseur:', error);
         }
@@ -40,6 +42,7 @@ function ListUser() {
         try {
             await axios.post(`http://localhost:3006/user/acces/${id}`);
             console.log('Envoyer accées au système avec succès');
+            alert('Envoyer accées au système avec succès');
         } catch (error) {
             console.error('Erreur :', error);
         }
