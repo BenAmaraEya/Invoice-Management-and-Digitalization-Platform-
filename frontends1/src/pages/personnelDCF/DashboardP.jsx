@@ -96,11 +96,7 @@ const DashboardP = () => {
     return (
         <div className="dashboard-container">
             <div className="top-container">
-                <div className="download-button">
-                    <button>
-                        rapport <i className="fas fa-download"></i>
-                    </button>
-                </div>
+               
             </div>
             <div className="middle-container">
                 <div className="boxes-container">

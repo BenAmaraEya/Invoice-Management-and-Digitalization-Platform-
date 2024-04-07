@@ -53,7 +53,7 @@ const Header = () => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("userId");
         console.log("Token removed");
-        navigate('/home');
+        navigate('/login');
       } else {
         console.error("Failed to logout:", response.statusText);
       }
@@ -175,12 +175,14 @@ const Header = () => {
     ) : (
       notifications.map(notification => (
         <div key={notification.id} onClick={() => {
-          navigate(`/reclam/${notification.id}`);
+         
           NotificationManager.info(notification.message.statuts);
           setNotifications(notifications.filter(n => n.id !== notification.id));
           localStorage.setItem("notifications", JSON.stringify(notifications.filter(n => n.id !== notification.id)));
         }} className="notification-item">
-         N°:{notification.message.statut.num} -{notification.message.statut.statuts}
+       {notification.message && notification.message.statuts && notification.message.statuts.num && (
+      <span>N°:{notification.message.statuts.num} - {notification.message.statuts.statuts}</span>
+    )}
         </div>
       ))
     )}
