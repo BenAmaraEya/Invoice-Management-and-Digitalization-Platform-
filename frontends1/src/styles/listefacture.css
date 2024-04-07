@@ -33,11 +33,10 @@ table {
     border-radius: 3px !important;
   }
   button.delete-btn {
-    background-color: #dc3545; /* Red color for delete button */
+    background-color: transparent;
+    color:rgb(68, 68, 68) /* Red color for delete button */
   }
-  button:hover {
-    background-color: #0056b3;
-  }
+  
   
  
   

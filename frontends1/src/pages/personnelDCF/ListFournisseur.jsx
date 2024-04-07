@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
+import { FaSearch, FaFileAlt } from 'react-icons/fa'; // Import search and file icons
 
 const ListFournisseur = () => {
     const [fournisseurs, setFournisseurs] = useState([]);
@@ -70,8 +71,11 @@ const ListFournisseur = () => {
         }
     };
     const renderSupplierTable = (data) => (
-        <table>
-            <thead>
+        <table style={{border:'1px solid rgb(219, 219, 219)',borderCollapse:'collapse',marginRight:'50px',width:'80%',marginLeft:'150px', justifyContent: 'center'}}>
+            <thead> <tr>
+            <th colSpan="4" style={{textAlign:'center'}}>Liste des Fournisseurs</th>
+            </tr>
+               
                 <tr>
                     <th>Nom</th>
                     <th>Email</th>
@@ -94,7 +98,7 @@ const ListFournisseur = () => {
                                     "/defaultDestination"
                                 }
                             >
-                                <button>List Factures</button>
+                                <button><FaFileAlt /> Voir Factures</button>
                             </Link>
                         </td>
                     </tr>
@@ -105,20 +109,27 @@ const ListFournisseur = () => {
 
     return (
         <div>
-            <input
-                type="text"
-                value={searchNameTerm}
-                onChange={(e) => setSearchNameTerm(e.target.value)}
-                placeholder="Rechercher par nom..."
-            />
-            <button onClick={searchByName}>Rechercher par nom</button>
-            <input
-                type="number"
-                value={searchIderpTerm}
-                onChange={(e) => setSearchIderpTerm(e.target.value)}
-                placeholder="Rechercher par identifiant..."
-            />
-            <button onClick={searchByIderp}>Rechercher par identifiant</button>
+            <div style={{ position: 'relative', display: 'inline-block', marginTop:'50px', left:'80%'}}>
+                <input
+                    type="text"
+                    value={searchNameTerm}
+                    onChange={(e) => setSearchNameTerm(e.target.value)}
+                    placeholder="Rechercher par nom..."
+                    style={{ width: '250px',borderRadius:'5px'  }}
+
+                />
+                <FaSearch style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer' }} onClick={searchByName} />
+            </div>
+            <div style={{ marginTop: '20px', position: 'relative', display: 'inline-block', marginTop:'50px', left:'40%' }}>
+                <input
+                    type="number"
+                    value={searchIderpTerm}
+                    onChange={(e) => setSearchIderpTerm(e.target.value)}
+                    placeholder="Rechercher par identifiant..."
+                    style={{ width: '250px',borderRadius:'5px'  }}
+                />
+               <FaSearch style={{ position: 'absolute',right: '15px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer' }} onClick={searchByIderp} />
+            </div>
 
             {searchResults.length > 0 && (
                 <div>
@@ -136,12 +147,10 @@ const ListFournisseur = () => {
 
             {!searchResults.length > 0 && !searchResultsIderp.length > 0 && (
                 <div>
-                    <h2>Liste des Fournisseurs</h2>
                     {renderSupplierTable(fournisseurs)}
                 </div>
             )}
         </div>
     );
 };
-
 export default ListFournisseur;

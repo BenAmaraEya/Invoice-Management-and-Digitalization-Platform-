@@ -53,7 +53,7 @@ const Header = () => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("userId");
         console.log("Token removed");
-        navigate('/login');
+        navigate('/home');
       } else {
         console.error("Failed to logout:", response.statusText);
       }
@@ -99,11 +99,7 @@ const Header = () => {
       <div className="navigation">
         <ul className="menu d-flex align-items-center gap-5">
           
-          <li className="nav__item">
-            <NavLink to="/home" activeClassName="active" exact>
-              Accueil
-            </NavLink>
-          </li>
+         
           
           <li className="nav__item">
             <NavLink to={`/dashboard/${userId}`} activeClassName="active" exact>

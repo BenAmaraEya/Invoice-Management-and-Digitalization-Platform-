@@ -222,7 +222,7 @@ const UserController = {
                     <p>Dear ${user.name},</p>
                     <p>Here are your temporary login credentials for the system:</p>
                     <p>Username: ${user.username}</p>
-                    <p>Password: ${user.username}</p>
+                    <p>Password: ${user.username} </p>
                     <p>Please change your password after logging in for security reasons.</p>
                     <p>Regards,</p>
                     <p>Your System</p>

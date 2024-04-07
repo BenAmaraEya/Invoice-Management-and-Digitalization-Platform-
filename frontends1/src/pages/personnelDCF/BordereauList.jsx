@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ListFactByB from './ListFactByB';
-
+import { FaSearch, FaFileAlt } from 'react-icons/fa';
 const BordereauList = () => {
     const [bordereaux, setBordereaux] = useState([]);
     const navigate = useNavigate();
@@ -26,23 +26,26 @@ const BordereauList = () => {
 
     return (
         <div>
-            <h2>Liste des Bordereaux</h2>
-            <table>
+            
+            <table style={{width:'50%',marginLeft:'30%' }}>
                 <thead>
                     <tr>
+                        <th colSpan={3} style={{textAlign:'center'}}>Liste des Bordereaux</th>
+                    </tr>
+                    <tr >
                         <th>Nature</th>
                         <th>Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody >
                     {bordereaux.map((bordereau) => (
-                        <tr key={bordereau.idB}>
+                        <tr key={bordereau.idB} >
                             <td>{bordereau.nature}</td>
                             <td>{bordereau.date}</td>
                             
-                            <td>
-                                <button onClick={() => handleViewFactures(bordereau.idB)}>Voir Factures</button>
+                            <td   >
+                                <button onClick={() => handleViewFactures(bordereau.idB)}><FaFileAlt />Voir Factures</button>
                             </td>
                         </tr>
                     ))}

@@ -104,11 +104,7 @@ const Header = () => {
       <div className="navigation">
         <ul className="menu d-flex align-items-center gap-5">
 
-          <li className="nav__item">
-            <NavLink to="/home" activeClassName="active" exact>
-              Accueil
-            </NavLink>
-          </li>
+         
 
           <li className="nav__item">
             <NavLink to={`/dashboardP/${userId}`} activeClassName="active" exact>

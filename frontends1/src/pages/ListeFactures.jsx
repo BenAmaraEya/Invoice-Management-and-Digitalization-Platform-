@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import axios from 'axios';
-import { FaTrash, FaFileExcel } from 'react-icons/fa';
+import { FaFileExcel } from 'react-icons/fa';
 import { Document, Page, pdfjs } from 'react-pdf';
 import './../styles/listefacture.css';
-
+import { FaTrash, FaPen, FaSearch, FaFilePdf } from 'react-icons/fa';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const ListeFactures = () => {
@@ -126,11 +126,12 @@ const ListeFactures = () => {
 
     return (
         <div>
-            <div>
-                <input type="text" name="num_fact" placeholder="Numéro Facture" value={searchParams.num_fact} onChange={handleInputChange} />
-                <input type="date" name="datereception" placeholder="Date de Réception (yyyy-mm-dd)" value={searchParams.datereception} onChange={handleInputChange} />
-                <button onClick={rechercheFacture}>Rechercher</button>
+            <div style={{ position: 'relative', display: 'inline-block', marginTop:'50px', right:'-12px'}}>
+                <input type="text" name="num_fact" placeholder="Numéro Facture" value={searchParams.num_fact} onChange={handleInputChange}  style={{ width: '250px',borderRadius:'5px'  }} />
+                <input type="date" name="datereception" placeholder="Date de Réception (yyyy-mm-dd)" value={searchParams.datereception} onChange={handleInputChange}  style={{ width: '250px',borderRadius:'5px'  }} />
+              
             </div>
+            <button style={{width:'50px',background:'white',border:'1px solid lightgrey',height:'26px',position: 'relative', display: 'inline-block', marginTop:'50px', top:'-6px',right:'-12px'}}><FaSearch style={{ position: 'absolute', right: '18px', top: '50%',transform: 'translateY(-50%)', color:'black', cursor: 'pointer' }} onClick={rechercheFacture} /></button>
             <table>
                 <thead>
                     <tr>
@@ -157,23 +158,23 @@ const ListeFactures = () => {
                             <td>{facture.date_fact}</td>
                             <td>
                                 <button className='delete-btn' onClick={() => deleteFacture(facture.iderp, facture.idF)}>
-                                    <FaTrash />
+                                <FaTrash style={{fontSize: '20px', backgroundColor: 'transparent' }} onClick={() => deleteFacture(facture.iderp, facture.idF)} />
                                 </button>
-                                 {facture.status === 'Attente' && (
-        <Link to={`/updatefacture/${facture.idF}`}>
-          <Button className='update-facture'>Update</Button>
-        </Link>
-      )}
+                                {facture.status === 'Attente' || facture.status.includes('Manque') ? (
+    <Link to={`/updatefacture/${facture.idF}`}>
+        <FaPen color="grey" />
+    </Link>
+) : null}
                             </td>
                             <td>
-                                <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
+                                <button onClick={() => viewFacturePDF(facture.pathpdf)}><FaFilePdf /></button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
             <div className="btns d-flex align-item-center gap-4">
-                <button onClick={exportToExcel}><FaFileExcel />Export Factures</button>
+                <button onClick={exportToExcel}>Export Factures <FaFileExcel /></button>
                 <Link to='/uploadfacture'>
                     <Button className='ajouter-btn'>Ajouter Factures</Button>
                 </Link>

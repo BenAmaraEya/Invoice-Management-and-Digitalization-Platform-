@@ -1,29 +1,3 @@
-
-
-
-
-.pie-chart-container {
-  position: relative;
-  width: 50%; /* Adjust width as needed */
-  height: 50%; /* Adjust height as needed */
-}
-
-.pie-segment {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-
-
-
-
-
-
 .dashboard-box p {
   font-size: 24px;
   font-weight: bold;
@@ -33,14 +7,7 @@
   flex-direction: column;
   gap: 20px;
 }
-.pie-label {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: black;
-  font-size: 14px; /* Adjust font size as needed */
-}
+
 .boxes-container {
   padding-top: 20px;
   display: flex;
@@ -85,10 +52,7 @@
   width: 20%;
 }
 
-.pie-chart-container {
-  flex: 1;
-  margin-top: 80px;
-}
+
 
 
 .third-container {
@@ -97,7 +61,7 @@
 
 
 .dashboard-box {
-  background-color: lightgrey;
+  background-color: rgb(238, 238, 238);
   color: black;
   padding: 20px;
   border-radius: 5px;
@@ -113,4 +77,77 @@
   justify-content: space-between;
   padding: 20px;
   margin-bottom: 20px; /* Add margin bottom for space between boxes and other containers */
+}
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.top-container {
+  height: 50px; /* Adjust height as needed */
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.download-button {
+  margin-top: 60px; 
+  padding-right: 50px;/* Adjust margin as needed */
+}
+
+.middle-container {
+  flex: 1;
+}
+
+.bottom-container {
+  display: flex;
+  gap: 20px;
+}
+
+.left-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.right-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: 80px;
+}
+.header-span {
+  text-align: center;
+}
+.pie-chart-container,
+.another-chart-container {
+  flex: 1;
+}
+
+.card {
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+ 
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid rgb(219, 219, 219);
+  margin-left: 12px;
+ 
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
 }

@@ -30,12 +30,16 @@ const ReclamationList = () => {
 
   return (
     <div>
-      <h2>Liste des Réclamations</h2>
-      <table>
+    
+      <table style={{width:'50%'}}>
+
+       
         <thead>
+        <tr style={{colspan:"2",textAlign:'center'}}>
+          <th>Liste des Réclamations</th>
+        </tr>
           <tr>
             <th>Contenu</th>
-            <th>ID Fournisseur</th>
             <th>État</th>
           </tr>
         </thead>
@@ -43,7 +47,6 @@ const ReclamationList = () => {
           {reclamations.map((reclamation) => (
             <tr key={reclamation.id}>
               <td>{reclamation.contenu}</td>
-              <td>{reclamation.idFournisseur}</td>
               <td>
                 {reclamation.lue ? (
                   <FontAwesomeIcon icon={faCheckDouble} />

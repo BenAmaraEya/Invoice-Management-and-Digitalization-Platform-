@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Document, Page, pdfjs } from 'react-pdf';
-import { FaTrash } from 'react-icons/fa';
+
 import { Link, useParams } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import '../../styles/listefacture.css';
-
+import { FaTrash, FaPen, FaSearch, FaFilePdf } from 'react-icons/fa';
+import { BsTrash } from 'react-icons/bs';
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const ListCourriers = () => {
@@ -130,10 +131,11 @@ const ListCourriers = () => {
                     <th>Numéro PO</th>
                     <th>Date Facture</th>
                     <th>Action</th>
-                    <th>PDF</th>
                     <th>valider</th>
-                    <th>Rejete</th>
-                    <th>mise à jour Etat</th>
+                    <th>rejeter</th>
+                    <th>Etat</th>
+                    <th>PDF</th>
+                   
                 </tr>
             </thead>
             <tbody>
@@ -148,20 +150,17 @@ const ListCourriers = () => {
                         <td>{facture.date_fact}</td>
                         <td>
                                 <button className='delete-btn' onClick={() => deleteFacture(facture.idF)}>
-                                    <FaTrash />
+                                <BsTrash style={{fontSize: '20px', backgroundColor: 'transparent' }} />
                                 </button>
                                 <Link to={`/updatefacture/${facture.idF}`}>
-                                    <Button className='update-facture'>Update</Button>
+                                <FaPen color="grey" />
                                 </Link>
-                            </td>
-                        <td>
-                            <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
-                        </td>
-                        <td>
-                            <button className='btn' onClick={() => validerDocument(facture.idF)}>valider</button>
-                        </td>
-                        <td>
-                            <select 
+                                </td>
+                                <td>
+                                <button className='btn' onClick={() => validerDocument(facture.idF)}>valider</button>
+                                </td>
+                                <td>
+                                <select 
                                 name="status" 
                                 value={motifsRejete[facture.idF] || ''} 
                                 onChange={(e) => rejeteDocument(facture.idF, e.target.value)}>
@@ -171,9 +170,9 @@ const ListCourriers = () => {
                                 <option value="Manque fiche de présences">Manque fiche de présences</option>
                                 <option value="Manque copie du PO">Manque copie du PO</option>
                             </select>
-                        </td>
-                        <td>
-                        <select 
+                                </td>
+                             <td>
+                             <select 
                                 name="etat" 
                                 value={etat[facture.idF] || ''} 
                                 onChange={(e) => updateProcessus(facture.idF, e.target.value)}>
@@ -182,8 +181,13 @@ const ListCourriers = () => {
                                 <option value="Envoye Fiscalité">Envoyé Fiscalité</option>
                                 <option value="paiement">paiement</option>
                                 <option value="cloture">cloturé</option>
-                            </select> 
+                            </select> </td>  
+                            
+                           
+                        <td>
+                            <button onClick={() => viewFacturePDF(facture.pathpdf)}> <FaFilePdf /></button>
                         </td>
+                        
                     </tr>
                 ))}
             </tbody>
@@ -206,11 +210,12 @@ const updateProcessus= async (idF, etat) => {
 };
     return (
         <div>
-            <div>
-                <input type="text" name="num_fact" placeholder="Numéro Facture" value={searchParams.num_fact} onChange={handleInputChange} />
-                <input type="date" name="datereception" placeholder="Date de Réception (yyyy-mm-dd)" value={searchParams.datereception} onChange={handleInputChange} />
-                <button onClick={rechercheFacture}>Rechercher</button>
+            <div style={{ position: 'relative', display: 'inline-block', marginTop:'50px', right:'-12px'}}>
+                <input type="text" name="num_fact" placeholder="Numéro Facture" value={searchParams.num_fact} onChange={handleInputChange}  style={{ width: '250px',height:'28px',borderRadius:'5px',border:'1px solid lightgrey'  }} />
+                <input type="date" name="datereception" placeholder="Date de Réception (yyyy-mm-dd)" value={searchParams.datereception} onChange={handleInputChange}  style={{ width: '250px',borderRadius:'5px' ,border:'1px solid lightgrey' }}/>
+                
             </div>
+            <button style={{width:'50px',background:'white',border:'1px solid lightgrey',height:'26px',position: 'relative', display: 'inline-block', marginTop:'50px', top:'-6px',right:'-12px'}}><FaSearch style={{ position: 'absolute', right: '18px', top: '50%',transform: 'translateY(-50%)', color:'black', cursor: 'pointer' }} onClick={rechercheFacture} /></button>
             {searchResults.length > 0 && (
                 <div>
                     <h3>Résultats de la recherche</h3>

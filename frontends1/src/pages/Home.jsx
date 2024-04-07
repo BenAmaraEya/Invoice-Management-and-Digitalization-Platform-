@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Form, FormGroup, Button, Card, CardImg } from "reactstrap";
 import { useNavigate } from "react-router-dom";
+import { FaUser, FaLock } from "react-icons/fa"; // Importing user and lock icons
 import "../styles/Home.css";
-import partener1 from "../assets/images/chakira cable.jpeg";
-import partener2 from "../assets/images/TTlogo.png"
+import partner1 from "../assets/images/chakira cable.jpeg";
+import partner2 from "../assets/images/TTlogo.png";
+
 const Home = () => {
   const [credentials, setCredentials] = useState({
     username: "",
@@ -42,15 +44,13 @@ const Home = () => {
       const { token, id, profil } = data;
 
       // Store the token and user ID in local storage
-      localStorage.setItem("accessToken",token);
+      localStorage.setItem("accessToken", token);
       localStorage.setItem("userId", id);
-      localStorage.setItem("userProfil",profil);
-      console.log("User ID:", id);
-      console.log("Response Data:", data);
-      console.log("profil", profil);
+      localStorage.setItem("userProfil", profil);
+
       if (profil === "fournisseur") {
         navigate(`/dashboard/${id}`);
-      } else if (profil === "bof"||profil==="personnelfiscalite" ||profil==="agentTresorerie") {
+      } else if (profil === "bof" || profil === "personnelfiscalite" || profil === "agentTresorerie") {
         navigate(`/dashboardP/${id}`);
       }
     } catch (error) {
@@ -61,79 +61,49 @@ const Home = () => {
   };
 
   return (
-    <Container>
-      <Row>
-        <Col lg="8" className="m-auto">
-          <div className="content-container">
-            <div className="left-content">
-              <h2>Effortless Invoice Digitalization.</h2>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Commodi nobis ad temporibus!In ratione magnam et.
-                Voluptate tenetur minima, esse quidem odio
-                deleniti facere, ipsum eos,quasi perferendis eligendi enim..
-              </p>
+   
+      <Container className="content-container">
+        <Row>
+          <Col lg="8" className="m-auto">
+            <div className="login__container">
+              <Form onSubmit={handleLogin}>
+                <FormGroup>
+                  <label htmlFor="username"><FaUser /> Utilisateur</label>
+                  <input
+                    type="text"
+                    placeholder="Entez votre nom"
+                    required
+                    id="username"
+                    onChange={handleInputChange}
+                    className="custom-input"
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <label htmlFor="password"><FaLock /> Mot de Passe</label>
+                  <input
+                    type="password"
+                    placeholder="Votre mot de passe"
+                    required
+                    id="password"
+                    onChange={handleInputChange}
+                    className="custom-input"
+                  />
+                </FormGroup>
+                <Button
+                  className="auth__btn"
+                  type="submit"
+                  disabled={loading}
+                >
+                  {loading ? "Logging in..." : "Login"}
+                </Button>
+              </Form>
+              {error && <p className="error-message">{error}</p>}
             </div>
-            <div className="right-content">
-              <div className="login__container d-flex justify-content-between">
-                <div className="login__form">
-                  <Form onSubmit={handleLogin}>
-                    <FormGroup>
-                      <label>Utilisateur </label>
-                      <input
-                        type="text"
-                        placeholder="Entez votre nom "
-                        required
-                        id="username"
-                        onChange={handleInputChange}
-                        className="custom-placeholder"
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <label>Mot de Passe</label>
-                      <input
-                        type="password"
-                        placeholder="Votre mot de passe"
-                        required
-                        id="password"
-                        onChange={handleInputChange}
-                        className="custom-placeholder"
-                      />
-                    </FormGroup>
-                    <Button
-                      className="btn secondary__btn auth__btn"
-                      type="submit"
-                      disabled={loading}
-                    >
-                      {loading ? "Logging in..." : "Login"}
-                    </Button>
-                  </Form>
-                  {error && <p className="error-message">{error}</p>}
-                </div>
-              </div>
-            </div>
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col lg="12">
-          <div className="partners">
-            <h2>Nos Partenaires</h2>
-            <div className="gallery">
-              <Card className="partner-card">
-                <CardImg src={partener1} alt="partner 1" />
-              </Card>
-              <Card className="partner-card">
-                <CardImg src={partener2} alt="partner 2" />
-              </Card>
-              <Card className="partner-card">
-                <CardImg src={partener2} alt="partner 2" />
-              </Card>
-            </div>
-          </div>
-        </Col>
-      </Row>
-    </Container>
+          </Col>
+        </Row>
+      </Container>
+      
+   
   );
 };
 
