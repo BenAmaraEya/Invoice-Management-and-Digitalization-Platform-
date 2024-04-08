@@ -14,7 +14,7 @@ const Header = () => {
   const userId = localStorage.getItem("userId");
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
+  const [notificationsEtat, setNotif] = useState([]);
 
   const handleToggleUserMenu = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
@@ -22,13 +22,12 @@ const Header = () => {
 
   const handleUpdatePassword = () => {
     navigate(`/updatePass/${userId}`);
-    setIsUserMenuOpen(false); // Close the menu after selecting an option
+    setIsUserMenuOpen(false); 
   };
 
   const handleReclamation = () => {
     navigate(`/reclamation/${userId}`);
-    setIsUserMenuOpen(false); // Close the menu after selecting an option
-  };
+    setIsUserMenuOpen(false);   };
 
   const handleLogout = async () => {
     try {
@@ -43,7 +42,7 @@ const Header = () => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("userId");
         console.log("Token removed");
-        navigate('/login');
+        navigate('/home');
       } else {
         console.error("Failed to logout:", response.statusText);
       }
@@ -54,18 +53,18 @@ const Header = () => {
   };
 
   useEffect(() => {
-    const storedNotifications = JSON.parse(localStorage.getItem("notifications")) || [];
-    setNotifications(storedNotifications);
+    const storedetatNotifications = JSON.parse(localStorage.getItem("notificationEtat")) || [];
+    setNotif(storedetatNotifications);
     const socket = io('http://localhost:3006');
     socket.on('newStatuts', async (statut, num) => {
       try {
         const newNotification = {
           message: { statut, num }
         };
-        setNotifications(prevNotifications => {
-          const updatedNotifications = [...prevNotifications, newNotification];
-          localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
-          return updatedNotifications;
+        setNotif(prevNotificationsEtat => {
+          const updatedNotificationEtat = [...prevNotificationsEtat, newNotification];
+          localStorage.setItem("notificationEtat", JSON.stringify(updatedNotificationEtat));
+          return updatedNotificationEtat;
         });
       } catch (error) {
         console.error("Error fetching fournisseur:", error);
@@ -88,11 +87,6 @@ const Header = () => {
       </div>
       <div className="navigation">
         <ul className="menu d-flex align-items-center gap-5">
-          <li className="nav__item">
-            <NavLink to="/home" activeClassName="active" exact>
-              Accueil
-            </NavLink>
-          </li>
           <li className="nav__item">
             <NavLink to={`/dashboard/${userId}`} activeClassName="active" exact>
               Dashboard
@@ -132,24 +126,24 @@ const Header = () => {
             <div className="dropdown">
               <div className="dropdown-btn" onClick={handleToggleNotificationMenu}>
                 <FontAwesomeIcon icon={faBell} className="notif-icon" />
-                {notifications.length > 0 && (
+                {notificationsEtat.length > 0 && (
                   <div className="notification-badge-container">
-                    <NotificationBadge count={notifications.length} effect={Effect.SCALE} />
+                    <NotificationBadge count={notificationsEtat.length} effect={Effect.SCALE} />
                   </div>
                 )}
               </div>
               {isNotificationMenuOpen && (
                 <div className="dropdown-content">
-                  {notifications.length === 0 ? (
+                  {notificationsEtat.length === 0 ? (
                     <div>Pas de nouveau notification</div>
                   ) : (
-                    notifications.map((notification, index) => (
+                    notificationsEtat.map((notif, index) => (
                       <div key={index} onClick={() => {
-                        NotificationManager.info(notification.message.statut.statuts);
-                        setNotifications(notifications.filter(n => n.id !== index));
-                        localStorage.setItem("notifications", JSON.stringify(notifications.filter(n => n.id !== index)));
+                        NotificationManager.info(notif.message.statut.statuts);
+                        setNotif(notificationsEtat.filter(n => n.id !== index));
+                        localStorage.setItem("notificationEtat", JSON.stringify(notificationsEtat.filter(n => n.id !== index)));
                       }} className="notification-item">
-                        N°: {notification.message.statut.num} - {notification.message.statut.statuts}
+                        N°: {notif.message.statut.num} - {notif.message.statut.statuts}
                       </div>
                     ))
                   )}
