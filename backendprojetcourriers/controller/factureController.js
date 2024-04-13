@@ -247,46 +247,40 @@ ExportFacturetoExcel:[authorizeSupplier, async (req, res) => {
 
 getFacturesCountByStatus: async (req, res) => {
   try {
-      // Récupérer les données des factures de fournisseur
-      const {iderp}=req.params;
-      const factures = await Facture.findAll({where:{ iderp } }); 
-      console.log("Factures found:", factures);
-      // Initialiser les compteurs pour chaque catégorie de factures
-      let NBFValide = 0;
-      let NBFpaye = 0;
-      let NBFAttente = 0;
-      let NBFrejete = 0;
+    // Récupérer les données des factures de fournisseur
+    const { iderp } = req.params;
+    const factures = await Facture.findAll({ where: { iderp } });
+    console.log("Factures found:", factures);
+    
+    // Initialiser les compteurs pour chaque catégorie de factures
+    let NBFValide = 0;
+    let NBFpaye = 0;
+    let NBFAttente = 0;
+    let NBFrejete = 0;
 
-      // Compter le nombre de factures dans chaque catégorie
-      factures.forEach((facture) => {
-          switch (facture.status) {
-              case 'Validé':
-                NBFValide++;
-                  break;
-              case 'Payé':
-                NBFpaye++;
-                  break;
-              case 'Attente':
-                NBFAttente++;
-                  break;
-              case 'Rejeté':
-                NBFrejete++;
-                  break;
-              default:
-                  break;
-          }
-      });
+    // Compter le nombre de factures dans chaque catégorie
+    factures.forEach((facture) => {
+      if (facture.status.toLowerCase().includes('validé')) {
+        NBFValide++;
+      } else if (facture.status === 'Payé') {
+        NBFpaye++;
+      } else if (facture.status === 'Attente') {
+        NBFAttente++;
+      } else if (facture.status.toLowerCase().includes('Rejeté')) {
+        NBFrejete++;
+      }
+    });
 
-      // Retourner les nombres de factures dans chaque catégorie
-      return res.status(200).json({
-        NBFValide,
-          NBFpaye,
-          NBFAttente,
-          NBFrejete
-      });
+    // Retourner les nombres de factures dans chaque catégorie
+    return res.status(200).json({
+      NBFValide,
+      NBFpaye,
+      NBFAttente,
+      NBFrejete
+    });
   } catch (error) {
-      console.error('Error fetching factures:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+    console.error('Error fetching factures:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 },
 viewFacturePDF: async (req, res) => {
@@ -439,7 +433,7 @@ validerBudget:[authorizeAgent,async (req,res) =>{
     
         // Update the facture status with the rejection motif and verification date
         const dateVerifi = new Date().toISOString().slice(0, 10);
-        const motifRejeteAvecDate = `${motifRejete}, date de vérification : ${dateVerifi}`;
+        const motifRejeteAvecDate = `Rejeté ${motifRejete}, date de vérification : ${dateVerifi}`;
         await facture.update({ status: motifRejeteAvecDate });
         await Etat.create({ etat:motifRejete, idF: idF, date: dateVerifi });
         factureController.sendNotificationToSupplier(motifRejeteAvecDate,facture.num_fact);

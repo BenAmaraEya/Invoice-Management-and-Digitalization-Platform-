@@ -1,7 +1,7 @@
 const Reclamation = require('../models/Reclamation');
 const Fournisseur = require('../models/Fournisseur');
 
-let io; // Define io variable to store socket.io instance
+let io; 
 
 const reclamationController = {
   sendNotificationToBOF: (reclamation) => {
