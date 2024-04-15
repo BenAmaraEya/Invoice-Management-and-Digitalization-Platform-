@@ -1,12 +1,19 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 
 const Header = () => {
-  return (
-    <View>
-      <Text>header</Text>
-    </View>
-  );
+  const route = useRoute();
+
+  if (route.name === 'Dashboard'||route.name==='Factures') {
+    return (
+      <View>
+        <Text>header</Text>
+      </View>
+    );
+  }
+
+  return null;
 };
 
 export default Header;

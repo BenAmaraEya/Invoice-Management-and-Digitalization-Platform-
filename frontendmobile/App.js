@@ -1,18 +1,13 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import Layout from './components/Layout';
-import { AppRegistry } from 'react-native';
-
-const appName = require('./app.json').name;
+import { NavigationContainer } from '@react-navigation/native';
 
 export default function App() {
   return (
-    <>
+    <NavigationContainer>
       <StatusBar style="auto" />
       <Layout />
-    </>
+    </NavigationContainer>
   );
 }
-
-// Register the component correctly
-AppRegistry.registerComponent(appName, () => App);

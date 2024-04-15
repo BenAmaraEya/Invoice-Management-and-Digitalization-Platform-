@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
@@ -13,10 +15,18 @@ const Login = () => {
 
   const navigation = useNavigation();
 
-  const handleInputChange = (text, field) => {
+  useEffect(() => {
+    
+    setCredentials({
+      username: '',
+      password: '',
+    });
+  }, []);
+
+  const handleInputChange = (field, value) => {
     setCredentials({
       ...credentials,
-      [field]: text,
+      [field]: value,
     });
   };
 
@@ -24,26 +34,24 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3006/auth/login', {
-        method: 'POST',
+      const response = await axios.post('http://192.168.0.5:3006/auth/login', credentials, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(credentials),
       });
 
-      if (!response.ok) {
+      if (!response.data) {
         throw new Error('Invalid credentials');
       }
 
-      const data = await response.json();
-      const { token, id, profil } = data;
+      const { token, id, profil } = response.data;
 
       AsyncStorage.setItem('accessToken', token);
       AsyncStorage.setItem('userId', id.toString());
       AsyncStorage.setItem('userProfil', profil);
 
-      navigation.navigate('Dashboard', { id });
+      navigation.navigate('Dashboard', { userId: id }); // Pass userId here
+
     } catch (error) {
       setError(error.message);
     } finally {
@@ -53,29 +61,36 @@ const Login = () => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.welcomeText}>Bienvenue</Text>
       <View style={styles.loginContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Entez votre nom"
-          value={credentials.username}
-          onChangeText={(text) => handleInputChange(text, 'username')}
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Votre mot de passe"
-          value={credentials.password}
-          onChangeText={(text) => handleInputChange(text, 'password')}
-          secureTextEntry
-          autoCapitalize="none"
-        />
+        <View style={styles.inputContainer}>
+          <Icon name="user" size={20} color="#000" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Entez votre nom"
+            value={credentials.username}
+            onChangeText={(text) => handleInputChange('username', text)}
+            autoCapitalize="none"
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Icon name="lock" size={20} color="#000" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Votre mot de passe"
+            value={credentials.password}
+            onChangeText={(text) => handleInputChange('password', text)}
+            secureTextEntry
+            autoCapitalize="none"
+          />
+        </View>
         <TouchableOpacity
           style={styles.button}
           onPress={handleLogin}
           disabled={loading}
         >
           <Text style={styles.buttonText}>
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? 'Logging in...' : 'connexion'}
           </Text>
         </TouchableOpacity>
         {error && <Text style={styles.errorMessage}>{error}</Text>}
@@ -89,31 +104,56 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#4367c4',
+  },
+  welcomeText: {
+    color: '#3B1B0D',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 50,
+    
   },
   loginContainer: {
     width: '80%',
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    elevation: 10, // Android shadow
+    shadowColor: '#000', // iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    marginBottom: 20,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
+    flex: 1,
     padding: 10,
-    marginBottom: 10,
-    borderRadius: 5,
+  },
+  icon: {
+    marginRight: 10,
   },
   button: {
-    backgroundColor: '#007bff',
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: '#e0e6e9',
+    padding: 15,
+    borderRadius: 8,
     alignItems: 'center',
+    
   },
   buttonText: {
-    color: '#fff',
+    color:'#3B1B0D',
     fontWeight: 'bold',
+    fontSize: 16,
   },
   errorMessage: {
     color: 'red',
     marginTop: 10,
+    textAlign: 'center',
   },
 });
 

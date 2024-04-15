@@ -266,7 +266,7 @@ getFacturesCountByStatus: async (req, res) => {
         NBFpaye++;
       } else if (facture.status === 'Attente') {
         NBFAttente++;
-      } else if (facture.status.toLowerCase().includes('Rejeté')) {
+      } else if (facture.status.toLowerCase().includes('rejeté')) {
         NBFrejete++;
       }
     });

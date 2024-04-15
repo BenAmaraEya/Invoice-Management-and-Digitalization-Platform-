@@ -1,20 +1,12 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-
-import Header from '../components/Header'; // Import your Header component
-import Footer from '../components/Footer'; // Import your Footer component
 import Routers from '../routes/routes';
 
 const Layout = () => {
   return (
-    <NavigationContainer>
-      <View style={styles.container}>
-        <Header />
-        <Routers />
-        <Footer />
-      </View>
-    </NavigationContainer>
+    <View style={styles.container}>
+      <Routers />
+    </View>
   );
 };
 
