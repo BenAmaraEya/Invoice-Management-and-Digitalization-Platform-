@@ -5,7 +5,7 @@ import { useRoute } from '@react-navigation/native';
 const Header = () => {
   const route = useRoute();
 
-  if (route.name === 'Dashboard'||route.name==='Factures') {
+  if (route.name === 'Dashboard'||route.name==='Factures'||route.name==='UploadFacture') {
     return (
       <View>
         <Text>header</Text>

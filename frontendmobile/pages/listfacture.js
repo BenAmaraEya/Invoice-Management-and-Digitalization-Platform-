@@ -117,7 +117,7 @@ const ListeFactures = () => {
 
   return (
     <View style={styles.container}>
-       <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('Uploadfacture')}>
+       <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('UploadFacture')}>
         
         <Text style={styles.addButtonText}><Icon name="plus" size={15} color="white" /> Ajouter Factures</Text>
       </TouchableOpacity>
