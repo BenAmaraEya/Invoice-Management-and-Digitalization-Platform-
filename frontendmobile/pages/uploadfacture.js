@@ -66,7 +66,7 @@ const FactureUploader = () => {
       console.log('Upload Response:', data);
 
       const filePath = `uploads/${fileName}`;
-      navigation.navigate('FactureForm', { extractedInfo: data.extractedInfo, filePath: filePath });
+      navigation.navigate('FormFacture', { extractedInfo: data.extractedInfo, filePath: filePath });
     } catch (error) {
       console.log('Error uploading facture:', error);
       setError('Error uploading facture');

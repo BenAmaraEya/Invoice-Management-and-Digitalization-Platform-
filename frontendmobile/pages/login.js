@@ -50,7 +50,7 @@ const Login = () => {
       AsyncStorage.setItem('userId', id.toString());
       AsyncStorage.setItem('userProfil', profil);
 
-      navigation.navigate('Dashboard', { userId: id }); // Pass userId here
+      navigation.navigate('Dashboard', { userId: id }); 
 
     } catch (error) {
       setError(error.message);

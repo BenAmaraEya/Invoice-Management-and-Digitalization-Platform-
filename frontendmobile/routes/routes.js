@@ -5,10 +5,12 @@ import Dashboard from '../pages/dashboard';
 import Header from '../components/Header'; // Import your Header component
 import ListeFactures from '../pages/listfacture';
 import FactureUploader from '../pages/uploadfacture';
+import FactureForm from '../pages/formulaire';
 
 const Stack = createStackNavigator();
 
 const Routers = () => {
+  console.log("Routers component loaded");
   return (
     <Stack.Navigator initialRouteName="Login">
       <Stack.Screen 
@@ -35,6 +37,14 @@ const Routers = () => {
        <Stack.Screen 
         name="UploadFacture" 
         component={FactureUploader} 
+        options={{ 
+          header: () => <Header />,
+         
+        }} 
+      />
+       <Stack.Screen 
+        name="FormFacture" 
+        component={FactureForm} 
         options={{ 
           header: () => <Header />,
          

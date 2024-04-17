@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Platform, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Platform, Linking, ScrollView  } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useRoute,useNavigation } from '@react-navigation/native';
@@ -117,8 +117,7 @@ const ListeFactures = () => {
 
   return (
     <View style={styles.container}>
-       <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('UploadFacture')}>
-        
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('UploadFacture')}>
         <Text style={styles.addButtonText}><Icon name="plus" size={15} color="white" /> Ajouter Factures</Text>
       </TouchableOpacity>
       <View style={styles.table}>
@@ -158,30 +157,31 @@ const ListeFactures = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 5,
     backgroundColor: '#f5f5f5',
+  },
+  table: {
+    flex: 1,
+    marginBottom: 60,  
   },
   addButton: {
     alignSelf: 'flex-end',
     padding: 10,
-    marginRight:15,
+    marginRight: 15,
     backgroundColor: '#a6db86',
     borderRadius: 8,
     marginBottom: 10,
+   
   },
   addButtonText: {
     color: '#fff',
     fontSize: 16,
   },
-  table: {
-    marginBottom: 2,
-  },
   tableTitle: {
     fontSize: 20,
     color: '#3b1b0d',
     textAlign: 'center',
-    marginBottom:1,
-    backgroundColor:'#4367c4'
+    marginBottom: 1,
+    backgroundColor: '#4367c4',
   },
   tableHeader: {
     flexDirection: 'row',

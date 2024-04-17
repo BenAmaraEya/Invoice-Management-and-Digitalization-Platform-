@@ -56,7 +56,7 @@ const Dashboard = () => {
               legendFontSize: 15,
             },
             {
-              name: 'En Attente',
+              name: 'Attente',
               population: NBFAttente,
               color: '#4367c4',
               legendFontColor: '#7F7F7F',
