@@ -22,7 +22,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchFournisseurById = async () => {
       try {
-        const response = await axios.get(`http://192.168.0.5:3006/fournisseur/userId/${userId}`); // change this line
+        const response = await axios.get(`http://localhost:3006/fournisseur/userId/${userId}`); // change this line
         const iderpFromResponse = response.data.fournisseur.iderp;
         setIderp(iderpFromResponse);
       } catch (error) {
@@ -37,7 +37,7 @@ const Dashboard = () => {
     const fetchFactureCounts = async () => {
       try {
         if (iderp) {
-          const response = await axios.get(`http://192.168.0.5:3006/facture/status/${iderp}`);
+          const response = await axios.get(`http://localhost:3006/facture/status/${iderp}`);
           const { NBFValide, NBFpaye, NBFAttente, NBFrejete } = response.data;
           setFactureCounts({ NBFValide, NBFpaye, NBFAttente, NBFrejete });
           setChartData([

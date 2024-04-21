@@ -6,6 +6,7 @@ import Header from '../components/Header'; // Import your Header component
 import ListeFactures from '../pages/listfacture';
 import FactureUploader from '../pages/uploadfacture';
 import FactureForm from '../pages/formulaire';
+import UpdateFacture from '../pages/updatefacture';
 
 const Stack = createStackNavigator();
 
@@ -49,6 +50,11 @@ const Routers = () => {
           header: () => <Header />,
          
         }} 
+      />
+       <Stack.Screen 
+        name="UpdateFacture" 
+        component={UpdateFacture} 
+        options={{ headerShown: false }} 
       />
     </Stack.Navigator>
   );
