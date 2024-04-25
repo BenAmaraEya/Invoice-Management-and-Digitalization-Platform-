@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRoute } from '@react-navigation/native';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet,ScrollView } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import Footer from '../components/Footer';
 
@@ -22,7 +22,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchFournisseurById = async () => {
       try {
-        const response = await axios.get(`http://localhost:3006/fournisseur/userId/${userId}`); // change this line
+        const response = await axios.get(`http://192.168.136.8:3006/fournisseur/userId/${userId}`); // change this line
         const iderpFromResponse = response.data.fournisseur.iderp;
         setIderp(iderpFromResponse);
       } catch (error) {
@@ -37,7 +37,7 @@ const Dashboard = () => {
     const fetchFactureCounts = async () => {
       try {
         if (iderp) {
-          const response = await axios.get(`http://localhost:3006/facture/status/${iderp}`);
+          const response = await axios.get(`http://192.168.136.8:3006/facture/status/${iderp}`);
           const { NBFValide, NBFpaye, NBFAttente, NBFrejete } = response.data;
           setFactureCounts({ NBFValide, NBFpaye, NBFAttente, NBFrejete });
           setChartData([
@@ -80,9 +80,10 @@ const Dashboard = () => {
   }, [iderp]);
 
   return (
-    <View style={styles.dashboardContainer}>
+    <View style={styles.container}>
+     <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.dashboardContainer}>
       <Text style={styles.title}>Tableau de bord</Text>
-      <View style={styles.chartContainer}>
         <PieChart
           data={chartData}
           width={380}
@@ -95,28 +96,51 @@ const Dashboard = () => {
           }}
           accessor="population"
           backgroundColor="transparent"
-          paddingLeft="15"
+          paddingLeft="22"
           absolute
         />
       </View>
-      <Footer />
+      </ScrollView>
+      <View style={styles.footerContainer}>
+        <Footer/>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 5,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+  },
   dashboardContainer: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#eff0f6',
+    borderRadius: 25,
     padding: 20,
+    marginTop: 10,
+    alignItems: 'center',
+    marginBottom: 30,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 15,
+    textAlign:'left',
     marginBottom: 20,
   },
-  chartContainer: {
-    alignItems: 'center',
+  footerContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
   },
 });
 

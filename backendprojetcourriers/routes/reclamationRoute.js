@@ -9,6 +9,7 @@ module.exports = (io) => {
   router.get('/', reclamationController.getAll);
 router.get('/:id',reclamationController.getbyid);
 router.delete('/:id', reclamationController.deleteReclamation);
+router.get('/fournisseur/:iderp',reclamationController.getReclamationBySupplierId);
   // Pass the io instance to the controller
   reclamationController.setIo(io);
 

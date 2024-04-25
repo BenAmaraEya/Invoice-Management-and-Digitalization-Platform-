@@ -72,8 +72,8 @@ const generateExcel = async (factures) => {
   return buffer;
 };
 const factureController = {
-  upload:[authorize, async (req, res) => {
-    //appel de l'upload qui est linstance de multer 
+  upload: [authorize, async (req, res) => {
+    // Appel de l'upload qui est l'instance de multer
     upload(req, res, err => {
       if (err) {
         return res.status(400).json({ message: 'Error uploading file', error: err });
@@ -81,22 +81,31 @@ const factureController = {
       if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
       }
-      console.log(req.file); 
+      console.log(req.file);
       console.log(req.file.originalname);
-      // Convertir pdf en image
+      // Convertir PDF en image
       const pdfFilePath = req.file.path;
       const outputImagePath = './uploads/';
       pdfPoppler.convert(pdfFilePath, { format: 'png', out_dir: outputImagePath, prefix: 'uploads' })
         .then(() => {
-          // 
+          // Reconnaissance optique des caractères (OCR)
           Tesseract.recognize(`${outputImagePath}uploads-1.png`, 'fra', {
             logger: m => console.log(m)
           }).then(({ data: { text } }) => {
-            // Extraire les information necessaire de l'ORC
+            // Extraire les informations nécessaires de l'OCR
             const extractedInfo = extractInfoFromOCR(text);
-            
-            //renvoir les information au client pour leur validation
-            res.json({ success: true, extractedInfo });
+            Facture.findOne({ where: { num_fact: extractedInfo.num_fact } }).then(facture => {
+              if (!facture) {
+                // Renvoyer les informations au client pour leur validation
+                res.json({ success: true, extractedInfo });
+              } else {
+                // Le numéro de facture existe déjà, afficher un message d'erreur
+                res.status(400).json({ message: 'Invoice already exists' });
+              }
+            }).catch(err => {
+              console.error(err);
+              res.status(500).json({ message: 'Error retrieving invoice', error: err });
+            });
           }).catch(err => {
             console.error(err);
             res.status(500).json({ message: 'Error performing OCR', error: err });
@@ -105,10 +114,8 @@ const factureController = {
           console.error(err);
           res.status(500).json({ message: 'Error converting PDF to image', error: err });
         });
-        
-        
     });
-  },],
+  }],
 
 
   save: [authorize,async (req, res) => {

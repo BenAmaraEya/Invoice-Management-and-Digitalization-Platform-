@@ -17,7 +17,7 @@ const ListeFactures = () => {
   useEffect(() => {
     const fetchFournisseurByUserId = async () => {
       try {
-        const response = await axios.get(`http://localhost:3006/fournisseur/userId/${userId}`);
+        const response = await axios.get(`http://192.168.136.8:3006/fournisseur/userId/${userId}`);
         const iderpFromResponse = response.data.fournisseur.iderp;
         setIdErp(iderpFromResponse);
       } catch (error) {
@@ -32,7 +32,7 @@ const ListeFactures = () => {
     const fetchFactures = async () => {
       try {
         if (iderp) {
-          const response = await axios.get(`http://localhost:3006/facture/${iderp}`);
+          const response = await axios.get(`http://192.168.136.8:3006/facture/${iderp}`);
           setFactures(response.data.factures);
         }
       } catch (error) {
@@ -45,7 +45,7 @@ const ListeFactures = () => {
 
   const viewFacturePDF = async (pathpdf) => {
     try {
-      const pdfUrl = `http://192.168.0.5:3006/facture/view-pdf/${pathpdf}`;
+      const pdfUrl = `http://192.168.0.5/facture/view-pdf/${pathpdf}`;
       const localUri = FileSystem.documentDirectory + 'facture.pdf';
   
       const downloadObject = FileSystem.createDownloadResumable(pdfUrl, localUri, {}, (downloadProgress) => {

@@ -54,7 +54,10 @@ const Routers = () => {
        <Stack.Screen 
         name="UpdateFacture" 
         component={UpdateFacture} 
-        options={{ headerShown: false }} 
+        options={{ 
+          header: () => <Header />,
+         
+        }} 
       />
     </Stack.Navigator>
   );

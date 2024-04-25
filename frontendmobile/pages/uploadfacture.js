@@ -22,7 +22,7 @@ const FactureUploader = () => {
       if (result && !result.cancelled && result.assets.length > 0 && result.assets[0].uri) {
         setFileUri(result.assets[0].uri);
         setFileName(result.assets[0].name);
-        setError(null);  // Reset error state
+        setError(null);  
       } else {
         setError('Aucun fichier sélectionné');
       }
@@ -52,7 +52,7 @@ const FactureUploader = () => {
 
     try {
       const token = await AsyncStorage.getItem('accessToken');
-      const response = await fetch('http://192.168.0.5:3006/facture/upload', {
+      const response = await fetch('http://192.168.136.8:3006/facture/upload', {
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -76,6 +76,7 @@ const FactureUploader = () => {
   };
 
   return (
+   
     <View style={styles.container}>
       <Text style={styles.title}>Télécharger Documents</Text>
       
@@ -97,6 +98,7 @@ const FactureUploader = () => {
       {error && <Text style={styles.error}>{error}</Text>}
       <Footer/>
     </View>
+   
   );
 };
 

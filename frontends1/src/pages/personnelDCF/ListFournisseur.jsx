@@ -93,8 +93,7 @@ const ListFournisseur = () => {
                             <Link
                                 to={
                                     userProfile === "bof" ? `/listcourriers/${fournisseur.iderp}` :
-                                    userProfile === "personnelfiscalite" ? `/listcourriersfiscal/${fournisseur.iderp}` :
-                                    userProfile === "agentTresorerie" ? `/listcourrierstresorerie/${fournisseur.iderp}` :
+                                   
                                     "/defaultDestination"
                                 }
                             >

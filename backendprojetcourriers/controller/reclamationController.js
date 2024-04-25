@@ -59,6 +59,20 @@ const reclamationController = {
     res.status(500).json({ error: 'Internal server error' });
   }
 },
+getReclamationBySupplierId:async(req,res)=>{
+  try{
+    const {iderp}=req.params;
+    const reclamation= await Reclamation.findAll({where:{iderp}});
+
+    if(!reclamation || reclamation.length===0){
+      return res.status(404).json({ message: 'No reclamation found for the supplier ID' });
+    }
+    res.json({ success: true, reclamation });
+  }catch(error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching reclamations by supplier ID', error: error });
+}
+},
 deleteReclamation: async (req, res) => {
   try {
     const { id } = req.params;

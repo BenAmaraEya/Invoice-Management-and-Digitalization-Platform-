@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate ,Link} from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt, faSignOutAlt, faCog, faBell } from "@fortawesome/free-solid-svg-icons";
 import "./Header.css";
@@ -9,7 +9,7 @@ import axios from 'axios';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import NotificationBadge, { Effect } from 'react-notification-badge';
-
+import { Button } from 'reactstrap';
 const Header = () => {
   const navigate = useNavigate();
 
@@ -20,7 +20,21 @@ const Header = () => {
   const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [fournisseur, setFournisseur] = useState([]);
+  const [iderp,setIdErp]=useState(null);
+  useEffect(() => {
+    const fetchFournisseurById = async () => {
+      try {
+        const id = localStorage.getItem('userId');
+        const response = await axios.get(`http://localhost:3006/fournisseur/userId/${id}`);
+        const iderpFromResponse = response.data.fournisseur.iderp;
+        setIdErp(iderpFromResponse);
+      } catch (error) {
+        console.error('Error fetching fournisseur:', error);
+      }
+    };
 
+    fetchFournisseurById();
+  }, []);
   useEffect(() => {
     
     const storedNotifications = JSON.parse(localStorage.getItem("notifications")) || [];
@@ -111,15 +125,30 @@ const Header = () => {
               Dashboard
             </NavLink>
           </li>
+
+         {userProfile === "personnelfiscalite" &&(
+          <>
           <li className="nav__item">
+            <NavLink to={`/listcourriersfiscal/${iderp}`} activeClassName="active" exact>
+              Factures
+            </NavLink>
+          </li>
+         </>)}
+         {userProfile === "agentTresorerie" &&(
+          <>
+          <li className="nav__item">
+            <NavLink to={`/listcourrierstresorerie/${iderp}`} activeClassName="active" exact>
+              Factures
+            </NavLink>
+          </li>
+         </>)}
+          {userProfile === "bof" && (
+            <>
+             <li className="nav__item">
             <NavLink to={`/listfournisseur/${userId}`} activeClassName="active" exact>
               Fournisseurs
             </NavLink>
           </li>
-
-         
-          {userProfile === "bof" && (
-            <>
               <li className="nav__item bordereau-item">
                 <div className="dropdown">
                   <div className="dropdown-btn" onClick={handleToggleBordereauMenu} activeClassName="active" exact>
@@ -145,31 +174,7 @@ const Header = () => {
                   Bordereaux
                 </NavLink>
               </li>
-            </>
-          )}
-
-          <li className="nav__item user-settings-item">
-            <div className="dropdown">
-              <div className="dropdown-btn" onClick={handleToggleUserMenu}>
-                <FontAwesomeIcon icon={faCog} className="icon" />
-              </div>
-              {isUserMenuOpen && (
-                <div className="dropdown-content">
-                  <button className="dropdown-item" onClick={handleUpdatePassword}>
-                    Update Password
-                  </button>
-                  <button className="dropdown-item" onClick={handleLogout}>
-                    Logout
-                  </button>
-                  <NavLink to={`/listArchive`} activeClassName="active" exact>
-                  listArchive
-                </NavLink>
-                  
-                </div>
-              )}
-            </div>
-          </li>
-          <li className="nav__item">
+              <li className="nav__item">
             <div className="dropdown">
               <div className="dropdown-btn" onClick={handleToggleNotificationMenu}>
                 
@@ -201,6 +206,33 @@ const Header = () => {
               )}
             </div>
           </li>
+            </>
+          )}
+
+          <li className="nav__item user-settings-item">
+            <div className="dropdown">
+              <div className="dropdown-btn" onClick={handleToggleUserMenu}>
+                <FontAwesomeIcon icon={faCog} className="icon" />
+              </div>
+              {isUserMenuOpen && (
+                <div className="dropdown-content">
+                  <button className="dropdown-item" onClick={handleUpdatePassword}>
+                    Update Password
+                  </button>
+                  <button className="dropdown-item" onClick={handleLogout}>
+                    Logout
+                  </button>
+                 
+  <Link to={`/listArchive`} className="nav__link">
+    <Button  className="listarchivebtn">Liste Archive</Button>
+  </Link>
+
+                  
+                </div>
+              )}
+            </div>
+          </li>
+          
         </ul>
       </div>
     </header>
