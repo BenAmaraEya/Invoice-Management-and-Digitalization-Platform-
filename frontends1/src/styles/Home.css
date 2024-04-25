@@ -1,0 +1,66 @@
+
+  
+  .content-container {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+  }
+  
+  .login__container {
+    background-color: white;
+    padding: 20px;
+    margin-left: 50px;
+    margin-bottom: 20px;
+   
+    border-right: 80px solid #246dfe;  /* Blue border */
+    
+    box-shadow: 10px 10px 10px 10px rgba(5, 24, 234, 0.2);
+    
+  }
+  
+  .login__container label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .custom-input {
+    width: 150%;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+  
+  .error-message {
+    color: red;
+  }
+  
+  .partners {
+    margin-top: 20px;
+    padding: 20px 0;
+    border-top: 1px solid #ccc;
+  }
+  
+  .gallery-container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .gallery .partner-card {
+    margin: 10px;
+    width: 28%;
+  }
+  
+  .auth__btn{
+   background-color: #246dfe !important;
+    width :150%
+  }

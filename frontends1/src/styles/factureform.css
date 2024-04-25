@@ -1,0 +1,66 @@
+/* factureform.css */
+
+.form-paragraph {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.facture-container {
+  margin-top: 20px;
+}
+
+.facture-form {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.facture-label {
+  font-weight: bold;
+}
+
+.facture-input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.validerform-btn {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 200px;
+  
+ 
+}
+.annulerform-btn{
+  background-color: rgb(210, 210, 210)!important;
+  color: black !important;
+  padding: 10px 20px !important;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 300px;
+  margin-left: 15px;
+  
+}
+.btn-container{
+  display: flex !important;
+  
+}
+.validerform-btn:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .facture-form {
+    padding: 10px;
+  }
+}

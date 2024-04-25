@@ -1,0 +1,167 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #246dfe;
+ height: 92px;
+  
+}
+
+.logo-container {
+  width: 148px; /* Set a fixed width for the logo container */
+  background-color: #ffffff;
+
+  flex-shrink: 0; 
+}
+
+
+.logo {
+  width: 110%;
+   
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  background-color: #246dfe; /* Set the background color for the navigation */
+  padding: 10px 20px; /* Adjust padding as needed */
+  border-radius: 5px;
+ 
+}
+
+.menu {
+  list-style: none;
+ margin-top: 15px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  margin-right:250px
+   /* Center the menu horizontally */
+}
+
+.menu li {
+  margin: 0 10px;
+   /* Adjust margin as needed */
+}
+
+.menu li a {
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  
+}
+
+.menu li a:hover {
+  background-color: #0041a8;
+  
+}
+
+.menu li a.active {
+  background-color: #0041a8; /* Adjust active color as needed */
+}
+
+.icon {
+  color: #fff;
+  margin-left: 20px; /* Adjust margin as needed */
+}
+
+.dropdown-content {
+  position: absolute;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 10px;
+  z-index: 1;
+}
+.notification-badge-container {
+  position: absolute;
+bottom:34px;
+  left: 45px;
+  display: inline-block;
+
+}
+.notif-icon {
+  
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px !important;
+}
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f4f4f4 !important;
+
+}
+
+.dropdown-item .icon {
+  margin-right: 8px;
+}
+
+.dropdown-btn {
+  cursor: pointer;
+  color: #fff !important;
+  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding-left: 5px !important;
+  margin: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background-color: transparent;
+  color: black;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+}
+.listarchivebtn{
+  border: none !important;
+  background-color: transparent !important;
+  color: black !important; 
+  padding-top: 5px !important;
+  padding-left: 1px !important;
+  
+}
+.nav__link{
+  text-align: left !important;
+ padding-top: 5px;
+}
+.dropdown-item:hover {
+  background-color: #f4f4f4 !important;
+}
+.nav__link:hover{
+
+  background-color: transparent !important;
+}
+
+.nav__link {
+  color: black !important;
+  text-decoration: none;
+}
+
+/* Apply pointer cursor to the dropdown items */
+.dropdown-content button {
+  cursor: pointer;
+}
