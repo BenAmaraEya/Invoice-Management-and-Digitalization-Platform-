@@ -440,7 +440,7 @@ validerBudget:[authorizeAgent,async (req,res) =>{
     
         // Update the facture status with the rejection motif and verification date
         const dateVerifi = new Date().toISOString().slice(0, 10);
-        const motifRejeteAvecDate = `Rejeté ${motifRejete}, date de vérification : ${dateVerifi}`;
+        const motifRejeteAvecDate = `rejeté ${motifRejete}, date de vérification : ${dateVerifi}`;
         await facture.update({ status: motifRejeteAvecDate });
         await Etat.create({ etat:motifRejete, idF: idF, date: dateVerifi });
         factureController.sendNotificationToSupplier(motifRejeteAvecDate,facture.num_fact);

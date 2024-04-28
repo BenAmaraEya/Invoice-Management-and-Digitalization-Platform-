@@ -53,7 +53,7 @@ const FactureForm = () => {
   const fetchFournisseurIdFiscale = async () => {
     try {
       const id = await AsyncStorage.getItem('userId');
-      const result = await axios.get(`http://192.168.136.8:3006/fournisseur/userId/` + id);
+      const result = await axios.get(`http://192.168.0.5:3006/fournisseur/userId/` + id);
       const fournisseurIdFiscale = result.data.fournisseur.idfiscale;
       setFormData(prevData => ({
         ...prevData,
@@ -67,7 +67,7 @@ const FactureForm = () => {
   const fetchFournisseurName = async () => {
     try {
       const id = await AsyncStorage.getItem('userId');
-      const result = await axios.get(`http://192.168.136.8:3006/user/` + id);
+      const result = await axios.get(`http://192.168.0.5:3006/user/` + id);
 
       if (result.data && result.data.name) {
         const fournisseur = result.data.name;
@@ -94,7 +94,7 @@ const FactureForm = () => {
     try {
       const token = await AsyncStorage.getItem('accessToken');
       const id = await AsyncStorage.getItem('userId');
-      const result = await axios.get(`http://192.168.136.8:3006/fournisseur/userId/${id}`);
+      const result = await axios.get(`http://192.168.0.5:3006/fournisseur/userId/${id}`);
       const fournisseurIdFiscal = result.data.fournisseur.idfiscale;
 
       setFormData(prevData => ({
@@ -102,7 +102,7 @@ const FactureForm = () => {
         idfiscale: fournisseurIdFiscal,
       }));
       let iderp = result.data.fournisseur.iderp;
-      const response = await axios.post(`http://192.168.136.8:3006/facture/save/`+iderp, formData, {
+      const response = await axios.post(`http://192.168.0.5:3006/facture/save/`+iderp, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -118,7 +118,7 @@ const FactureForm = () => {
         idFacture: factureId,
       };
 
-      await axios.post('http://192.168.136.8:3006/piecejoint/addpiece', requestData, {
+      await axios.post('http://192.168.0.5:3006/piecejoint/addpiece', requestData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

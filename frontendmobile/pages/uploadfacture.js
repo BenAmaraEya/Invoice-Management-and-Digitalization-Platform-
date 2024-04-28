@@ -1,9 +1,12 @@
+// FactureUploader component
+
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import Footer from '../components/Footer';
+
 const FactureUploader = () => {
   const [fileUri, setFileUri] = useState(null);
   const [fileName, setFileName] = useState('');
@@ -52,7 +55,7 @@ const FactureUploader = () => {
 
     try {
       const token = await AsyncStorage.getItem('accessToken');
-      const response = await fetch('http://192.168.136.8:3006/facture/upload', {
+      const response = await fetch(`http://192.168.0.5:3006/facture/upload`, {
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -76,10 +79,8 @@ const FactureUploader = () => {
   };
 
   return (
-   
     <View style={styles.container}>
       <Text style={styles.title}>Télécharger Documents</Text>
-      
       <View style={styles.fileInputContainer}>
         <TouchableOpacity style={styles.inputButton} onPress={pickDocument}>
           <Text style={styles.inputButtonText}>Choisir un fichier</Text>
@@ -87,7 +88,6 @@ const FactureUploader = () => {
         <Text>{fileName ? `Fichier choisi: ${fileName}` : 'Un seul PDF doit être téléchargé'}</Text>
         <Text>Max 50 Mo</Text>
       </View>
-      
       <TouchableOpacity
         style={[styles.uploadBtn, loading ? styles.uploadBtnLoading : null]}
         onPress={handleSubmit}
@@ -96,9 +96,8 @@ const FactureUploader = () => {
         <Text style={styles.uploadBtnText}>{loading ? 'Uploading...' : 'Upload'}</Text>
       </TouchableOpacity>
       {error && <Text style={styles.error}>{error}</Text>}
-      <Footer/>
+      <Footer />
     </View>
-   
   );
 };
 

@@ -28,7 +28,7 @@ app.use(cors({
 const server = http.createServer(app); // Create HTTP server using Express app
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000",'http://localhost:8081'],
     methods: ["GET", "POST"]
   }
 }); // Attach socket.io to the server

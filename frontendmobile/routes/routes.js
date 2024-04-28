@@ -7,6 +7,8 @@ import ListeFactures from '../pages/listfacture';
 import FactureUploader from '../pages/uploadfacture';
 import FactureForm from '../pages/formulaire';
 import UpdateFacture from '../pages/updatefacture';
+import UpdatePasswordForm from '../pages/updatepassword';
+import ReclamationForm from '../pages/reclamation';
 
 const Stack = createStackNavigator();
 
@@ -39,7 +41,7 @@ const Routers = () => {
         name="UploadFacture" 
         component={FactureUploader} 
         options={{ 
-          header: () => <Header />,
+         
          
         }} 
       />
@@ -54,6 +56,22 @@ const Routers = () => {
        <Stack.Screen 
         name="UpdateFacture" 
         component={UpdateFacture} 
+        options={{ 
+          header: () => <Header />,
+         
+        }} 
+      />
+      <Stack.Screen 
+        name="UpdatePass" 
+        component={UpdatePasswordForm} 
+        options={{ 
+          header: () => <Header />,
+         
+        }} 
+      />
+       <Stack.Screen 
+        name="Reclamation" 
+        component={ReclamationForm} 
         options={{ 
           header: () => <Header />,
          

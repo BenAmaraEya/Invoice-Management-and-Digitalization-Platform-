@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { getIpAddressAsync } from 'expo-network';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
@@ -12,15 +13,28 @@ const Login = () => {
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [localIp, setLocalIp] = useState(null);
 
   const navigation = useNavigation();
 
   useEffect(() => {
-    
     setCredentials({
       username: '',
       password: '',
     });
+  }, []);
+
+  useEffect(() => {
+    const fetchLocalIpAddress = async () => {
+      try {
+        const ipAddress = await getIpAddressAsync(); // Get local IP address
+        setLocalIp(ipAddress);
+      } catch (error) {
+        console.error('Error fetching local IP address:', error);
+      }
+    };
+
+    fetchLocalIpAddress();
   }, []);
 
   const handleInputChange = (field, value) => {
@@ -34,7 +48,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://192.168.136.8:3006/auth/login', credentials, {
+      const response = await axios.post(`http://192.168.0.5:3006/auth/login`, credentials, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -50,7 +64,7 @@ const Login = () => {
       AsyncStorage.setItem('userId', id.toString());
       AsyncStorage.setItem('userProfil', profil);
 
-      navigation.navigate('Dashboard', { userId: id }); 
+      navigation.navigate('Dashboard', { userId: id });
 
     } catch (error) {
       setError(error.message);
@@ -111,7 +125,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 50,
-    
+
   },
   loginContainer: {
     width: '80%',
@@ -143,10 +157,10 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    
+
   },
   buttonText: {
-    color:'#3B1B0D',
+    color: '#3B1B0D',
     fontWeight: 'bold',
     fontSize: 16,
   },

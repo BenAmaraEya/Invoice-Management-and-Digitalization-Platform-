@@ -5,19 +5,34 @@ import axios from 'axios';
 import { useRoute,useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Footer from '../components/Footer';
-
+import { Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as WebBrowser from 'expo-web-browser';
+import { getIpAddressAsync } from 'expo-network';
 const ListeFactures = () => {
   const [factures, setFactures] = useState([]);
   const [iderp, setIdErp] = useState(null);
+  const [localIp, setLocalIp] = useState(null);
   const route = useRoute();
   const { userId } = route.params;
   const navigation = useNavigation();
   useEffect(() => {
+    const fetchLocalIpAddress = async () => {
+      try {
+        const ipAddress = await getIpAddressAsync(); // Get local IP address
+        setLocalIp(ipAddress);
+      } catch (error) {
+        console.error('Error fetching local IP address:', error);
+      }
+    };
+
+    fetchLocalIpAddress();
+  }, []);
+
+  useEffect(() => {
     const fetchFournisseurByUserId = async () => {
       try {
-        const response = await axios.get(`http://192.168.136.8:3006/fournisseur/userId/${userId}`);
+        const response = await axios.get(`http://192.168.0.5:3006/fournisseur/userId/${userId}`);
         const iderpFromResponse = response.data.fournisseur.iderp;
         setIdErp(iderpFromResponse);
       } catch (error) {
@@ -26,13 +41,13 @@ const ListeFactures = () => {
     };
 
     fetchFournisseurByUserId();
-  }, [userId]);
+  }, [userId, localIp]);
 
   useEffect(() => {
     const fetchFactures = async () => {
       try {
         if (iderp) {
-          const response = await axios.get(`http://192.168.136.8:3006/facture/${iderp}`);
+          const response = await axios.get(`http://192.168.0.5:3006/facture/${iderp}`);
           setFactures(response.data.factures);
         }
       } catch (error) {
@@ -41,11 +56,11 @@ const ListeFactures = () => {
     };
 
     fetchFactures();
-  }, [iderp]);
+  }, [iderp, localIp]);
 
   const viewFacturePDF = async (pathpdf) => {
     try {
-      const pdfUrl = `http://192.168.0.5/facture/view-pdf/${pathpdf}`;
+      const pdfUrl = `http://192.168.0.5:3006/facture/view-pdf/${pathpdf}`;
       const localUri = FileSystem.documentDirectory + 'facture.pdf';
   
       const downloadObject = FileSystem.createDownloadResumable(pdfUrl, localUri, {}, (downloadProgress) => {
@@ -80,7 +95,40 @@ const ListeFactures = () => {
   };
   
   const deleteFacture = async (iderp, idF) => {
-    // Implement delete functionality here
+    // Display a confirmation dialog to the user
+    Alert.alert(
+      'Confirm Delete',
+      'Are you sure you want to delete this facture?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel'
+        },
+        {
+          text: 'Delete',
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem('accessToken');
+              const response = await axios.delete(`http://192.168.0.5:3006/facture/fournisseur/${iderp}/facture/${idF}`, {
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              });
+              if (response.data.success) {
+                setFactures(factures.filter(facture => facture.idF !== idF));
+                console.log(response.data.message);
+                Alert.alert('Success', 'Facture deleted successfully.');
+              }
+            } catch (error) {
+              console.error('Error deleting facture:', error);
+              Alert.alert('Error', 'An error occurred while deleting facture.');
+            }
+          }
+        }
+      ],
+      { cancelable: false }
+    );
   };
 
   const renderItem = ({ item }) => (

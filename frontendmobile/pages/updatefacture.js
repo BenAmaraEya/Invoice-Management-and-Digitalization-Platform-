@@ -53,7 +53,7 @@ const UpdateFacture = () => {
     const fetchFactureDetails = async () => {
       try {
         const token = await AsyncStorage.getItem('accessToken');
-        const response = await axios.get(`http://192.168.136.8:3006/facture/facturebyId/${idF}`, {
+        const response = await axios.get(`http://192.168.0.5:3006/facture/facturebyId/${idF}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -145,7 +145,7 @@ const UpdateFacture = () => {
       });
   
       const token = await AsyncStorage.getItem('accessToken');
-      const response = await axios.post(`http://192.168.136.8:3006/facture/upload`, formData, {
+      const response = await axios.post(`http://192.168.0.5:3006/facture/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
@@ -173,7 +173,7 @@ const UpdateFacture = () => {
       const token = await AsyncStorage.getItem('accessToken');
 
       // Update facture
-      const updateFactureResponse = await axios.put(`http://192.168.136.8:3006/facture/updateFacture/${idF}`, {
+      const updateFactureResponse = await axios.put(`http://192.168.0.5:3006/facture/updateFacture/${idF}`, {
         ...formData,
       }, {
         headers: {
@@ -182,7 +182,7 @@ const UpdateFacture = () => {
       });
 
       // Update pieces jointes
-      const updatePiecesResponse = await axios.put(`http://192.168.136.8:3006/piecejoint/updatepiece/${idF}`, {
+      const updatePiecesResponse = await axios.put(`http://192.168.0.5:3006/piecejoint/updatepiece/${idF}`, {
         piece_name: selectedPieces, // Send only the selected piece names as an array
       }, {
         headers: {
