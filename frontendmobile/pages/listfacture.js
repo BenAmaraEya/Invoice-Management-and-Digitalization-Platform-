@@ -47,7 +47,7 @@ const ListeFactures = () => {
     const fetchFactures = async () => {
       try {
         if (iderp) {
-          const response = await axios.get(`http://192.168.0.5:3006/facture/${iderp}`);
+          const response = await axios.get(`http://192.168.1.123:3006/facture/${iderp}`);
           setFactures(response.data.factures);
         }
       } catch (error) {
@@ -110,7 +110,7 @@ const ListeFactures = () => {
           onPress: async () => {
             try {
               const token = await AsyncStorage.getItem('accessToken');
-              const response = await axios.delete(`http://192.168.0.5:3006/facture/fournisseur/${iderp}/facture/${idF}`, {
+              const response = await axios.delete(`http://192.168.1.123:3006/facture/fournisseur/${iderp}/facture/${idF}`, {
                 headers: {
                   Authorization: `Bearer ${token}`
                 }

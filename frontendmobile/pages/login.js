@@ -48,7 +48,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`http://192.168.0.5:3006/auth/login`, credentials, {
+      const response = await axios.post(`http://192.168.1.123:3006/auth/login`, credentials, {
         headers: {
           'Content-Type': 'application/json',
         },
