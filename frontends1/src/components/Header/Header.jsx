@@ -102,6 +102,11 @@ const Header = () => {
               Réclamations
             </NavLink>
           </li>
+          <li className="nav__item">
+            <NavLink to={`/historique/${userId}`} activeClassName="active" exact>
+              Historique
+            </NavLink>
+          </li>
           <li className="nav__item user-settings-item">
             <div className="dropdown">
               <div className="dropdown-btn" onClick={handleToggleUserMenu}>

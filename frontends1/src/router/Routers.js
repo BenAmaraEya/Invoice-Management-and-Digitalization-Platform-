@@ -28,6 +28,8 @@ import ReclamationDetails from "../pages/personnelDCF/reclamationbyid";
 import ReclamationList from "../pages/ListReclamation";
 import ArchiveList from "../pages/personnelDCF/Archive";
 import DetailFacture from "../pages/personnelDCF/DetailFacture";
+import Historique from "../pages/historique";
+import Details from "../pages/Details";
 
 const Routers = () => {
     return (
@@ -62,6 +64,8 @@ const Routers = () => {
             <Route path="/listreclamation/:id" element={<ReclamationList />} />
             <Route path="/listArchive" element={<ArchiveList />} />
             <Route path="/detailsFacture/:idF" element={<DetailFacture />} />
+            <Route path="/historique/:id" element={<Historique />} />
+            <Route path="/details/:idF" element={<Details />} />
         </Routes>
     );
 };

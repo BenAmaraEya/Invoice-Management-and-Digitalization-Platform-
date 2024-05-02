@@ -221,7 +221,7 @@ getAllFacture: async (req, res) => {
   getFactureBySupplierId: async (req, res) => {
     try {
         const { iderp } = req.params;
-        const factures = await Facture.findAll({ where: { iderp } });
+        const factures = await Facture.findAll({ where: { iderp } , include: [{ model: Pieces_jointe, as: 'Pieces_jointes'} , {model:Etat}] });
 
         if (!factures || factures.length === 0) {
             return res.status(404).json({ message: 'No factures found for the supplier ID' });

@@ -35,7 +35,12 @@ const ListeFactures = () => {
             try {
                 if (iderp) {
                     const response = await axios.get(`http://localhost:3006/facture/${iderp}`);
-                    setFactures(response.data.factures);
+                    //setFactures(response.data.factures);
+                    console.log(response.data.factures);
+                    const factures = response.data.factures;
+                    const facturesNonCloturees = factures.filter(facture => !facture.Etats.some(etat => etat.etat === 'cloture'));
+                    setFactures(facturesNonCloturees);
+                    console.log("facturesNonCloturees",facturesNonCloturees);
                 }
             } catch (error) {
                 console.error('Error fetching factures:', error);
@@ -147,7 +152,7 @@ const ListeFactures = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {factures.map((facture) => (
+                {factures.map((facture) => (
                         <tr key={facture.idF}>
                             <td>{facture.idF}</td>
                             <td>{facture.num_fact}</td>
