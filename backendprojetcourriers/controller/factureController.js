@@ -515,6 +515,41 @@ rechercheFacture: async (req, res) => {
       res.status(500).send('Erreur de serveur');
   }
 },
+factureTraiteParmois:async (req, res) => {
+try {
+    // Obtenez la date d'aujourd'hui
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Réglez l'heure à minuit pour obtenir la date complète du jour
+
+    // Déterminez la date de début et de fin du mois actuel
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    lastDayOfMonth.setHours(23, 59, 59, 999); // Réglez l'heure à la fin de la journée
+
+    // Comptez le nombre de factures avec le statut "en attente" pour chaque jour du mois actuel
+    const statutParJour = await Facture.aggregate([
+      {
+        $match: {
+          datereception: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
+          statut: { $ne: 'en attente' } // Remplacez 'en attente' par le statut que vous souhaitez compter
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$datereception' } },
+          nombreFactures: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } } // Trier par date croissante
+    ]);
+
+    // Retournez les statistiques par jour dans la réponse
+    res.json({ statutParJour });
+  } catch (err) {
+    console.error('Erreur lors du calcul du nombre de factures avec le statut "en attente" par jour :', err);
+    res.status(500).json({ erreur: 'Une erreur s\'est produite lors du calcul des statistiques par jour.' });
+  }
+},
 sendNotificationToSupplier: (statuts, num) => {
   io.emit('newStatuts', { statuts, num });
 },

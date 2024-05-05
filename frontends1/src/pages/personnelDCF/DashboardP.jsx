@@ -22,10 +22,31 @@ const DashboardP = () => {
         },
         series: [],
     });
+    const [chartDataMonthly, setChartDataMonthly] = useState({
+        options: {
+            chart: {
+                type: 'bar',
+                height: 350
+            },
+            xaxis: {
+                categories: [], // Les mois seront les catégories de l'axe X
+            },
+            yaxis: {
+                title: {
+                    text: 'Nombre de factures traitées',
+                },
+            },
+        },
+        series: [{
+            name: 'Nombre de factures traitées',
+            data: [], // Les données du nombre de factures par mois
+        }],
+    });
     const userProfile = localStorage.getItem("userProfil");
 
     useEffect(() => {
         fetchData();
+        fetchChartDataMonthly();
     }, []);
 
     useEffect(() => {
@@ -66,7 +87,37 @@ const DashboardP = () => {
             setLoading(false);
         }
     };
+    const fetchChartDataMonthly = async () => {
+        try {
+            const response = await axios.get('http://localhost:3006/facture/factureTraiteParmois');
+            const data = response.data.statutParJour;
 
+            const months = [];
+            const counts = [];
+
+            // Parcourir les données pour extraire les mois et les nombres de factures
+            data.forEach(item => {
+                months.push(item._id); // Le mois est l'identifiant dans votre agrégation MongoDB
+                counts.push(item.nombreFactures);
+            });
+
+            // Mettre à jour les données du graphique
+            setChartDataMonthly({
+                options: {
+                    ...chartDataMonthly.options,
+                    xaxis: {
+                        categories: months, // Mettez à jour les catégories de l'axe X avec les mois
+                    },
+                },
+                series: [{
+                    ...chartDataMonthly.series[0],
+                    data: counts, // Mettez à jour les données du graphique avec les nombres de factures
+                }],
+            });
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données du graphique mensuel:', error);
+        }
+    };
     const sendEmailAndDeleteReclamation = async (email, reclamationId) => {
         try {
             const subject = encodeURIComponent('Réponse de réclamation');
@@ -154,10 +205,10 @@ const DashboardP = () => {
                         </div>
                     </div>
                     <div className="another-chart-container">
-                        <div className="card">
-                            <p>Another chart placeholder</p>
-                        </div>
-                    </div>
+                <div className="card">
+                    <Chart options={chartDataMonthly.options} series={chartDataMonthly.series} type="bar" height={350} />
+                </div>
+            </div>
                 </div>
             </div>
         </div>
