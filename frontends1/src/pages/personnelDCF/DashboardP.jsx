@@ -22,32 +22,98 @@ const DashboardP = () => {
         },
         series: [],
     });
-    const [chartDataMonthly, setChartDataMonthly] = useState({
+    const [lineChartData, setLineChartData] = useState({
         options: {
             chart: {
-                type: 'bar',
-                height: 350
+                type: 'bar'
             },
             xaxis: {
-                categories: [], // Les mois seront les catégories de l'axe X
-            },
-            yaxis: {
-                title: {
-                    text: 'Nombre de factures traitées',
-                },
-            },
+                categories: [] 
+            }
         },
         series: [{
-            name: 'Nombre de factures traitées',
-            data: [], // Les données du nombre de factures par mois
-        }],
+            name: 'factures traitées',
+            data: [] 
+        }]
     });
-    const userProfile = localStorage.getItem("userProfil");
 
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [factureStatsResponse, reclamationsResponse, fournisseurResponse] = await Promise.all([
+                    axios.get('http://localhost:3006/facture/stat/all'),
+                    axios.get('http://localhost:3006/reclamation'),
+                    axios.get('http://localhost:3006/fournisseur/')
+                ]);
+
+                setFactureStats({
+                    nbFactureParType: factureStatsResponse.data.nbFactureParType,
+                    nbFactureRecuHier: factureStatsResponse.data.nbFactureRecuHier,
+                    nbFactureMoisEnCours: factureStatsResponse.data.nbFactureMoisEnCours,
+                    nbFactureParNature: factureStatsResponse.data.nbFactureParNature,
+                });
+
+                setFournisseur(fournisseurResponse.data);
+                setReclamations(reclamationsResponse.data);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setLoading(false);
+            }
+        };
+
         fetchData();
-        fetchChartDataMonthly();
     }, []);
+    const getDaysOfMonth = () => {
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth() + 1; // Month starts from 0, so add 1 to get the current month
+        const daysInMonth = new Date(currentYear, currentMonth, 0).getDate(); // Get the number of days in the current month
+    
+        // Generate an array of days from 1 to the number of days in the current month
+        return Array.from({ length: daysInMonth }, (_, index) => index + 1);
+    };
+    useEffect(() => {
+        const fetchProcessedInvoices = async () => {
+            try {
+                const response = await axios.get('http://localhost:3006/facture/factureTraiteParmois/pourcentage');
+                const { processedInvoices } = response.data;
+    
+                // Get the current date
+                const currentDate = new Date();
+                const currentYear = currentDate.getFullYear();
+                const currentMonth = currentDate.getMonth() + 1; // Month starts from 0, so add 1 to get the current month
+                const daysInMonth = new Date(currentYear, currentMonth, 0).getDate(); // Get the number of days in the current month
+    
+                // Generate an array of days from 1 to the number of days in the current month
+                const daysOfMonth = Array.from({ length: daysInMonth }, (_, index) => index + 1);
+    
+                // Set x-axis categories as days of the month
+                const categories = daysOfMonth.map(day => `${day}/${currentMonth}/${currentYear}`);
+    
+                // Set data points for each day
+                const data = daysOfMonth.map(day => (day === currentDate.getDate()) ? processedInvoices : 0);
+    
+                setLineChartData(prevState => ({
+                    ...prevState,
+                    options: {
+                        xaxis: {
+                            categories: categories
+                        }
+                    },
+                    series: [{
+                        name: 'Processed Invoices',
+                        data: data
+                    }]
+                }));
+            } catch (error) {
+                console.error('Error fetching facture counts:', error);
+            }
+        };
+    
+        fetchProcessedInvoices();
+    }, []);
+    
 
     useEffect(() => {
         const natureLabels = factureStats.nbFactureParNature.map(item => item.nature);
@@ -64,60 +130,6 @@ const DashboardP = () => {
         });
     }, [factureStats]);
 
-    const fetchData = async () => {
-        try {
-            const [factureStatsResponse, reclamationsResponse, fournisseurResponse] = await Promise.all([
-                axios.get('http://localhost:3006/facture/stat/all'),
-                axios.get('http://localhost:3006/reclamation'),
-                axios.get('http://localhost:3006/fournisseur/')
-            ]);
-
-            setFactureStats({
-                nbFactureParType: factureStatsResponse.data.nbFactureParType,
-                nbFactureRecuHier: factureStatsResponse.data.nbFactureRecuHier,
-                nbFactureMoisEnCours: factureStatsResponse.data.nbFactureMoisEnCours,
-                nbFactureParNature: factureStatsResponse.data.nbFactureParNature,
-            });
-
-            setFournisseur(fournisseurResponse.data);
-            setReclamations(reclamationsResponse.data);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setLoading(false);
-        }
-    };
-    const fetchChartDataMonthly = async () => {
-        try {
-            const response = await axios.get('http://localhost:3006/facture/factureTraiteParmois');
-            const data = response.data.statutParJour;
-
-            const months = [];
-            const counts = [];
-
-            // Parcourir les données pour extraire les mois et les nombres de factures
-            data.forEach(item => {
-                months.push(item._id); // Le mois est l'identifiant dans votre agrégation MongoDB
-                counts.push(item.nombreFactures);
-            });
-
-            // Mettre à jour les données du graphique
-            setChartDataMonthly({
-                options: {
-                    ...chartDataMonthly.options,
-                    xaxis: {
-                        categories: months, // Mettez à jour les catégories de l'axe X avec les mois
-                    },
-                },
-                series: [{
-                    ...chartDataMonthly.series[0],
-                    data: counts, // Mettez à jour les données du graphique avec les nombres de factures
-                }],
-            });
-        } catch (error) {
-            console.error('Erreur lors de la récupération des données du graphique mensuel:', error);
-        }
-    };
     const sendEmailAndDeleteReclamation = async (email, reclamationId) => {
         try {
             const subject = encodeURIComponent('Réponse de réclamation');
@@ -143,11 +155,36 @@ const DashboardP = () => {
             console.error('Error deleting reclamation:', error);
         }
     };
-
+    const generateReport = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.post('http://localhost:3006/facture/generaterapports', {}, {
+                responseType: 'blob' // Set response type to blob
+            });
+    
+            const blob = new Blob([response.data], { type: 'application/pdf' }); // Create a Blob from the response data
+            console.log('Received PDF blob:', blob);
+    
+            const url = window.URL.createObjectURL(blob); // Create a URL for the Blob
+            console.log('Blob URL:', url);
+    
+            const link = document.createElement('a'); // Create a link element
+            link.href = url;
+            link.setAttribute('download', 'report.pdf'); // Set the download attribute
+            document.body.appendChild(link); // Append the link to the document body
+            link.click(); // Simulate a click event to download the file
+            document.body.removeChild(link); // Remove the link from the document body after download
+            window.URL.revokeObjectURL(url); // Revoke the URL object to release the memory
+            setLoading(false);
+        } catch (error) {
+            console.error('Error generating report:', error);
+            setLoading(false);
+        }
+    };
     return (
         <div className="dashboard-container">
-            <div className="top-container">
-               
+             <div className="top-container">
+                <button onClick={generateReport}>Generate Report</button>
             </div>
             <div className="middle-container">
                 <div className="boxes-container">
@@ -167,12 +204,11 @@ const DashboardP = () => {
             </div>
             <div className="bottom-container">
                 <div className="left-side">
-                    
                     <table>
                         <thead>
-                        <tr>
-                <th colSpan="3" className="header-span">Liste des Réclamations</th>
-            </tr>
+                            <tr>
+                                <th colSpan="3" className="header-span">Liste des Réclamations</th>
+                            </tr>
                             <tr>
                                 <th>Contenu de la Réclamation</th>
                                 <th>id fournisseur</th>
@@ -205,10 +241,10 @@ const DashboardP = () => {
                         </div>
                     </div>
                     <div className="another-chart-container">
-                <div className="card">
-                    <Chart options={chartDataMonthly.options} series={chartDataMonthly.series} type="bar" height={350} />
-                </div>
-            </div>
+                        <div className="card">
+                            <Chart options={lineChartData.options} series={lineChartData.series} type="bar" height={300} />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

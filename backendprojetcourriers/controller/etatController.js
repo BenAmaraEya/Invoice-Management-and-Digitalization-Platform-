@@ -1,6 +1,21 @@
 const Facture = require('../models/Facture');
 const Etat = require('../models/Etat');
 const archiveController = require('../controller/archiveControlleur');
+const generateInfographicImage = require('./../LigneInfographique');
+const nodemailer = require('nodemailer');
+const fs = require('fs');
+const Fournisseur = require('../models/Fournisseur');
+const User = require('../models/User');
+const { Sequelize } = require('sequelize');
+const etatgraph = ['Envoye Finance', 'Envoye Fiscalité', 'Paiement', 'Cloture'];
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'eyabenamara288@gmail.com',
+    pass: 'pgaw wcnc ymux oeqs'
+  }
+});
 const etatController ={
   add: async (req,res) =>{
     try {
@@ -19,11 +34,16 @@ const etatController ={
         if(existingEtat){
             return res.status(400).json({ error: 'La facture est déjà à cet état' });
         }
-        const etats = await Etat.create({ etat, idF: idF, date: new Date });
+
+      const index = etatgraph.indexOf(etat);
+      const completionStatus = Array(etatgraph.length).fill(false);
+      completionStatus[index] = true;
+      const etats = await Etat.create({ etat, idF: idF, date: new Date});
         
         if (etat === 'cloture') {
           await archiveController.archiver(req, res);
         }
+        sendEmailNotification(facture.idF, etat, completionStatus);
         console.log(`etat facture ${facture.num_fact} add successful`);
       } catch (error) {
         console.error(error);
@@ -48,5 +68,53 @@ const etatController ={
       }
     }
 
+};
+const sendEmailNotification = async (factureID, newEtat, completedSteps) => {
+  try {
+    
+     
+    const facture = await Facture.findByPk(factureID, {
+      include: [
+        {
+          model: Fournisseur, // Include the Fournisseur model
+          where: { iderp: Sequelize.col('facture.iderp') }, // Match the foreign key
+          include: [
+            {
+              model: User, // Include the User model through Fournisseur
+              attributes: ['email'] // Specify the attributes to retrieve
+            }
+          ]
+        }
+      ]
+    });
+      
+      if (!facture) {
+        console.error('Facture not found');
+        return;
+      }
+      
+      const userEmail = facture.Fournisseur.User.email;
+    const imagePath = generateInfographicImage(completedSteps);
+
+    const mailOptions = {
+      from: 'eyabenamara288@gmail.com',
+      to: userEmail,
+      subject: 'Etat Update Notification',
+      text: `Dear recipient,\nThe etat for facture ID ${factureID} has been updated. Please see the attached infographic line representing the etat update.\n\nBest regards,\nYour Name`,
+      attachments: [{ path: imagePath }]
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.error('Error sending email:', error);
+      } else {
+        console.log('Email sent:', info.response);
+      }
+
+      fs.unlinkSync(imagePath);
+    });
+  } catch (error) {
+    console.error('Error sending email notification:', error);
+  }
 };
 module.exports = etatController;  

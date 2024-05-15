@@ -3,6 +3,7 @@ const  {sequelize}  = require('../database');
 const Pieces_jointe = require('./PiecesJointe');
 const Bordereau= require ('./Bordereau');
 const Etat = require('./Etat');
+const Fournisseur = require('./Fournisseur');
 const Facture = sequelize.define('Facture', {
 idF:{
     type: DataTypes.INTEGER,
@@ -57,4 +58,8 @@ pathpdf:{
 Facture.hasMany(Pieces_jointe, { as: 'Pieces_jointes', foreignKey: 'idFacture',onDelete: 'CASCADE' });
 Facture.belongsTo(Bordereau, { foreignKey: 'idB' });
 Facture.hasMany(Etat, {foreignKey: 'idF',onDelete: 'CASCADE' });
+Facture.belongsTo(Fournisseur, {
+    foreignKey: 'iderp',
+    as: 'Fournisseur', // Specify the alias for the association
+  });
 module.exports = Facture;

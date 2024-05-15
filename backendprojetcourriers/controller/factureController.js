@@ -20,6 +20,10 @@ const path = require('path');
 const { where } = require('sequelize');
 const { Sequelize } = require('sequelize');
 let io;
+const { Op } = require('sequelize');
+const pdfkit = require('pdfkit');
+
+const synaptic = require('synaptic');
 
 
 // définit la configuration de Multer pour le téléchargement de fichiers
@@ -71,6 +75,107 @@ const generateExcel = async (factures) => {
 
   return buffer;
 };
+
+
+async function trainNeuralNetwork() {
+  try {
+    // Step 1: Define neural network architecture
+    const perceptron = new synaptic.Architect.Perceptron(1, 3, 1);
+
+    // Step 2: Define training data and labels
+    const trainingData = [
+      { input: [0], output: [0] },
+      { input: [0.5], output: [0.5] },
+      { input: [1], output: [1] }
+    ];
+
+    // Step 3: Train neural network
+    const trainer = new synaptic.Trainer(perceptron);
+    trainer.train(trainingData);
+
+    // Step 4: Return trained neural network
+    return perceptron;
+  } catch (error) {
+    console.error('Error training neural network:', error);
+    throw error;
+  }
+}
+
+async function collectAndAnalyzeData() {
+  try {
+    // Example: Fetch all invoices from the database
+    const allFactures = await Facture.findAll();
+
+    // Calculate the total number of invoices
+    const totalFactures = allFactures.length;
+
+    // Count the number of treated invoices
+    const treatedFactures = allFactures.filter(facture => facture.status !== 'Attente').length;
+
+    // You can perform further analysis or calculations here as needed
+
+    // Return the analyzed data
+    return { totalFactures, treatedFactures };
+  } catch (error) {
+    console.error('Error collecting and analyzing data:', error);
+    throw error;
+  }
+}
+
+
+async function generateReportFromData(analyzedData, neuralNetwork) {
+  try {
+    // Extract necessary data from the analyzed data
+    const { totalFactures, treatedFactures } = analyzedData;
+
+    // Calculate the percentage of treated invoices
+    const percentageTreated = treatedFactures / totalFactures;
+
+    // Use the neural network to predict personnel performance based on the percentage of treated invoices
+    const prediction = neuralNetwork.activate([percentageTreated])[0];
+    const personnelPerformance = prediction > 0.5 ? 'Good' : 'Needs Improvement';
+
+    // Generate the report content
+    const reportContent = `
+      Total Factures: ${totalFactures}
+      Percentage of Factures Treated: ${percentageTreated}
+      Personnel Performance: ${personnelPerformance}
+    `;
+
+    return reportContent;
+  } catch (error) {
+    console.error('Error generating report from analyzed data:', error);
+    throw error;
+  }
+}
+async function generatePDF(reportContent) {
+  try {
+    return new Promise((resolve, reject) => {
+      // Create a new PDF document
+      const doc = new pdfkit();
+
+      // Store PDF content in memory
+      const buffers = [];
+      doc.on('data', buffers.push.bind(buffers));
+      doc.on('end', () => {
+        const pdfData = Buffer.concat(buffers);
+        console.log('PDF generation successful.');
+        // Resolve with the PDF data
+        resolve(pdfData);
+      });
+
+      // Add the report content to the PDF
+      doc.fontSize(12);
+      doc.text(reportContent);
+
+      // Finalize the PDF
+      doc.end();
+    });
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    throw error;
+  }
+}
 const factureController = {
   upload: [authorize, async (req, res) => {
     // Appel de l'upload qui est l'instance de multer
@@ -193,7 +298,8 @@ const factureController = {
 },
   ],
 
-  getFactureById: async (req, res) => {
+
+getFactureById: async (req, res) => {
     try {
       const { idF } = req.params;
       const facture = await Facture.findOne({ where: { idF: idF }, include: [{ model: Pieces_jointe, as: 'Pieces_jointes'} , {model:Etat}] });
@@ -208,6 +314,8 @@ const factureController = {
       res.status(500).json({ message: 'Error fetching facture by ID', error: error });
     }
   },
+
+
 getAllFacture: async (req, res) => {
     try {
       const factures = await Facture.findAll({ include: { model: Pieces_jointe, as: 'Pieces_jointes' } });
@@ -218,7 +326,7 @@ getAllFacture: async (req, res) => {
     }
   },
    
-  getFactureBySupplierId: async (req, res) => {
+getFactureBySupplierId: async (req, res) => {
     try {
         const { iderp } = req.params;
         const factures = await Facture.findAll({ where: { iderp } , include: [{ model: Pieces_jointe, as: 'Pieces_jointes'} , {model:Etat}] });
@@ -233,7 +341,9 @@ getAllFacture: async (req, res) => {
         res.status(500).json({ message: 'Error fetching factures by supplier ID', error: error });
     }
 },
-ExportFacturetoExcel:[authorizeSupplier, async (req, res) => {
+
+
+ExportFacturetoExcel:[authorizeSupplier,async (req, res) => {
   try {
       
       const factures = req.body.factures; 
@@ -290,6 +400,8 @@ getFacturesCountByStatus: async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 },
+
+
 viewFacturePDF: async (req, res) => {
   try {
     const filename = req.params.filename;
@@ -303,7 +415,9 @@ viewFacturePDF: async (req, res) => {
     res.status(500).json({ message: 'Error viewing facture PDF', error: error });
   }
 },
- updateFacture :[authorize, async (req, res) => {
+
+
+updateFacture :[authorize, async (req, res) => {
   try {
     const { idF } = req.params;
 
@@ -328,6 +442,8 @@ viewFacturePDF: async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 }],
+
+
 statfacture: async (req, res) => {
   try {
     // Interroger la base de données pour obtenir les statistiques requises
@@ -370,9 +486,9 @@ statfacture: async (req, res) => {
     console.error('Erreur lors de la récupération des statistiques de facturation:', error);
     res.status(500).json({ message: 'Erreur interne du serveur' });
   }
-}
+},
 
-,
+
 validerDocument:[authorizePersonnelbof, async (req,res) =>{
   try{
 const {idF} = req.params;
@@ -395,6 +511,8 @@ else {
   res.status(500).json({ message: 'Internal server error' });
 }
 }],
+
+
 validerFiscalité:[authorizePersonnelFiscaliste, async (req,res) =>{
   try{
   const {idF} = req.params;
@@ -411,6 +529,8 @@ validerFiscalité:[authorizePersonnelFiscaliste, async (req,res) =>{
   res.status(500).json({ message: 'Internal server error' });
 }
   }],
+
+
 validerBudget:[authorizeAgent,async (req,res) =>{
   try{
     const {idF} = req.params;
@@ -427,6 +547,8 @@ validerBudget:[authorizeAgent,async (req,res) =>{
     res.status(500).json({ message: 'Internal server error' });
   }
     }],
+
+
  rejeterCourriers : [authorizePersonnel,async (req, res) => {
       try {
         const { idF } = req.params;
@@ -452,6 +574,7 @@ validerBudget:[authorizeAgent,async (req,res) =>{
         res.status(500).json({ message: 'Internal server error' });
       }
     }],
+
 /*rechercheParNumFact: async (req, res) => {
       try {
           const { num_fact } = req.query; 
@@ -484,6 +607,8 @@ recherchePardate: async (req, res) => {
         res.status(500).send('Erreur de serveur');
     }
 },*/
+
+
 rechercheFacture: async (req, res) => {
   try {
       const { num_fact, datereception } = req.query;
@@ -515,41 +640,68 @@ rechercheFacture: async (req, res) => {
       res.status(500).send('Erreur de serveur');
   }
 },
-factureTraiteParmois:async (req, res) => {
-try {
-    // Obtenez la date d'aujourd'hui
+
+factureTraiteParmois: async (req, res) => {
+  try {
+    // Get the current date
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Réglez l'heure à minuit pour obtenir la date complète du jour
+    today.setHours(0, 0, 0, 0); // Set the time to midnight to get the full date of the day
 
-    // Déterminez la date de début et de fin du mois actuel
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-    lastDayOfMonth.setHours(23, 59, 59, 999); // Réglez l'heure à la fin de la journée
+    // Determine the start and end date of today
+    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999); // Set the time to end of the day
 
-    // Comptez le nombre de factures avec le statut "en attente" pour chaque jour du mois actuel
-    const statutParJour = await Facture.aggregate([
-      {
-        $match: {
-          datereception: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
-          statut: { $ne: 'en attente' } // Remplacez 'en attente' par le statut que vous souhaitez compter
-        }
-      },
-      {
-        $group: {
-          _id: { $dateToString: { format: '%Y-%m-%d', date: '$datereception' } },
-          nombreFactures: { $sum: 1 }
-        }
-      },
-      { $sort: { _id: 1 } } // Trier par date croissante
-    ]);
+    // Count the number of processed invoices for today
+    const processedInvoices = await Facture.count({ 
+      where: { 
+        updatedAt: { 
+          [Sequelize.Op.between]: [startOfToday, endOfToday]
+        },
+        status: { 
+          [Sequelize.Op.not]: 'Attente'
+        } 
+      } 
+    });
 
-    // Retournez les statistiques par jour dans la réponse
-    res.json({ statutParJour });
-  } catch (err) {
-    console.error('Erreur lors du calcul du nombre de factures avec le statut "en attente" par jour :', err);
-    res.status(500).json({ erreur: 'Une erreur s\'est produite lors du calcul des statistiques par jour.' });
+    // Return the number of processed invoices in the response
+    res.json({ processedInvoices });
+  } catch (error) {
+    console.error('Error calculating the number of processed invoices for today:', error);
+    res.status(500).json({ error: 'An error occurred while calculating the number of processed invoices for today.' });
   }
 },
+generateReports: async (req, res) => {
+  try {
+    // Step 1: Train neural network
+    console.log('Training neural network...');
+    const neuralNetwork = await trainNeuralNetwork();
+
+    // Step 2: Collect and analyze data
+    console.log('Collecting and analyzing data...');
+    const analyzedData = await collectAndAnalyzeData();
+    console.log('Analyzed data:', analyzedData);
+
+    // Step 3: Generate report from analyzed data
+    console.log('Generating report...');
+    const reportContent = await generateReportFromData(analyzedData, neuralNetwork);
+
+    // Step 4: Generate PDF from report content
+    console.log('Generating PDF...');
+    const pdfData = await generatePDF(reportContent);
+
+    console.log('Report generated successfully.');
+
+    // Set appropriate headers for PDF download
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=report.pdf');
+    res.send(pdfData); // Send the PDF data as response
+  } catch (error) {
+    console.error('Error generating reports:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+},
+
+
 sendNotificationToSupplier: (statuts, num) => {
   io.emit('newStatuts', { statuts, num });
 },
@@ -578,5 +730,6 @@ function extractInfoFromOCR(text) {
     return { num_fact, date_fact, montant };
     
   }
+  
 
 module.exports = factureController;
