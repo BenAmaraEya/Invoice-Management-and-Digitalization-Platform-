@@ -22,7 +22,7 @@ const { Sequelize } = require('sequelize');
 let io;
 const { Op } = require('sequelize');
 const pdfkit = require('pdfkit');
-
+const  {sequelize}  = require('../database');
 const synaptic = require('synaptic');
 
 
@@ -112,10 +112,39 @@ async function collectAndAnalyzeData() {
     // Count the number of treated invoices
     const treatedFactures = allFactures.filter(facture => facture.status !== 'Attente').length;
 
-    // You can perform further analysis or calculations here as needed
+    // Count the number of pending and resolved claims
+    const numReclamationsEnCours = allFactures.filter(facture => facture.status === 'En cours').length;
+    const numReclamationsResolues = allFactures.filter(facture => facture.status === 'Résolu').length;
+
+    // Count the number of invoices by their status
+    let NBFValide = 0;
+    let NBFpaye = 0;
+    let NBFAttente = 0;
+    let NBFrejete = 0;
+
+    allFactures.forEach((facture) => {
+      if (facture.status.toLowerCase().includes('validé')) {
+        NBFValide++;
+      } else if (facture.status === 'Payé') {
+        NBFpaye++;
+      } else if (facture.status === 'Attente') {
+        NBFAttente++;
+      } else if (facture.status.toLowerCase().includes('rejeté')) {
+        NBFrejete++;
+      }
+    });
 
     // Return the analyzed data
-    return { totalFactures, treatedFactures };
+    return {
+      totalFactures,
+      treatedFactures,
+      numReclamationsEnCours,
+      numReclamationsResolues,
+      NBFValide,
+      NBFpaye,
+      NBFAttente,
+      NBFrejete
+    };
   } catch (error) {
     console.error('Error collecting and analyzing data:', error);
     throw error;
@@ -123,24 +152,57 @@ async function collectAndAnalyzeData() {
 }
 
 
+
 async function generateReportFromData(analyzedData, neuralNetwork) {
   try {
+    const allFactures = await Facture.findAll();
     // Extract necessary data from the analyzed data
-    const { totalFactures, treatedFactures } = analyzedData;
+    const treatedFactures = allFactures.filter(facture => facture.status !== 'Attente').length;
 
     // Calculate the percentage of treated invoices
+    const totalFactures = allFactures.length;
     const percentageTreated = treatedFactures / totalFactures;
-
     // Use the neural network to predict personnel performance based on the percentage of treated invoices
     const prediction = neuralNetwork.activate([percentageTreated])[0];
-    const personnelPerformance = prediction > 0.5 ? 'Good' : 'Needs Improvement';
-
+    const personnelPerformance = prediction > 0.5 ? 'Bien' : 'Besoin amélioration';
+    const {
+     
+      
+      numReclamationsEnCours,
+      numReclamationsResolues,
+      NBFValide,
+      NBFpaye,
+      NBFAttente,
+      NBFrejete
+    } = await collectAndAnalyzeData();
+   
     // Generate the report content
     const reportContent = `
-      Total Factures: ${totalFactures}
-      Percentage of Factures Treated: ${percentageTreated}
-      Personnel Performance: ${personnelPerformance}
+                                                        Rapport 
+
+      Introduction :
+Ce rapport offre une analyse approfondie de la situation financière actuelle de l'entreprise, mettant en lumière le traitement des factures, ainsi que les réclamations en cours et résolues.
+
+Résumé des Données :
+
+Total des Factures : ${totalFactures} : Nombre total de factures enregistrées dans le système.
+Factures Traitées : ${treatedFactures} : Nombre de factures traitées et enregistrées comme traitées dans le système.
+Factures Validées : ${NBFValide} : Nombre de factures validées pour le paiement.
+Factures Payées : ${NBFpaye} : Nombre de factures pour lesquelles le paiement a été effectué.
+Factures en Attente : ${NBFAttente} : Nombre de factures en attente de validation ou de paiement.
+Factures Rejetées : ${NBFrejete} : Nombre de factures rejetées en raison d'erreurs ou d'incohérences.
+Réclamations en Cours : ${numReclamationsEnCours} : Nombre total de réclamations actuellement en cours de traitement.
+Réclamations Résolues : ${numReclamationsResolues} : Nombre total de réclamations qui ont été résolues avec succès.
+La Performance du Personnel : ${personnelPerformance} : Évaluation de la performance du personnel impliqué dans le processus de gestion des factures et des réclamations.
+Analyse des Réclamations :
+Les réclamations en cours représentent un défi majeur pour l'entreprise, nécessitant une intervention immédiate pour éviter les litiges avec les fournisseurs. Un nombre élevé de réclamations en cours peut indiquer des problèmes dans le processus de traitement des factures ou des erreurs dans les transactions.
+
+Conclusion :
+En résumé, ce rapport met en évidence les principaux défis rencontrés par l'entreprise dans la gestion des factures et des réclamations. Il souligne l'importance de l'amélioration des processus internes pour garantir un traitement rapide et efficace des factures, ainsi que la résolution rapide des réclamations afin de maintenir de bonnes relations avec les fournisseurs et d'assurer la stabilité financière de l'entreprise.
+
+   Merci pour votre attention
     `;
+
 
     return reportContent;
   } catch (error) {
@@ -641,35 +703,48 @@ rechercheFacture: async (req, res) => {
   }
 },
 
-factureTraiteParmois: async (req, res) => {
+FactureTraiteParMois: async (req, res) => {
   try {
     // Get the current date
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set the time to midnight to get the full date of the day
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
 
-    // Determine the start and end date of today
-    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999); // Set the time to end of the day
+    // Determine the start and end date of the current month
+    const startOfMonth = new Date(currentYear, currentMonth, 1);
+    const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59, 999);
 
-    // Count the number of processed invoices for today
-    const processedInvoices = await Facture.count({ 
-      where: { 
-        updatedAt: { 
-          [Sequelize.Op.between]: [startOfToday, endOfToday]
+    // Query the database to count processed invoices for each day of the current month
+    const processedInvoicesByDay = await Facture.findAll({
+      attributes: [
+        [sequelize.fn('date', sequelize.col('updatedAt')), 'date'],
+        [sequelize.fn('count', sequelize.col('*')), 'count']
+      ],
+      where: {
+        updatedAt: {
+          [Sequelize.Op.between]: [startOfMonth, endOfMonth]
         },
-        status: { 
+        status: {
           [Sequelize.Op.not]: 'Attente'
-        } 
-      } 
+        }
+      },
+      group: [sequelize.fn('date', sequelize.col('updatedAt'))]
     });
 
-    // Return the number of processed invoices in the response
-    res.json({ processedInvoices });
+    // Prepare the response data
+    const processedInvoicesData = processedInvoicesByDay.map(item => ({
+      date: item.get('date'),
+      count: item.get('count')
+    }));
+
+    // Return the processed invoice counts for each day of the current month in the response
+    res.json({ processedInvoicesData });
   } catch (error) {
-    console.error('Error calculating the number of processed invoices for today:', error);
-    res.status(500).json({ error: 'An error occurred while calculating the number of processed invoices for today.' });
+    console.error('Error calculating processed invoices for the current month:', error);
+    res.status(500).json({ error: 'An error occurred while calculating processed invoices for the current month.' });
   }
 },
+
 generateReports: async (req, res) => {
   try {
     // Step 1: Train neural network

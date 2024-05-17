@@ -149,6 +149,7 @@ const ListeFactures = () => {
                         <th>Date Facture</th>
                         <th>Action</th>
                         <th>PDF</th>
+                        <th>Infographic</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -174,6 +175,11 @@ const ListeFactures = () => {
                             <td>
                                 <button onClick={() => viewFacturePDF(facture.pathpdf)}><FaFilePdf /></button>
                             </td>
+                            <td>
+              <Link to={`/infographic/${facture.idF}`}>
+                View Etat
+              </Link>
+            </td>
                         </tr>
                     ))}
                 </tbody>

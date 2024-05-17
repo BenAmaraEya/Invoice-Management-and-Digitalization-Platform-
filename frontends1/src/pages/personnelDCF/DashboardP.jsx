@@ -64,20 +64,16 @@ const DashboardP = () => {
 
         fetchData();
     }, []);
-    const getDaysOfMonth = () => {
-        const currentDate = new Date();
-        const currentYear = currentDate.getFullYear();
-        const currentMonth = currentDate.getMonth() + 1; // Month starts from 0, so add 1 to get the current month
-        const daysInMonth = new Date(currentYear, currentMonth, 0).getDate(); // Get the number of days in the current month
-    
-        // Generate an array of days from 1 to the number of days in the current month
-        return Array.from({ length: daysInMonth }, (_, index) => index + 1);
-    };
+   
     useEffect(() => {
         const fetchProcessedInvoices = async () => {
             try {
                 const response = await axios.get('http://localhost:3006/facture/factureTraiteParmois/pourcentage');
-                const { processedInvoices } = response.data;
+                const { processedInvoicesData } = response.data;
+    
+                // Extract dates and counts from the response data
+                const dates = processedInvoicesData.map(item => item.date);
+                const counts = processedInvoicesData.map(item => item.count);
     
                 // Get the current date
                 const currentDate = new Date();
@@ -88,11 +84,18 @@ const DashboardP = () => {
                 // Generate an array of days from 1 to the number of days in the current month
                 const daysOfMonth = Array.from({ length: daysInMonth }, (_, index) => index + 1);
     
-                // Set x-axis categories as days of the month
-                const categories = daysOfMonth.map(day => `${day}/${currentMonth}/${currentYear}`);
+                // Initialize data array with zeros for each day of the month
+                const data = Array(daysInMonth).fill(0);
     
-                // Set data points for each day
-                const data = daysOfMonth.map(day => (day === currentDate.getDate()) ? processedInvoices : 0);
+                // Map counts to the corresponding dates in the data array
+                dates.forEach((date, index) => {
+                    const day = new Date(date).getDate();
+                    const count = counts[index];
+                    data[day - 1] = count; // Subtract 1 because days are 1-indexed
+                });
+    
+                // Set x-axis categories as days of the month
+                const categories = daysOfMonth.map(day => `${currentYear}-${currentMonth}-${day}`);
     
                 setLineChartData(prevState => ({
                     ...prevState,
@@ -113,6 +116,10 @@ const DashboardP = () => {
     
         fetchProcessedInvoices();
     }, []);
+    
+    
+        
+    
     
 
     useEffect(() => {

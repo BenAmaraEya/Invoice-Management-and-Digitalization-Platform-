@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Sequelize } = require('sequelize');
 const  {sequelize}  = require('../database');
 const Pieces_jointe = require('./PiecesJointe');
 const Bordereau= require ('./Bordereau');
@@ -47,6 +47,13 @@ datereception:{
     type: DataTypes.DATEONLY,
 
 },
+/*iderp:{
+    type:Sequelize.INTEGER,
+    references:{
+        model:Fournisseur,
+        key:"iderp"
+    }
+},*/
 num_po:{
 type: DataTypes.STRING
 },
@@ -58,8 +65,13 @@ pathpdf:{
 Facture.hasMany(Pieces_jointe, { as: 'Pieces_jointes', foreignKey: 'idFacture',onDelete: 'CASCADE' });
 Facture.belongsTo(Bordereau, { foreignKey: 'idB' });
 Facture.hasMany(Etat, {foreignKey: 'idF',onDelete: 'CASCADE' });
-Facture.belongsTo(Fournisseur, {
+/*Facture.belongsTo(Fournisseur, {
     foreignKey: 'iderp',
-    as: 'Fournisseur', // Specify the alias for the association
-  });
+     // Specify the alias for the association
+    onDelete: 'CASCADE'
+});
+
+/*Facture.associate=()=>{
+    Facture.belongsTo(Fournisseur,{foreignKey:'iderp'})
+}*/
 module.exports = Facture;

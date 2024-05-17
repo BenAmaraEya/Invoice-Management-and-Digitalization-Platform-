@@ -22,7 +22,7 @@ router.put('/validerTresorerie/:idF',factureController.validerBudget);
 /*router.get('/recherche/parNumFact',factureController.rechercheParNumFact);
 router.get('/recherche/parDateReception',factureController.recherchePardate);*/
 router.get('/recherche/ParDATEetNUM',factureController.rechercheFacture);
-router.get('/factureTraiteParmois/pourcentage',factureController.factureTraiteParmois);
+router.get('/factureTraiteParmois/pourcentage',factureController.FactureTraiteParMois);
 router.post('/generaterapports',factureController.generateReports);
 factureController.setIo(io);
 

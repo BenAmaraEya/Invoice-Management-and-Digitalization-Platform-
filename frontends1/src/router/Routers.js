@@ -30,6 +30,7 @@ import ArchiveList from "../pages/personnelDCF/Archive";
 import DetailFacture from "../pages/personnelDCF/DetailFacture";
 import Historique from "../pages/historique";
 import Details from "../pages/Details";
+import InfographicLine from "../pages/infographicline";
 
 const Routers = () => {
     return (
@@ -66,6 +67,7 @@ const Routers = () => {
             <Route path="/detailsFacture/:idF" element={<DetailFacture />} />
             <Route path="/historique/:id" element={<Historique />} />
             <Route path="/details/:idF" element={<Details />} />
+            <Route path="infographic/:idF" element={<InfographicLine/>}/>
         </Routes>
     );
 };

@@ -7,6 +7,7 @@ import { Button } from 'reactstrap';
 import '../../styles/listefacture.css';
 import { FaTrash, FaPen, FaSearch, FaFilePdf } from 'react-icons/fa';
 import { BsTrash } from 'react-icons/bs';
+import InfographicLine from '../infographicline';
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const ListCourriers = () => {
@@ -135,7 +136,7 @@ const ListCourriers = () => {
                     <th>rejeter</th>
                     <th>Etat</th>
                     <th>PDF</th>
-                   
+                    <th>Infographic</th>
                 </tr>
             </thead>
             <tbody>
@@ -187,7 +188,11 @@ const ListCourriers = () => {
                         <td>
                             <button onClick={() => viewFacturePDF(facture.pathpdf)}> <FaFilePdf /></button>
                         </td>
-                        
+                        <td>
+              <Link to={`/infographic/${facture.idF}`}>
+                View Etat
+              </Link>
+            </td>
                     </tr>
                 ))}
             </tbody>
