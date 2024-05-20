@@ -9,6 +9,7 @@ import axios from 'axios';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import NotificationBadge, { Effect } from 'react-notification-badge';
+
 import { Button } from 'reactstrap';
 const Header = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const Header = () => {
   const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [fournisseur, setFournisseur] = useState([]);
+  const [user, setUser] = useState({});
   const [iderp,setIdErp]=useState(null);
   useEffect(() => {
     const fetchFournisseurById = async () => {
@@ -35,6 +37,20 @@ const Header = () => {
 
     fetchFournisseurById();
   }, []);
+  useEffect(() => {
+    const fetchUser = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3006/user/${userId}`);
+            setUser(response.data);
+        } catch (error) {
+            
+            console.error('Error fetching user:', error);
+        }
+    };
+
+    fetchUser();
+}, [userId]);
+
   useEffect(() => {
     
     const storedNotifications = JSON.parse(localStorage.getItem("notifications")) || [];
@@ -109,72 +125,83 @@ const Header = () => {
     }
     setIsUserMenuOpen(false);
   };
-
+  const renderUserName = () => {
+    if (user.User) {
+        return user.User.name;
+    } else {
+        return user.name;
+    }};
   return (
     <header className="header">
-      <div className="logo-container">
-        <img src={logo} alt="" className="logo" />
-      </div>
+      
       <div className="navigation">
         <ul className="menu d-flex align-items-center gap-5">
 
          
 
-          <li className="nav__item">
-            <NavLink to={`/dashboardP/${userId}`} activeClassName="active" exact>
+          <li className="nav__item" style={{marginTop:'25px'}} >
+            <NavLink to={`/dashboardP/${userId}`} style={{marginTop:'30px'}}activeClassName="active" exact>
               Dashboard
             </NavLink>
           </li>
 
          {userProfile === "personnelfiscalite" &&(
           <>
-          <li className="nav__item">
-            <NavLink to={`/listcourriersfiscal/${iderp}`} activeClassName="active" exact>
+          <li className="nav__item" style={{marginTop:'25px'}} >
+            <NavLink to={`/listcourriersfiscal/${iderp}`}style={{marginTop:'25px'}} activeClassName="active" exact>
               Factures
             </NavLink>
           </li>
          </>)}
          {userProfile === "agentTresorerie" &&(
           <>
-          <li className="nav__item">
-            <NavLink to={`/listcourrierstresorerie/${iderp}`} activeClassName="active" exact>
+          <li className="nav__item" style={{marginTop:'25px'}} >
+            <NavLink to={`/listcourrierstresorerie/${iderp}`} style={{marginTop:'25px'}} activeClassName="active" exact>
               Factures
             </NavLink>
           </li>
          </>)}
           {userProfile === "bof" && (
             <>
-             <li className="nav__item">
-            <NavLink to={`/listfournisseur/${userId}`} activeClassName="active" exact>
+             <li className="nav__item"style={{marginTop:'25px'}} >
+            <NavLink to={`/listfournisseur/${userId}`}style={{marginTop:'25px'}} activeClassName="active" exact>
               Fournisseurs
             </NavLink>
           </li>
-              <li className="nav__item bordereau-item">
-                <div className="dropdown">
-                  <div className="dropdown-btn" onClick={handleToggleBordereauMenu} activeClassName="active" exact>
-                    deposer
-                  </div>
-                  {isBordereauMenuOpen && (
-                    <div className="dropdown-content">
-                      <button className="dropdown-item" onClick={() => handleNatureSelection('3WMTND')}>
-                        TND
-                      </button>
-                      <button className="dropdown-item" onClick={() => handleNatureSelection('Nature2')}>
-                        Nature 2
-                      </button>
-                      <button className="dropdown-item" onClick={() => handleNatureSelection('Nature3')}>
-                        Nature 3
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </li>
-              <li className="nav__item">
-                <NavLink to={`/bordereaux`} activeClassName="active" exact>
+          <li className="nav__item bordereau-item">
+  <div className="dropdown">
+    <div className="dropdown-btn deposer-button" onClick={handleToggleBordereauMenu} style={{
+        cursor: 'pointer',
+        color: '#fff',
+        textDecoration: 'none',
+        padding: '10px 20px',
+        borderRadius: '25px',
+        position: 'relative',
+        transition: 'background-color 0.3s ease, color 0.3s ease, border-radius 0.3s ease'
+      }} activeClassName="active" exact>
+      deposer
+    </div>
+    {isBordereauMenuOpen && (
+      <div className="dropdown-content">
+        <button className="dropdown-item" onClick={() => handleNatureSelection('3WMTND')}>
+          TND
+        </button>
+        <button className="dropdown-item" onClick={() => handleNatureSelection('Nature2')}>
+          Nature 2
+        </button>
+        <button className="dropdown-item" onClick={() => handleNatureSelection('Nature3')}>
+          Nature 3
+        </button>
+      </div>
+    )}
+  </div>
+</li>
+              <li className="nav__item" style={{marginTop:'25px'}} >
+                <NavLink to={`/bordereaux`}activeClassName="active" exact>
                   Bordereaux
                 </NavLink>
               </li>
-              <li className="nav__item">
+              <li className="nav__item" style={{marginTop:'25px'}} >
             <div className="dropdown">
               <div className="dropdown-btn" onClick={handleToggleNotificationMenu}>
                 
@@ -210,7 +237,7 @@ const Header = () => {
           )}
 
           <li className="nav__item user-settings-item">
-            <div className="dropdown">
+            <div className="dropdown" style={{marginTop:'25px'}} >
               <div className="dropdown-btn" onClick={handleToggleUserMenu}>
                 <FontAwesomeIcon icon={faCog} className="icon" />
               </div>
@@ -232,7 +259,10 @@ const Header = () => {
               )}
             </div>
           </li>
-          
+          <li style={{marginTop:'25px',marginLeft:'300px',color:'white', fontWeight:'bold'}}>
+          <div className="user-name">Nom : {renderUserName()}</div>
+          {userProfile && <span>Profile : {userProfile}</span>}
+          </li>
         </ul>
       </div>
     </header>

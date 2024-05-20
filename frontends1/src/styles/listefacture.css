@@ -129,33 +129,9 @@
   .delete-btn:hover{
     color: rgb(86, 86, 86) !important;
   }
-  select {
-    width: 150px;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid lightgrey;
-    background-color: #f9f9f9; /* Background color */
-    color: #333; /* Text color */
-  }
   
-  select:focus {
-    outline: none; /* Remove focus outline */
-    border-color: #007bff; /* Change border color on focus */
-  }
-  
-  option {
-    background-color: white; /* Background color of options */
-    color: #333; /* Text color of options */
-  }
 
-.infographic-link {
-  color: #007bff;
-  text-decoration: none;
-}
 
-.infographic-link:hover {
-  text-decoration: underline;
-}
 .factures-table thead tr.table-header th,
 .factures-table thead tr.table-header td {
     background-color: #4367c4;
@@ -177,13 +153,7 @@
   border-top: 2px solid white;
    /* Add a white border-top to each row */
 }
-.factures-table tbody tr:nth-child(odd) {
-    background-color: #f9f9f9;
-}
 
-.factures-table tbody tr:nth-child(even) {
-    background-color: #ffffff;
-}
 .edit:hover{
   color: rgb(86, 86, 86) !important;
    }

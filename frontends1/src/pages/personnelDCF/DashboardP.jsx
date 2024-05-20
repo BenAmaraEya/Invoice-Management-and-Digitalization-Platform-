@@ -211,12 +211,12 @@ const DashboardP = () => {
             </div>
             <div className="bottom-container">
                 <div className="left-side">
-                    <table>
+                    <table className='reclamation-table'>
                         <thead>
-                            <tr>
+                            <tr className='reclamation-row-1'>
                                 <th colSpan="3" className="header-span">Liste des Réclamations</th>
                             </tr>
-                            <tr>
+                            <tr className='reclamation-row-2'>
                                 <th>Contenu de la Réclamation</th>
                                 <th>id fournisseur</th>
                                 <th>Action</th>
@@ -230,8 +230,8 @@ const DashboardP = () => {
                                     <td>
                                         {fournisseur.map((fournisseurItem) => (
                                             fournisseurItem.iderp === reclamation.iderp && fournisseurItem.User ? (
-                                                <button key={fournisseurItem.id} onClick={() => sendEmailAndDeleteReclamation(fournisseurItem.User.email, reclamation.id)}>
-                                                    <i className="fas fa-envelope"></i>
+                                                <button key={fournisseurItem.id} style={{background:'transparent',border:'none'}}onClick={() => sendEmailAndDeleteReclamation(fournisseurItem.User.email, reclamation.id)}>
+                                                    <i className="fas fa-envelope" ></i>
                                                 </button>
                                             ) : null
                                         ))}
@@ -243,7 +243,7 @@ const DashboardP = () => {
                 </div>
                 <div className="right-side">
                     <div className="pie-chart-container">
-                        <div className="card">
+                        <div className="card" style={{marginTop:'2px'}}>
                             <Chart options={chartData.options} series={chartData.series} type="pie" height={300} />
                         </div>
                     </div>

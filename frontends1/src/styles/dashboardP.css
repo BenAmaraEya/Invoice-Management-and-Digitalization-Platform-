@@ -56,8 +56,6 @@
 
 
 
-
-
 .dashboard-box {
   background-color: rgb(238, 238, 238);
   color: black;
@@ -141,11 +139,28 @@ table {
 }
 
 th, td {
-  border: 1px solid #ddd;
+ 
   padding: 8px;
   text-align: left;
+ 
+}
+th{
+  border: 1px solid #aeaeae;
 }
 
-th {
+td {
   background-color: #f2f2f2;
+  border: 1px solid #aeaeae;
+}
+.reclamation-table tr.reclamation-row-1 th{
+  background-color: #fae6c3;
+
+}
+.reclamation-table tr.reclamation-row-2 th{
+  background-color: #4367c4;
+  color: white;
+}
+.reclamation-table{
+  margin-top: 40px;
+ 
 }

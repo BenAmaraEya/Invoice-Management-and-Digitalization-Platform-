@@ -8,14 +8,18 @@ import io from 'socket.io-client';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import NotificationBadge, { Effect } from 'react-notification-badge';
-
+import axios from 'axios';
 const Header = () => {
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
+  const userProfile = localStorage.getItem("userProfil");
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
   const [notificationsEtat, setNotif] = useState([]);
-
+  const [iderp, setIdErp] = useState(null);
+  const [userName, setUserName] = useState('');
+  const [user, setUser] = useState({});
+  const [error, setError] = useState(null);
   const handleToggleUserMenu = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
   };
@@ -28,7 +32,20 @@ const Header = () => {
   const handleReclamation = () => {
     navigate(`/reclamation/${userId}`);
     setIsUserMenuOpen(false);   };
+    useEffect(() => {
+      const fetchUser = async () => {
+          try {
+              const response = await axios.get(`http://localhost:3006/user/${userId}`);
+              setUser(response.data);
+          } catch (error) {
+              setError(error);
+              console.error('Error fetching user:', error);
+          }
+      };
 
+      fetchUser();
+  }, [userId]);
+ 
   const handleLogout = async () => {
     try {
       const response = await fetch(`http://localhost:3006/auth/logout/${userId}`, {
@@ -79,32 +96,38 @@ const Header = () => {
   const handleToggleNotificationMenu = () => {
     setIsNotificationMenuOpen(!isNotificationMenuOpen);
   };
+  const renderUserName = () => {
+    if (user.User) {
+        return user.User.name;
+    } else {
+        return user.name;
+    }
+};
 
   return (
     <header className="header">
-      <div className="logo-container">
-        <img src={logo} alt="" className="logo" />
-      </div>
+      
       <div className="navigation">
         <ul className="menu d-flex align-items-center gap-5">
-          <li className="nav__item">
-            <NavLink to={`/dashboard/${userId}`} activeClassName="active" exact>
+          <li className="nav__item" style={{marginTop:'25px'}}>
+            <NavLink to={`/dashboard/${userId}`} activeClassName="active"  exact>
               Dashboard
             </NavLink>
           </li>
-          <li className="nav__item">
+          <li className="nav__item" style={{marginTop:'25px'}}>
             <NavLink to={`/factures/${userId}`} activeClassName="active" exact>
               Factures
             </NavLink>
           </li>
           
-          <li className="nav__item">
+          <li className="nav__item" style={{marginTop:'25px'}}>
             <NavLink to={`/historique/${userId}`} activeClassName="active" exact>
               Historique
             </NavLink>
           </li>
+         
           <li className="nav__item user-settings-item">
-            <div className="dropdown">
+            <div className="dropdown" style={{marginTop:'25px'}}>
               <div className="dropdown-btn" onClick={handleToggleUserMenu}>
                 <FontAwesomeIcon icon={faCog} className="icon" />
               </div>
@@ -124,7 +147,7 @@ const Header = () => {
             </div>
           </li>
           <li className="nav__item">
-            <div className="dropdown">
+            <div className="dropdown" style={{marginTop:'25px'}}>
               <div className="dropdown-btn" onClick={handleToggleNotificationMenu}>
                 <FontAwesomeIcon icon={faBell} className="notif-icon" />
                 {notificationsEtat.length > 0 && (
@@ -151,7 +174,13 @@ const Header = () => {
                 </div>
               )}
             </div>
+          </li> 
+          <li style={{marginTop:'25px',marginLeft:'500px',color:'white', fontWeight:'bold'}}>
+          <div className="user-name">Nom : {renderUserName()}</div>
+          {userProfile && <span>Profile : {userProfile}</span>}
           </li>
+         
+         
         </ul>
       </div>
       <NotificationContainer />
