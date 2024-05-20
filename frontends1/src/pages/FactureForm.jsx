@@ -147,11 +147,11 @@ navigate(`/factures/${id}`);
 
   return (
     <section>
-      <Container>
+      <Container className="facture-container d-flex justify-content-between">
         <Row>
-          <Col lg="8" className="m-auto">
-            <p className='form-paragraph'>Vérifiez et complétez votre formulaire attentivement avant de soumettre.</p>
-            <div className="facture-container d-flex justify-content-between">
+         
+            <p className='form-paragraph' style={{textAlign:'center'}}>Vérifiez et complétez votre formulaire attentivement avant de soumettre.</p>
+            <div >
               <div className="facture-form">
                 <Form onSubmit={handleSubmit}>
                   <Row>
@@ -240,7 +240,7 @@ navigate(`/factures/${id}`);
                       </FormGroup>
                     </Col>
                   </Row>
-                  <div className='btn-container'>
+                  <div className='btn-container' style={{marginLeft:'40%'}}>
                   <button className="validerform-btn" type="submit">Valider</button>
                   <Link to={`/factures/${id}`}>
                   <Button className='annulerform-btn'>Annuler</Button>
@@ -249,7 +249,7 @@ navigate(`/factures/${id}`);
                 </Form>
               </div>
             </div>
-          </Col>
+          
         </Row>
       </Container>
     </section>

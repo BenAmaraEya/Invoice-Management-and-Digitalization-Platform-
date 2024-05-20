@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import '../styles/Reclamation.css'; // Import your CSS file for styling
 
 const ReclamationForm = () => {
     const [contenu, setContenu] = useState('');
@@ -39,15 +40,15 @@ const ReclamationForm = () => {
     };
 
     return (
-        <div>
+        <div className="reclamation-form-container">
             <h2>Envoyer une réclamation</h2>
             <form onSubmit={handleSubmit}>
-                <div>
+                <div className="form-group">
                     <label htmlFor="contenu">Contenu de la réclamation:</label>
                     <textarea id="contenu" value={contenu} onChange={(e) => setContenu(e.target.value)} required />
                 </div>
-                {errorMessage && <p>{errorMessage}</p>}
-                <button type="submit">Envoyer</button>
+                {errorMessage && <p className="error-message">{errorMessage}</p>}
+                <button type="submit" className="submit-button">Envoyer</button>
             </form>
         </div>
     );

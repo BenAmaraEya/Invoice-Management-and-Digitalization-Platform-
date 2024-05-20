@@ -5,12 +5,14 @@ import axios from 'axios';
 import { FaFileExcel } from 'react-icons/fa';
 import { Document, Page, pdfjs } from 'react-pdf';
 import './../styles/listefacture.css';
-import { FaTrash, FaPen, FaSearch, FaFilePdf } from 'react-icons/fa';
+import { FaPlus,FaEye } from 'react-icons/fa';
+import { FaTrashAlt, FaEdit, FaSearch, FaFilePdf } from 'react-icons/fa';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const ListeFactures = () => {
     const [factures, setFactures] = useState([]);
     const [iderp, setIdErp] = useState(null);
+    const [filteredFactures, setFilteredFactures] = useState([]);
     const [pdfPath, setPdfPath] = useState(null);
     const [pdfError, setPdfError] = useState(null);
     const [searchParams, setSearchParams] = useState({ num_fact: '', datereception: '' });
@@ -127,19 +129,52 @@ const ListeFactures = () => {
             ...prevState,
             [name]: value
         }));
+        
+        
     };
 
     return (
         <div>
-            <div style={{ position: 'relative', display: 'inline-block', marginTop:'50px', right:'-12px'}}>
-                <input type="text" name="num_fact" placeholder="Numéro Facture" value={searchParams.num_fact} onChange={handleInputChange}  style={{ width: '250px',borderRadius:'5px'  }} />
-                <input type="date" name="datereception" placeholder="Date de Réception (yyyy-mm-dd)" value={searchParams.datereception} onChange={handleInputChange}  style={{ width: '250px',borderRadius:'5px'  }} />
-              
+              <div className="btns d-flex   align-item-center justify-content-end">
+                <button onClick={exportToExcel}  className="export-btn"><FaFileExcel />Export Factures </button>
+                <Link to='/uploadfacture'>
+                <Button className='ajouter-btn'> <FaPlus style={{ marginRight: '5px' }} />Ajouter Factures</Button>
+                </Link>
             </div>
-            <button style={{width:'50px',background:'white',border:'1px solid lightgrey',height:'26px',position: 'relative', display: 'inline-block', marginTop:'50px', top:'-6px',right:'-12px'}}><FaSearch style={{ position: 'absolute', right: '18px', top: '50%',transform: 'translateY(-50%)', color:'black', cursor: 'pointer' }} onClick={rechercheFacture} /></button>
-            <table>
+           
+            <table className="factures-table">
                 <thead>
-                    <tr>
+                <tr className="table-header">
+                        <th colSpan="10">Liste Factures</th>
+                    </tr>
+                    <tr >
+                    
+            
+                    <td colSpan="10" className="search-row">
+                            <div className="search-container">
+                                <input 
+                                    type="text" 
+                                    name="num_fact" 
+                                    placeholder="Numéro Facture" 
+                                    value={searchParams.num_fact} 
+                                    onChange={handleInputChange} 
+                                    className="search-input"
+                                />
+                                <input 
+                                    type="date" 
+                                    name="datereception" 
+                                    placeholder="Date de Réception (yyyy-mm-dd)" 
+                                    value={searchParams.datereception} 
+                                    onChange={handleInputChange} 
+                                    className="search-input"
+                                />
+                                <button onClick={rechercheFacture} className="search-btn"><FaSearch /></button>
+                            </div>
+                        </td>
+
+                    </tr>
+                    
+                    <tr className="table-subheader">
                         <th>Facture ID</th>
                         <th>Numéro Facture</th>
                         <th>Facture Name</th>
@@ -149,12 +184,16 @@ const ListeFactures = () => {
                         <th>Date Facture</th>
                         <th>Action</th>
                         <th>PDF</th>
-                        <th>Infographic</th>
+                        <th>Etat</th>
                     </tr>
                 </thead>
                 <tbody>
                 {factures.map((facture) => (
-                        <tr key={facture.idF}>
+                       <tr key={facture.idF} style={{
+                        backgroundColor: facture.status.includes('rejeté') ? '#eeb1b1' :
+                                         facture.status.includes('validé') ? '#bad381' : '',
+                        opacity: facture.status.includes('rejeté') || facture.status.includes('validé') ? '0.8' :'0.8'
+                    }}>
                             <td>{facture.idF}</td>
                             <td>{facture.num_fact}</td>
                             <td>{facture.factname}</td>
@@ -163,33 +202,28 @@ const ListeFactures = () => {
                             <td>{facture.num_po}</td>
                             <td>{facture.date_fact}</td>
                             <td>
-                                <button className='delete-btn' onClick={() => deleteFacture(facture.iderp, facture.idF)}>
-                                <FaTrash style={{fontSize: '20px', backgroundColor: 'transparent' }} onClick={() => deleteFacture(facture.iderp, facture.idF)} />
+                                <button className='delete-btn' onClick={() => deleteFacture(facture.iderp, facture.idF)} style={{background:'none' ,border:'none'}}>
+                                <FaTrashAlt style={{fontSize: '20px', backgroundColor: 'transparent',color:'black' }} onClick={() => deleteFacture(facture.iderp, facture.idF)} />
                                 </button>
                                 {facture.status === 'Attente' || facture.status.includes('Manque') ? (
     <Link to={`/updatefacture/${facture.idF}`}>
-        <FaPen color="grey" />
+        <FaEdit color="black" style={{fontSize: '20px',marginLeft:'5px'}} />
     </Link>
 ) : null}
                             </td>
                             <td>
-                                <button onClick={() => viewFacturePDF(facture.pathpdf)}><FaFilePdf /></button>
+                                <button onClick={() => viewFacturePDF(facture.pathpdf)} className="pdf-btn"><FaFilePdf /></button>
                             </td>
                             <td>
               <Link to={`/infographic/${facture.idF}`}>
-                View Etat
+              <FaEye color="black" style={{fontSize: '20px'}}/>
               </Link>
             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            <div className="btns d-flex align-item-center gap-4">
-                <button onClick={exportToExcel}>Export Factures <FaFileExcel /></button>
-                <Link to='/uploadfacture'>
-                    <Button className='ajouter-btn'>Ajouter Factures</Button>
-                </Link>
-            </div>
+            
             {pdfPath && (
                 <Document file={pdfPath} error="PDF loading error">
                     <Page pageNumber={1} />

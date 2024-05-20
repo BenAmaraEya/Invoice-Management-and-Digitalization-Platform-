@@ -97,11 +97,7 @@ const Header = () => {
               Factures
             </NavLink>
           </li>
-          <li className="nav__item">
-            <NavLink to={`/listreclamation/${userId}`} activeClassName="active" exact>
-              Réclamations
-            </NavLink>
-          </li>
+          
           <li className="nav__item">
             <NavLink to={`/historique/${userId}`} activeClassName="active" exact>
               Historique

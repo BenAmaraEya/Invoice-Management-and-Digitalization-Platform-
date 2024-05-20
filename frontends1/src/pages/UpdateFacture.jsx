@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams ,useNavigate} from 'react-router-dom';
+import {Link, useParams ,useNavigate} from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import { Container, Row, Col, Form, FormGroup, Button } from "reactstrap";
 import 'react-datepicker/dist/react-datepicker.css';
 import '../styles/updatefacture.css';
+const id = localStorage.getItem("userId");
 const UpdateFactureDetailsPage = () => {
   const { idF } = useParams();
   const navigate = useNavigate();
@@ -159,49 +160,50 @@ const UpdateFactureDetailsPage = () => {
 
   return (
     <section>
-    <Container>
+    <Container className="facture-container d-flex justify-content-between">
       <Row>
-        <Col lg="8" className="m-auto">
+        
     
-      <h1>Modifier Facture </h1>
-      <div className="facture-container d-flex justify-content-between">
+     
+     
               <div className="facture-form">
       <form onSubmit={handleSubmit}>
       <Row>
                     <Col md="6">
                       <FormGroup>
         <label>
-          Numéro de Facture:
+          Numéro de Facture:*
           <input type="text" name="num_fact" value={facture.num_fact} onChange={handleChange} required />
         </label>
         </FormGroup>
                       <FormGroup>
         <label>
-          Numéro PO:
+          Numéro PO:*
           <input type="text" name="num_po" value={facture.num_po} onChange={handleChange} />
         </label>
         </FormGroup>
                       <FormGroup>
         <label>
-          Date de facture:
+          <div>Date de facture:*</div>
+          
           <DatePicker selected={facture.date_fact} onChange={handleDateChange} />        </label>
           </FormGroup>
           
                       <FormGroup>
         <label>
-          Montant:
+          Montant:*
           <input type="number" name="montant" value={facture.montant} onChange={handleChange} required />
         </label>
         </FormGroup>
                       <FormGroup>
         <label>
-          Nom de Facture:
+          Nom de Facture:*
           <input type="text" name="factname" value={facture.factname} onChange={handleChange} required />
         </label>
         </FormGroup>
                       <FormGroup>
         <label>
-          Devise:
+          Devise:*
           <select name="devise" value={facture.devise} onChange={handleChange} required>
             <option value="TND">TND</option>
             <option value="EURO">EURO</option>
@@ -213,25 +215,27 @@ const UpdateFactureDetailsPage = () => {
                     <Col md="6">
                       <FormGroup>
         <label>
-          Nature:
+          Nature:*
           <input type="text" name="nature" value={facture.nature} onChange={handleChange} required />
         </label>
         </FormGroup>
+        <FormGroup>
+                        <label className="facture-label">Object:*</label>
+                        <select className="facture-input" name="objet" value={facture.objet} onChange={handleChange} required>
+                          <option value="NOUVELLE FACTURE">Nouvelle Facture</option>
+                          <option value="ancien facture">Ancien Facture</option>
+                        </select>
+                      </FormGroup>
                       <FormGroup>
         <label>
-          Objet:
-          <input type="text" name="objet" value={facture.objet} onChange={handleChange} required />
-        </label>
-        </FormGroup>
-                      <FormGroup>
-        <label>
-          Date de Réception:
+          <div> Date de Réception:*</div>
+         
           <DatePicker selected={facture.datereception} onChange={handleDateChange} />         </label>
           </FormGroup>
                    
                       <FormGroup>
   <label>
-    Pièces Jointes :
+    Pièces Jointes :*
     <div>
       <label>
         <input
@@ -261,11 +265,11 @@ const UpdateFactureDetailsPage = () => {
 
                       <FormGroup>
         <label>
-          Chemin PDF:
+          Chemin PDF:*
           <input type="text" name="pathpdf" value={facture.pathpdf} onChange={handleChange} required />
         </label>
         <label>
-          Modifier Document:
+          Modifier Document:*
           <input type="file" onChange={handleFileChange} accept=".pdf" />
           <button className="upload-btn" onClick={changeDocuments}>
             Modifier Document
@@ -276,12 +280,14 @@ const UpdateFactureDetailsPage = () => {
                   </Row>
                   <div className='btn-container'>
         <button type="submit">Valider</button>
+        <Link to={`/factures/${id}`}>
+                  <Button className='annulerform-btn'>Annuler</Button>
+                    </Link>
         </div>
       </form>
       </div>
-            </div>
-          </Col>
-        </Row>
+           
+                  </Row>
       </Container>
     </section>
   );

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Chart from 'react-apexcharts';
 import '../../styles/dashboardP.css';
-
+import { FaDownload } from 'react-icons/fa';
 const DashboardP = () => {
     const [factureStats, setFactureStats] = useState({
         nbFactureParType: 0,
@@ -189,9 +189,9 @@ const DashboardP = () => {
         }
     };
     return (
-        <div className="dashboard-container">
+        <div className="dashboardp-container">
              <div className="top-container">
-                <button onClick={generateReport}>Generate Report</button>
+                <button onClick={generateReport} style={{background:'#4367c4',color:'white',border:'none',marginRight:'30px',borderRadius:'5px',padding:'8px',marginTop:'20px'}}>  Generé Repport <FaDownload style={{ marginLeft: '8px' }} /></button>
             </div>
             <div className="middle-container">
                 <div className="boxes-container">

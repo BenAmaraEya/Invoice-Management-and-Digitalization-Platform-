@@ -1,66 +1,72 @@
-/* factureform.css */
 
-.form-paragraph {
-  margin-top: 30px;
-  margin-bottom: 20px;
-  text-align: center;
-}
+  
+  .facture-container {
+    background-color: #eff0f6;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 30px;
+   
+  }
+  
+ .facture-form{
+  margin-left: 150px !important;
+ }
+  
+  .facture-form label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #3b1b0d;
+   
+  }
+  
+  .facture-form input[type='text'],
+  .facture-form input[type='number'],
+  .facture-form select,
+  .facture-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color:#3b1b0d;
+    background-color: #dcdbe0;
+   
+  }
+  
+  .facture-form textarea {
+    height: 100px;
+  }
+  
+  .facture-form button[type='submit'] {
+    background-color: #4367c4;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .facture-form button[type='submit']:hover {
+    background-color: #4367c4;
+  }
 
-.facture-container {
-  margin-top: 20px;
-}
-
-.facture-form {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.facture-label {
-  font-weight: bold;
-}
-
-.facture-input {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.validerform-btn {
-  background-color: #007bff;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
+.upload-btn{
+  background-color: #4367c4;
+  padding: 10px 20px !important;
   border-radius: 8px;
-  cursor: pointer;
-  margin-left: 200px;
+}
   
  
-}
+  
 .annulerform-btn{
   background-color: rgb(210, 210, 210)!important;
   color: black !important;
   padding: 10px 20px !important;
-  border: none;
+  border: 1px solid rgb(210, 210, 210) !important;
   border-radius: 8px;
   cursor: pointer;
-  margin-left: 300px;
+ margin-bottom: 4px;
   margin-left: 15px;
   
-}
-.btn-container{
-  display: flex !important;
-  
-}
-.validerform-btn:hover {
-  background-color: #0056b3;
-}
-
-@media (max-width: 768px) {
-  .facture-form {
-    padding: 10px;
-  }
 }

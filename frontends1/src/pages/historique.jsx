@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import axios from 'axios';
 import { Document, Page, pdfjs } from 'react-pdf';
-import './../styles/listefacture.css';
+import './../styles/historique.css';
 import { FaTrash, FaPen, FaSearch, FaFilePdf } from 'react-icons/fa';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -97,18 +97,39 @@ const Historique = () => {
 
     return (
         <div>
-            <div style={{ position: 'relative', display: 'inline-block', marginTop:'50px', right:'-12px'}}>
-                <input type="text" name="num_fact" placeholder="Numéro Facture" value={searchParams.num_fact} onChange={handleInputChange}  style={{ width: '250px',borderRadius:'5px'  }} />
-                <input type="date" name="datereception" placeholder="Date de Réception (yyyy-mm-dd)" value={searchParams.datereception} onChange={handleInputChange}  style={{ width: '250px',borderRadius:'5px'  }} />
-            </div>
-            <button style={{width:'50px',background:'white',border:'1px solid lightgrey',height:'26px',position: 'relative', display: 'inline-block', marginTop:'50px', top:'-6px',right:'-12px'}}><FaSearch style={{ position: 'absolute', right: '18px', top: '50%',transform: 'translateY(-50%)', color:'black', cursor: 'pointer' }} onClick={rechercheFacture} /></button>
-            
+           
             {Object.keys(groupedFactures).map(year => (
                 <div key={year}>
-                    <h2>{year}</h2>
-                    <table>
+                  
+                    <table className="factures-table-historique">
                         <thead>
                             <tr>
+                                <th colSpan="10" style={{textAlign:'center',color:'#3b1b0d',fontSize:'20px'}}>L'historique des factures de l'année :{year}</th>
+                            </tr>
+                            <tr>
+                            <td colSpan="10" className="search-row">
+                            <div className="search-container">
+                                <input 
+                                    type="text" 
+                                    name="num_fact" 
+                                    placeholder="Numéro Facture" 
+                                    value={searchParams.num_fact} 
+                                    onChange={handleInputChange} 
+                                    className="search-input"
+                                />
+                                <input 
+                                    type="date" 
+                                    name="datereception" 
+                                    placeholder="Date de Réception (yyyy-mm-dd)" 
+                                    value={searchParams.datereception} 
+                                    onChange={handleInputChange} 
+                                    className="search-input"
+                                />
+                                <button onClick={rechercheFacture} className="search-btn"><FaSearch /></button>
+                            </div>
+                        </td>
+                            </tr>
+                            <tr style={{color:'#3b1b0d'}}>
                                 <th>Numéro Facture</th>
                                 <th>Montant</th>
                                 <th>Numéro PO</th>
@@ -119,17 +140,17 @@ const Historique = () => {
                         </thead>
                         <tbody>
                             {groupedFactures[year].map((facture) => (
-                                <tr key={facture.idF}>
+                                <tr key={facture.idF} className="facture-row-historique">
                                     <td>{facture.num_fact}</td>
                                     <td>{facture.montant}</td>
                                     <td>{facture.num_po}</td>
                                     <td>{facture.date_fact}</td>
                                     <td>
-                                        <button onClick={() => viewFacturePDF(facture.pathpdf)}><FaFilePdf /></button>
+                                        <button onClick={() => viewFacturePDF(facture.pathpdf)} className="pdf-btn"><FaFilePdf /></button>
                                     </td>
                                     <td>
                                         <Link to={`/details/${facture.idF}`}>
-                                            <Button>Details</Button>
+                                            <Button className='details-btn'>Details</Button>
                                         </Link>
                                     </td>
                                 </tr>
