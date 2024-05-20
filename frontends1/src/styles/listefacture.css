@@ -49,31 +49,37 @@
 }
 
 .search-row {
-  padding: 20px;
+  padding: 10px !important;
   background-color: #f1f1f1;
+ 
 }
 
 .search-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-end !important;
   gap: 10px;
+  
+ 
 }
 
 .search-input {
   width: 250px;
   padding: 8px;
   border-radius: 5px;
-  border: 1px solid lightgrey;
+  border: 1px solid rgb(163, 163, 163);
+  background-color: whitesmoke !important;
+  
 }
 
 .search-btn {
   width: 50px;
-  background: white;
+  background: whitesmoke;
   border: 1px solid lightgrey;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 5px;
 }
 
 .search-btn svg {
@@ -93,13 +99,54 @@
   background-color: #fae6c3 !important;
 }
 
-.pdf-btn {
+.pdf-file {
   background: none;
   border: none;
   cursor: pointer;
-  color: rgb(255, 80, 80);
+  color: rgb(255, 123, 123) ;
   font-size: 24px;
 }
+.pdf-file:hover{
+  color: rgb(255, 83, 83);
+}
+.view-etat:hover{
+  color:#007bff !important
+}
+.btn-validcourriers{
+    background-color: #55da08 !important;
+    color: white;
+    border: 1px solid #55da08 !important;
+    padding: 8px 14px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  .btn-validcourriers:hover {
+    background-color: #bbed9c !important;
+  }
+  .edit:hover{
+ color: rgb(86, 86, 86) !important;
+  }
+  .delete-btn:hover{
+    color: rgb(86, 86, 86) !important;
+  }
+  select {
+    width: 150px;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    background-color: #f9f9f9; /* Background color */
+    color: #333; /* Text color */
+  }
+  
+  select:focus {
+    outline: none; /* Remove focus outline */
+    border-color: #007bff; /* Change border color on focus */
+  }
+  
+  option {
+    background-color: white; /* Background color of options */
+    color: #333; /* Text color of options */
+  }
 
 .infographic-link {
   color: #007bff;
@@ -137,3 +184,6 @@
 .factures-table tbody tr:nth-child(even) {
     background-color: #ffffff;
 }
+.edit:hover{
+  color: rgb(86, 86, 86) !important;
+   }

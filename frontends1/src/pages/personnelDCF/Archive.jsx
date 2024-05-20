@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, Table, Form, FormGroup, Label, Input, Container, Row, Col } from 'reactstrap';
-import { Link, useParams } from 'react-router-dom';
+import { Button, Table, Form, FormGroup, Label, Input, Container } from 'reactstrap';
+import { Link } from 'react-router-dom';
 import '../../styles/Archive.css'; // Import your CSS file for styling
 
 const ArchiveViewer = () => {
@@ -35,7 +35,7 @@ const ArchiveViewer = () => {
 
     try {
       const response = await axios.get(`http://localhost:3006/archive/listArchive/${selectedYear}`);
-      const filteredData = response.data?.Factures ? [response.data] : []; 
+      const filteredData = response.data?.Factures ? [response.data] : [];
       setFilteredArchives(filteredData);
     } catch (error) {
       console.error('Error fetching filtered archives:', error);
@@ -44,41 +44,36 @@ const ArchiveViewer = () => {
 
   return (
     <Container className="archive-viewer-container">
-      <Row className="justify-content-between align-items-center mb-4">
-        <Col>
-          <h2 className="text-center">Archives</h2>
-        </Col>
-        <Col className="text-right">
-          <Form inline style={{marginLeft:'50%'}}>
-            <FormGroup>
-              <Label for="yearFilter" className="mr-2">Filter by Year:</Label>
-              <Input
-                type="select"
-                id="yearFilter"
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value)}
-                className="mr-2"
-                style={{width:'30%'}}
-              >
-                <option value="">All</option>
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </Input>
-              <Button  style={{background:'#688eec',color:'whitesmoke',border:'none'}}onClick={handleYearFilter}>Filter</Button>
-            </FormGroup>
-          </Form>
-        </Col>
-      </Row>
-
       <Table bordered hover responsive>
         <thead>
-          <tr>
+          <tr className='filter-archive'>
+            <th colSpan='3'>
+              <Form inline className="filter-form">
+                <FormGroup className="form-group">
+                  <Label for="yearFilter" className="mr-2" style={{color:'#3b1b0d'}}>Filter par année:</Label>
+                  <Input
+                    type="select"
+                    id="yearFilter"
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                    className="mr-2"
+                  >
+                    <option value="">Tous</option>
+                    {years.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </Input>
+                  <Button onClick={handleYearFilter} style={{marginTop:'20px',marginRight:'20px'}}>Filter</Button>
+                </FormGroup>
+              </Form>
+            </th>
+          </tr>
+          <tr className='header-row-archive'>
             <th>ID</th>
-            <th>Year</th>
-            <th>Associated Factures</th>
+            <th>Année</th>
+            <th>Factures</th>
           </tr>
         </thead>
         <tbody>
@@ -89,28 +84,27 @@ const ArchiveViewer = () => {
                 <td>{archive.annee}</td>
                 <td>
                   {Array.isArray(archive.Factures) && archive.Factures.length > 0 ? (
-                    <ul>
+                    <div className="facture-list">
                       {archive.Factures.map((facture) => (
-                        <li key={facture.idF}>
-                          <p><strong>Facture Numéro:</strong> {facture.num_fact} <br />
-                          <strong>Date:</strong> {facture.date_fact} <br />
-                          <strong>iderp Fournisseur:</strong> {facture.iderp} <br />
+                        <div key={facture.idF} className="facture-item">
+                          <p><strong>Facture Numéro:</strong> {facture.num_fact}</p>
+                          <p><strong>Date:</strong> {facture.date_fact}</p>
+                          <p><strong>iderp Fournisseur:</strong> {facture.iderp}</p>
                           <Link to={`/detailsFacture/${facture.idF}`}>
-                            <Button  style={{background:'#688eec',color:'whitesmoke',border:'none'}} size="sm">Details</Button>
+                            <Button className="details-button" size="sm">Details</Button>
                           </Link>
-                          </p>
-                        </li>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   ) : (
-                    <p>No associated factures.</p>
+                    <p>pas de factures.</p>
                   )}
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="3">No archives found.</td>
+              <td colSpan="3">pas d'archive.</td>
             </tr>
           )}
         </tbody>

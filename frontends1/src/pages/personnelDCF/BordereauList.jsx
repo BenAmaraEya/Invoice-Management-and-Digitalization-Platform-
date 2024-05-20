@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ListFactByB from './ListFactByB';
 import { FaSearch, FaFileAlt } from 'react-icons/fa';
+import '../../styles/BordereauList.css'; // Import your CSS file for styling
+
 const BordereauList = () => {
     const [bordereaux, setBordereaux] = useState([]);
     const navigate = useNavigate();
@@ -25,27 +27,25 @@ const BordereauList = () => {
     };
 
     return (
-        <div>
-            
-            <table style={{width:'50%',marginLeft:'30%' }}>
+        <div className="bordereau-list-container">
+            <table className="bordereau-table">
                 <thead>
                     <tr>
-                        <th colSpan={3} style={{textAlign:'center'}}>Liste des Bordereaux</th>
+                        <th colSpan={3} className="table-header-b">Liste des Bordereaux</th>
                     </tr>
-                    <tr >
+                    <tr className="table-row-header-b">
                         <th>Nature</th>
                         <th>Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody >
+                <tbody>
                     {bordereaux.map((bordereau) => (
-                        <tr key={bordereau.idB} >
+                        <tr key={bordereau.idB} className="table-row-b">
                             <td>{bordereau.nature}</td>
                             <td>{bordereau.date}</td>
-                            
-                            <td   >
-                                <button onClick={() => handleViewFactures(bordereau.idB)}><FaFileAlt />Voir Factures</button>
+                            <td className="action-cell">
+                                <button onClick={() => handleViewFactures(bordereau.idB)} className="view-factures-btn"><FaFileAlt />Voir Factures</button>
                             </td>
                         </tr>
                     ))}

@@ -4,8 +4,8 @@ import { Document, Page, pdfjs } from 'react-pdf';
 
 import { Link, useParams } from 'react-router-dom';
 import { Button } from 'reactstrap';
-import '../../styles/listefacture.css';
-import { FaTrash, FaPen, FaSearch, FaFilePdf } from 'react-icons/fa';
+import '../../styles/listecourriers.css';
+import { FaTrashAlt, FaPen, FaSearch, FaFilePdf,FaEye,FaEdit} from 'react-icons/fa';
 import { BsTrash } from 'react-icons/bs';
 import InfographicLine from '../infographicline';
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -121,9 +121,27 @@ const ListCourriers = () => {
     };
 
     const renderFactureTable = (factures) => (
-        <table>
+        <table className='courriers-table'>
             <thead>
-                <tr>
+                <tr className='courriers-1' >
+<td colSpan='13' className="courriers-row-1" >
+     <div className="search-row-container" >
+                <input type="text" name="num_fact"
+                 placeholder="Numéro Facture" 
+                 value={searchParams.num_fact} 
+                 onChange={handleInputChange}  
+                 className="search-input-courriers"/>
+                <input type="date"
+                 name="datereception"
+                  placeholder="Date de Réception (yyyy-mm-dd)"
+                   value={searchParams.datereception} 
+                   onChange={handleInputChange}  
+                   className="search-input-courriers"/>
+                 <button onClick={rechercheFacture} className="search-btn-courriers" ><FaSearch /></button>
+            </div>
+           </td>
+                </tr>
+                <tr className="courriers-row-2">
                     <th>Facture ID</th>
                     <th>Numéro Facture</th>
                     <th>Facture Name</th>
@@ -136,7 +154,7 @@ const ListCourriers = () => {
                     <th>rejeter</th>
                     <th>Etat</th>
                     <th>PDF</th>
-                    <th>Infographic</th>
+                    <th>localisation</th>
                 </tr>
             </thead>
             <tbody>
@@ -150,15 +168,15 @@ const ListCourriers = () => {
                         <td>{facture.num_po}</td>
                         <td>{facture.date_fact}</td>
                         <td>
-                                <button className='delete-btn' onClick={() => deleteFacture(facture.idF)}>
-                                <BsTrash style={{fontSize: '20px', backgroundColor: 'transparent' }} />
+                                <button onClick={() => deleteFacture(facture.idF)} style={{background:'none' ,border:'none'}}>
+                                <FaTrashAlt  className='delete-btn' style={{fontSize: '18px', backgroundColor: 'transparent',color:'black',border:'none'}} />
                                 </button>
                                 <Link to={`/updatefacture/${facture.idF}`}>
-                                <FaPen color="grey" />
+                                <FaEdit className='edit' color="black" style={{fontSize:'18px'}} />
                                 </Link>
                                 </td>
                                 <td>
-                                <button className='btn' onClick={() => validerDocument(facture.idF)}>valider</button>
+                                <button className='btn-validcourriers' onClick={() => validerDocument(facture.idF)}>valider</button>
                                 </td>
                                 <td>
                                 <select 
@@ -186,11 +204,11 @@ const ListCourriers = () => {
                             
                            
                         <td>
-                            <button onClick={() => viewFacturePDF(facture.pathpdf)}> <FaFilePdf /></button>
+                            <button onClick={() => viewFacturePDF(facture.pathpdf)} className='pdf-file'> <FaFilePdf /></button>
                         </td>
                         <td>
               <Link to={`/infographic/${facture.idF}`}>
-                View Etat
+              <FaEye color="black" className='view-etat' style={{fontSize: '20px',marginLeft:'30px'}}/>
               </Link>
             </td>
                     </tr>
@@ -215,12 +233,7 @@ const updateProcessus= async (idF, etat) => {
 };
     return (
         <div>
-            <div style={{ position: 'relative', display: 'inline-block', marginTop:'50px', right:'-12px'}}>
-                <input type="text" name="num_fact" placeholder="Numéro Facture" value={searchParams.num_fact} onChange={handleInputChange}  style={{ width: '250px',height:'28px',borderRadius:'5px',border:'1px solid lightgrey'  }} />
-                <input type="date" name="datereception" placeholder="Date de Réception (yyyy-mm-dd)" value={searchParams.datereception} onChange={handleInputChange}  style={{ width: '250px',borderRadius:'5px' ,border:'1px solid lightgrey' }}/>
-                
-            </div>
-            <button style={{width:'50px',background:'white',border:'1px solid lightgrey',height:'26px',position: 'relative', display: 'inline-block', marginTop:'50px', top:'-6px',right:'-12px'}}><FaSearch style={{ position: 'absolute', right: '18px', top: '50%',transform: 'translateY(-50%)', color:'black', cursor: 'pointer' }} onClick={rechercheFacture} /></button>
+           
             {searchResults.length > 0 && (
                 <div>
                     <h3>Résultats de la recherche</h3>

@@ -4,7 +4,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import { FaTrash } from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import { Button } from 'reactstrap';
-import '../../styles/listefacture.css';
+import '../../styles/listecourriers.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 

@@ -160,13 +160,13 @@ const UpdateFactureDetailsPage = () => {
 
   return (
     <section>
-    <Container className="facture-container d-flex justify-content-between">
+    <Container className="facture-update-container d-flex justify-content-between">
       <Row>
         
     
      
      
-              <div className="facture-form">
+              <div className="facture-update-form">
       <form onSubmit={handleSubmit}>
       <Row>
                     <Col md="6">
@@ -279,7 +279,7 @@ const UpdateFactureDetailsPage = () => {
         </Col>
                   </Row>
                   <div className='btn-container'>
-        <button type="submit">Valider</button>
+        <button type="submit" >Valider</button>
         <Link to={`/factures/${id}`}>
                   <Button className='annulerform-btn'>Annuler</Button>
                     </Link>

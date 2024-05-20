@@ -29,4 +29,32 @@
    
     background-color: #4367c4 !important;
   }
-  
+  .factures-table-historique tr.historique-row-1 th,
+  .factures-table-historique tr.historique-row-1 td {
+    background-color: #4367c4 !important; /* Background color for the first row */
+    color: white !important;
+    border: none; /* Ensure text is visible on dark background */
+  }
+  .factures-table-historique tr.historique-body th{
+    background-color: #fae6c3;
+  }
+  .pdf-file {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgb(255, 123, 123) ;
+    font-size: 24px;
+  }
+  .pdf-file:hover{
+    color: rgb(255, 83, 83);
+  }
+  .details-btn:hover {
+    background-color: #36569c !important; /* Darker blue for hover effect */
+  }
+  .details-btn {
+    background-color: #4367c4 !important;
+    color: white !important;
+    border: 1px solid #4367c4!important;
+    padding: 8px 16px;
+    cursor: pointer;
+  }

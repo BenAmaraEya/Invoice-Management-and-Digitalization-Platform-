@@ -103,11 +103,10 @@ const Historique = () => {
                   
                     <table className="factures-table-historique">
                         <thead>
-                            <tr>
-                                <th colSpan="10" style={{textAlign:'center',color:'#3b1b0d',fontSize:'20px'}}>L'historique des factures de l'année :{year}</th>
-                            </tr>
-                            <tr>
-                            <td colSpan="10" className="search-row">
+                            <tr className='historique-row-1'>
+                                <th colSpan="3" className='historique' style={{textAlign:'center',color:'white',fontSize:'20px'}}>L'historique des factures de l'année :{year}</th>
+                            
+                            <td colSpan="3" className="search-row">
                             <div className="search-container">
                                 <input 
                                     type="text" 
@@ -129,7 +128,7 @@ const Historique = () => {
                             </div>
                         </td>
                             </tr>
-                            <tr style={{color:'#3b1b0d'}}>
+                            <tr  className='historique-body'>
                                 <th>Numéro Facture</th>
                                 <th>Montant</th>
                                 <th>Numéro PO</th>
@@ -146,7 +145,7 @@ const Historique = () => {
                                     <td>{facture.num_po}</td>
                                     <td>{facture.date_fact}</td>
                                     <td>
-                                        <button onClick={() => viewFacturePDF(facture.pathpdf)} className="pdf-btn"><FaFilePdf /></button>
+                                        <button onClick={() => viewFacturePDF(facture.pathpdf)} className="pdf-file"><FaFilePdf /></button>
                                     </td>
                                     <td>
                                         <Link to={`/details/${facture.idF}`}>

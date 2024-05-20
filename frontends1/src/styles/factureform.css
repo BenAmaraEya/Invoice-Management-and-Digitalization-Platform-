@@ -1,11 +1,11 @@
 
   
   .facture-container {
-    background-color: #eff0f6;
+    background-color: #f0f4f8;
     padding: 20px;
     border-radius: 8px;
     margin-top: 30px;
-   
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
   }
   
  .facture-form{
@@ -16,7 +16,8 @@
     display: block;
     margin-bottom: 10px;
     font-weight: bold;
-    color: #3b1b0d;
+    color: #142e44;
+
    
   }
   
@@ -27,10 +28,10 @@
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    color:#3b1b0d;
-    background-color: #dcdbe0;
+    border: 1px solid #cfd8dc; /* Light blue-gray border color */
+  border-radius: 5px;
+  color: #142e44; /* Dark blue color */
+  background-color: #ffffff;
    
   }
   

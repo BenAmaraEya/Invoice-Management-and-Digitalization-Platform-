@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate,Link } from 'react-router-dom';
 import { Container, Row, Col, Form, FormGroup, Button } from "reactstrap";
-import '../../styles/updatefacture.css';
+import '../../styles/factureform.css';
 
 const UploadFacture = () => {
   const navigate = useNavigate();
-  const { nature } = useParams(); // Extract the nature parameter from the URL
-
+  const { nature,iderp } = useParams(); // Extract the nature parameter from the URL
+  const id = localStorage.getItem("userId");
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
   const [facture, setFacture] = useState({
@@ -260,8 +260,9 @@ const UploadFacture = () => {
         </FormGroup>
         </Col>
                   </Row>
-                  <div className='btn-container'>
+                  <div className='btn-container' style={{marginLeft:'40%'}}>
         <button type="submit">Valider</button>
+       
         </div>
       </form>
       </div>

@@ -167,6 +167,7 @@ const ListeFactures = () => {
                                     value={searchParams.datereception} 
                                     onChange={handleInputChange} 
                                     className="search-input"
+                                   
                                 />
                                 <button onClick={rechercheFacture} className="search-btn"><FaSearch /></button>
                             </div>
@@ -202,21 +203,21 @@ const ListeFactures = () => {
                             <td>{facture.num_po}</td>
                             <td>{facture.date_fact}</td>
                             <td>
-                                <button className='delete-btn' onClick={() => deleteFacture(facture.iderp, facture.idF)} style={{background:'none' ,border:'none'}}>
-                                <FaTrashAlt style={{fontSize: '20px', backgroundColor: 'transparent',color:'black' }} onClick={() => deleteFacture(facture.iderp, facture.idF)} />
+                                <button  onClick={() => deleteFacture(facture.iderp, facture.idF)} style={{background:'none' ,border:'none'}}>
+                                <FaTrashAlt className='delete-btn' style={{fontSize: '20px', backgroundColor: 'transparent',color:'black' }} onClick={() => deleteFacture(facture.iderp, facture.idF)} />
                                 </button>
                                 {facture.status === 'Attente' || facture.status.includes('Manque') ? (
     <Link to={`/updatefacture/${facture.idF}`}>
-        <FaEdit color="black" style={{fontSize: '20px',marginLeft:'5px'}} />
+        <FaEdit className='edit' color="black" style={{fontSize: '20px',marginLeft:'5px'}} />
     </Link>
 ) : null}
                             </td>
                             <td>
-                                <button onClick={() => viewFacturePDF(facture.pathpdf)} className="pdf-btn"><FaFilePdf /></button>
+                                <button onClick={() => viewFacturePDF(facture.pathpdf)} className="pdf-file"><FaFilePdf /></button>
                             </td>
                             <td>
               <Link to={`/infographic/${facture.idF}`}>
-              <FaEye color="black" style={{fontSize: '20px'}}/>
+              <FaEye className='view-etat' color="black" style={{fontSize: '20px'}}/>
               </Link>
             </td>
                         </tr>
