@@ -11,9 +11,7 @@ const Header = () => {
     
 
     return (
-        <header className="header">
-            
-        </header>
+     <h1></h1>
     );
 };
 

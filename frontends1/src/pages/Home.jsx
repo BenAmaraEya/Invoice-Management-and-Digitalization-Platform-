@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Form, FormGroup, Button, Card, CardImg } from "reactstrap";
+import { Container, Row, Col, Form, FormGroup, Button } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaLock } from "react-icons/fa"; // Importing user and lock icons
 import "../styles/Home.css";
-import partner1 from "../assets/images/chakira cable.jpeg";
-import partner2 from "../assets/images/TTlogo.png";
 
 const Home = () => {
   const [credentials, setCredentials] = useState({
@@ -61,49 +59,53 @@ const Home = () => {
   };
 
   return (
-   
+    <div className="full-page-background">
       <Container className="content-container">
-        <Row>
-          <Col lg="8" className="m-auto">
-            <div className="login__container">
-              <Form onSubmit={handleLogin}>
-                <FormGroup>
-                  <label htmlFor="username"><FaUser /> Utilisateur</label>
-                  <input
-                    type="text"
-                    placeholder="Entez votre nom"
-                    required
-                    id="username"
-                    onChange={handleInputChange}
-                    className="custom-input"
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <label htmlFor="password"><FaLock /> Mot de Passe</label>
-                  <input
-                    type="password"
-                    placeholder="Votre mot de passe"
-                    required
-                    id="password"
-                    onChange={handleInputChange}
-                    className="custom-input"
-                  />
-                </FormGroup>
-                <Button
-                  className="auth__btn"
-                  type="submit"
-                  disabled={loading}
-                >
-                  {loading ? "Logging in..." : "Login"}
-                </Button>
-              </Form>
-              {error && <p className="error-message">{error}</p>}
+        <Row className="justify-content-center align-items-center min-vh-100">
+          <Col md="6" className="login__container">
+            <div className="login__header">
+              <div className="login__icon"><FaUser /></div>
             </div>
+            <Form onSubmit={handleLogin}>
+              <FormGroup>
+                <label className="labels" htmlFor="username"><FaUser /> Email ID</label>
+                <input
+                  type="text"
+                  placeholder="Enter your email"
+                  required
+                  id="username"
+                  onChange={handleInputChange}
+                  className="custom-input"
+                />
+              </FormGroup>
+              <FormGroup>
+                <label className="labels"  htmlFor="password"><FaLock /> Password</label>
+                <input
+                  type="password"
+                  placeholder="Enter your password"
+                  required
+                  id="password"
+                  onChange={handleInputChange}
+                  className="custom-input"
+                />
+              </FormGroup>
+              <Button
+                className="auth__btn"
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? "Logging in..." : "Login"}
+              </Button>
+              <div className="login__options">
+                <input type="checkbox" id="rememberMe" /> <label htmlFor="rememberMe">Remember me</label>
+                <a href="#" className="forgot-password">Forgot Password?</a>
+              </div>
+            </Form>
+            {error && <p className="error-message">{error}</p>}
           </Col>
         </Row>
       </Container>
-      
-   
+    </div>
   );
 };
 

@@ -66,15 +66,16 @@ const UserController = {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     },
-
+   
     sendLoginAlertEmail: async (user, location) => {
+        //definit les options de l'email
         const mailOptions = {
             from: 'eyabenamara288@gmail.com',
             to: user.email,
             subject: 'Login Alert',
             text: `Hello ${user.username},\n\nYou have logged in at ${new Date()} from ${location.city}, ${location.region}, ${location.country}.`
         };
-
+        //envoyer l 'email
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error('Error sending email:', error);
@@ -98,20 +99,20 @@ const UserController = {
         const { profil } = req.query;
     
         try {
-            // Check if profil is defined
+           
             if (!profil) {
                 return res.status(400).json({ error: 'Profil is required' });
             }
     
-            // Find user by profil and password
+           
             const user = await User.findOne({ where: { profil, password } });
     
-            // If user is not found or profile is not 'admin', return failure
+          
             if (!user || user.profil !== 'admin') {
-                return res.status(401).json({ error: 'Unauthorized' }); // or 403 Forbidden if you prefer
+                return res.status(401).json({ error: 'Unauthorized' }); 
             }
     
-            // If user profile is 'admin' and password matches, return success
+           
             return res.json({ isAdmin: true });
         } catch (error) {
             console.error('Error checking admin password:', error);

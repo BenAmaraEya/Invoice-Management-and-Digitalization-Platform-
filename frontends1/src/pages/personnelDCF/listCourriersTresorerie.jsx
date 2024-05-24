@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Document, Page, pdfjs } from 'react-pdf';
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash,FaSearch, FaFilePdf } from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import '../../styles/listefacture.css';
@@ -121,9 +121,27 @@ const ListeFacturesFiscalité = () => {
         const facturesArray = Array.isArray(factures) ? factures : [];
 
         return (
-            <table>
+            <table className='courriers-table'>
                 <thead>
-                    <tr>
+                <tr className='courriers-1' >
+<td colSpan='13' className="courriers-row-1" >
+     <div className="search-row-container" >
+                <input type="text" name="num_fact"
+                 placeholder="Numéro Facture" 
+                 value={searchParams.num_fact} 
+                 onChange={handleInputChange}  
+                 className="search-input-courriers"/>
+                <input type="date"
+                 name="datereception"
+                  placeholder="Date de Réception (yyyy-mm-dd)"
+                   value={searchParams.datereception} 
+                   onChange={handleInputChange}  
+                   className="search-input-courriers"/>
+                 <button onClick={rechercheFacture} className="search-btn-courriers" ><FaSearch /></button>
+            </div>
+           </td>
+                </tr>
+                <tr className="courriers-row-2">
                         <th>Facture ID</th>
                         <th>Numéro Facture</th>
                         <th>Facture Name</th>
@@ -152,10 +170,10 @@ const ListeFacturesFiscalité = () => {
                 <td>{facture.num_po}</td>
                 <td>{facture.date_fact}</td>
                 <td>
-                    <button onClick={() => viewFacturePDF(facture.pathpdf)}>View PDF</button>
+                    <button onClick={() => viewFacturePDF(facture.pathpdf)}className='pdf-file'> <FaFilePdf /></button>
                 </td>
                 <td>
-                    <button className='btn' onClick={() => validerFiscalité(facture.idF)}>valider</button>
+                    <button className='btn-validcourriers' onClick={() => validerFiscalité(facture.idF)}>valider</button>
                 </td>
                 <td>
                     <select 
@@ -178,11 +196,7 @@ const ListeFacturesFiscalité = () => {
 
     return (
         <div>
-            <div>
-                <input type="text" name="num_fact" placeholder="Numéro Facture" value={searchParams.num_fact} onChange={handleInputChange} />
-                <input type="date" name="datereception" placeholder="Date de Réception (yyyy-mm-dd)" value={searchParams.datereception} onChange={handleInputChange} />
-                <button onClick={rechercheFacture}>Rechercher</button>
-            </div>
+            
             {searchResults.length > 0 && (
                 <div>
                     <h3>Résultats de la recherche</h3>

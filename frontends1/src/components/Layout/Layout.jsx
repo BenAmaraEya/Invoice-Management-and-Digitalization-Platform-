@@ -30,7 +30,7 @@ const Layout = () => {
     // Define a function to determine which header component to render based on the current route
     const renderHeader = () => {
         if (location.pathname === "/home") {
-            return <HomeHeader />;
+            return null;
         
         }else {
             // Check the user's profile from localStorage
