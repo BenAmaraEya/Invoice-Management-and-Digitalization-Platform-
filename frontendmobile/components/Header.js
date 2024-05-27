@@ -14,13 +14,16 @@ const Header = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { userId } = route.params;
+  
   const handleUpdatePassword = () => {
     navigation.navigate('UpdatePass', { userId: userId });
     setIsUserMenuOpen(false);
   };
+
   const handleReclamation = () => {
     navigation.navigate('Reclamation', { userId: userId });
     setIsUserMenuOpen(false);   };
+    
   useEffect(() => {
     const fetchStoredNotifications = async () => {
       try {

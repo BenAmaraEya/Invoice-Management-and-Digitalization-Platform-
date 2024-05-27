@@ -40,19 +40,19 @@ const reclamationController = {
   getbyid:async(req,res)=>
   {
     try {
-    // Get the reclamation ID from the request parameters
+    
     const { id } = req.params;
 
-    // Find the reclamation by ID in the database
+    
     const reclamation = await Reclamation.findByPk(id);
 
-    // Check if reclamation exists
+   
     if (!reclamation) {
       return res.status(404).json({ error: 'Reclamation not found' });
     }
     reclamation.lue = true;
     await reclamation.save();
-    // If reclamation is found, return it as a response
+    
     res.json(reclamation);
   } catch (error) {
     console.error('Error fetching reclamation by ID:', error);
@@ -76,13 +76,13 @@ getReclamationBySupplierId:async(req,res)=>{
 deleteReclamation: async (req, res) => {
   try {
     const { id } = req.params;
-    // Find the reclamation by ID and delete it
+   
     const deletedReclamation = await Reclamation.destroy({ where: { id } });
     if (deletedReclamation === 0) {
-      // If no reclamation was deleted, it means the reclamation with the given ID does not exist
+      
       return res.status(404).json({ error: 'Reclamation not found' });
     }
-    // Respond with a success message
+    
     res.json({ message: 'Reclamation deleted successfully' });
   } catch (error) {
     console.error('Error deleting reclamation:', error);

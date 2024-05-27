@@ -13,7 +13,7 @@ const bordereauRoute = require('./routes/bordereauxRoute');
 const reclamationRoute = require('./routes/reclamationRoute');
 const etatRoute = require('./routes/etatRoute');
 const archiveRoute = require('./routes/archiveRoute');
-
+const { translateText } = require('./translation');
 connectDB();
 
 const app = express();
@@ -43,10 +43,18 @@ app.use('/fournisseur', fournisseurRoute);
 app.use('/facture', factureRoute(io));
 app.use('/piecejoint', piecejointRoute);
 app.use('/bordereaux', bordereauRoute);
-app.use('/reclamation', reclamationRoute(io)); // Pass io instance to reclamationRoute
+app.use('/reclamation', reclamationRoute(io)); 
 app.use('/etat', etatRoute);
 app.use('/archive', archiveRoute);
-
+app.post('/translate', async (req, res) => {
+  const { text, targetLanguage } = req.body;
+  try {
+    const translatedText = await translateText(text, targetLanguage);
+    res.json({ translatedText });
+  } catch (error) {
+    res.status(500).json({ error: 'Translation failed' });
+  }
+});
 // Start server
 const PORT = process.env.PORT || 3006;
 server.listen(PORT, () => {

@@ -4,7 +4,7 @@ import { useRoute } from '@react-navigation/native';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import Footer from '../components/Footer';
-import { getIpAddressAsync } from 'expo-network';
+//import { getIpAddressAsync } from 'expo-network';
 
 const Dashboard = () => {
   const [iderp, setIderp] = useState(null);
@@ -21,7 +21,7 @@ const Dashboard = () => {
   const route = useRoute();
   const { userId } = route.params;
 
-  useEffect(() => {
+  /*useEffect(() => {
     const fetchLocalIpAddress = async () => {
       try {
         const ipAddress = await getIpAddressAsync(); // Get local IP address
@@ -32,7 +32,7 @@ const Dashboard = () => {
     };
 
     fetchLocalIpAddress();
-  }, []);
+  }, []);*/
 
   useEffect(() => {
     const fetchFournisseurById = async () => {

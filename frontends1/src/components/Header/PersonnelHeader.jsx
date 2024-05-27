@@ -148,7 +148,7 @@ const Header = () => {
          {userProfile === "personnelfiscalite" &&(
           <>
           <li className="nav__item" style={{marginTop:'25px'}} >
-            <NavLink to={`/listcourriersfiscal/${iderp}`}style={{marginTop:'25px'}} activeClassName="active" exact>
+            <NavLink to={`/listcourriersfiscal`}style={{marginTop:'25px'}} activeClassName="active" exact>
               Factures
             </NavLink>
           </li>
@@ -156,7 +156,7 @@ const Header = () => {
          {userProfile === "agentTresorerie" &&(
           <>
           <li className="nav__item" style={{marginTop:'25px'}} >
-            <NavLink to={`/listcourrierstresorerie/${iderp}`} style={{marginTop:'25px'}} activeClassName="active" exact>
+            <NavLink to={`/listcourrierstresorerie`} style={{marginTop:'25px'}} activeClassName="active" exact>
               Factures
             </NavLink>
           </li>

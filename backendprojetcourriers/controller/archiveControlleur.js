@@ -8,16 +8,19 @@ const { where } = require('sequelize');
 const archiveController = {
   archiver: async (req, res) => {
     try {
+      //rècupére les facture et inclure son model etat filtrer par etat 
       const facturesCloturees = await Facture.findAll({
         include: [{ model: Etat, where: { etat: 'cloture' } }],
       });
-
+      //crée un objet pour stocker les chemin d'archive par année
       const archivesByYear = {};
-
+    //traité  chaque facture dans un boucle for
       for (const facture of facturesCloturees) {
         const etats = await facture.getEtats();
+        //trouver les propieté etat cloturé dans l'objet etat
         const clotureEtat = etats.find(etat => etat.etat === 'cloture');
-
+        
+        
         if (clotureEtat) {
           const anneeCloture = new Date(clotureEtat.date).getFullYear();
 

@@ -7,11 +7,11 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import * as DocumentPicker from 'expo-document-picker';
 import Footer from '../components/Footer';
 
-const RadioButton = ({ selected, onSelect }) => (
+/*const RadioButton = ({ selected, onSelect }) => (
   <TouchableOpacity onPress={onSelect} style={styles.radio}>
     {selected ? <View style={styles.radioDot} /> : null}
   </TouchableOpacity>
-);
+);*/
 
 const UpdateFacture = () => {
   const route = useRoute();

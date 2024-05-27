@@ -3,7 +3,7 @@ const router = express.Router();
 const reclamationController = require('../controller/reclamationController');
 
 module.exports = (io) => {
-  // Define your routes here
+ 
   router.post('/envoyer/:iderp', reclamationController.envoyer);
   //router.get('/new/count', reclamationController.getNewReclamationsCount); // Corrected method name
   router.get('/', reclamationController.getAll);

@@ -10,39 +10,44 @@ const InfographicLine = () => {
         options: {
             chart: {
                 type: 'line',
-                height: 50,
+                height: 100,
+                width: 500, // Adjusted height for better visibility
                 zoom: {
-                    enabled: true,
+                    enabled: false,
                 },
             },
+            color: '#FF5733', // Set the line color
             dataLabels: {
                 enabled: false,
             },
             stroke: {
-                curve: 'straight', // Straight line
-                width: 3, // Adjust the line width as needed
+                curve: 'smooth',
+                width: 10,
             },
             yaxis: {
                 min: 0,
-                max: 2, // Adjust the y-axis range as needed
+                max: 2,
                 labels: {
-                    show: false, // Hide y-axis labels
+                    show: false,
                 },
             },
             tooltip: {
-                enabled: false, // Disable tooltip
+                enabled: false,
             },
             grid: {
-                show: false, // Hide grid
+                show: false,
             },
             xaxis: {
-                categories: [0],
+                categories: [],
+                
+               
+                
             },
         },
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    
+
     useEffect(() => {
         const fetchEtat = async () => {
             if (!idF) {
@@ -68,10 +73,10 @@ const InfographicLine = () => {
                             item.etat === 'cloture'
                         );
                     });
-                    const categories = filteredData.map(item => item.date); // Adjust according to your data structure
-                    const values = filteredData.map(item => item.etat); // Adjust according to your data structure
+                    const categories = filteredData.map(item => item.date);
+                    const values = filteredData.map(item => item.etat);
 
-                    const completedSteps = [0, 2, 4]; // Example indices of completed steps
+                    const completedSteps = [0, 2, 4];
                     const fill = {
                         type: 'gradient',
                         gradient: {
@@ -84,7 +89,6 @@ const InfographicLine = () => {
                         }
                     };
 
-                    // Calculate stops based on completed steps
                     const totalSteps = values.length - 1;
                     completedSteps.forEach(stepIndex => {
                         fill.gradient.stops.push(stepIndex / totalSteps);
@@ -100,9 +104,20 @@ const InfographicLine = () => {
                         ],
                         options: {
                             ...chartData.options,
+                          
                             xaxis: {
-                                categories: values,
+                                categories: values, // Display categories on the x-axis
+                                labels: {
+                                    style: {
+                                        colors: ['#3F51B5', '#E91E63', '#9C27B0', '#673AB7', '#F44336'],
+                                        fontWeight: 'bold',
+                                        fontSize:'14px',
+                                    
+                 
+                                    },
+                                },
                             },
+                           
                         },
                     });
                 } else {
@@ -129,14 +144,21 @@ const InfographicLine = () => {
     }
 
     return (
-        <div>
-            <h2>Etat for Facture ID: {idF}</h2>
+        <div >
+            <h2 style={{textAlign:'center',fontSize:'25px',marginTop:'20px',background:'#fae6c3',padding:'20px'}}>Etat for Facture ID: {idF}</h2>
+           
             <Chart
                 options={chartData.options}
                 series={chartData.series}
                 type="line"
-                height={350}
+                height={300}
+               
+                
+               
+               
             />
+           
+           
         </div>
     );
 };

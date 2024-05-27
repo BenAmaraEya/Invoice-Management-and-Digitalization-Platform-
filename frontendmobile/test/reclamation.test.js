@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import axios from 'axios';
-import ReclamationForm from '../pages/reclamation'; 
+import { Alert } from 'react-native';
+import ReclamationForm from '../pages/reclamation';
 
 jest.mock('axios');
 
@@ -23,6 +24,7 @@ describe('handleSubmit', () => {
     expect(Alert.alert).toHaveBeenCalledWith('Success', 'Réclamation envoyée avec succès');
 
     // Vérifiez que le formulaire est réinitialisé après l'envoi réussi
+    // Assuming your component properly resets the input value on successful submission
     expect(input.props.value).toBe('');
   });
 });

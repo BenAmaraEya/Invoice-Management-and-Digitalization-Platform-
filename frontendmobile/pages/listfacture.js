@@ -8,7 +8,7 @@ import Footer from '../components/Footer';
 import { Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as WebBrowser from 'expo-web-browser';
-import { getIpAddressAsync } from 'expo-network';
+//import { getIpAddressAsync } from 'expo-network';
 const ListeFactures = () => {
   const [factures, setFactures] = useState([]);
   const [iderp, setIdErp] = useState(null);
@@ -16,7 +16,7 @@ const ListeFactures = () => {
   const route = useRoute();
   const { userId } = route.params;
   const navigation = useNavigation();
-  useEffect(() => {
+ /* useEffect(() => {
     const fetchLocalIpAddress = async () => {
       try {
         const ipAddress = await getIpAddressAsync(); // Get local IP address
@@ -27,7 +27,7 @@ const ListeFactures = () => {
     };
 
     fetchLocalIpAddress();
-  }, []);
+  }, []);*/
 
   useEffect(() => {
     const fetchFournisseurByUserId = async () => {
