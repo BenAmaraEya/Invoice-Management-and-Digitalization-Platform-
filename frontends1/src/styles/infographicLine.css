@@ -35,4 +35,11 @@
   .step:last-child::after {
     display: none;
   }
+  .apexcharts-marker-custom-html {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
   

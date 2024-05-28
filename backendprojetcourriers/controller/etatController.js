@@ -29,7 +29,11 @@ const etatController ={
           return res.status(404).json({ error: 'facture non trouvé' });
         }
         console.log(facture)
-    
+      // Vérifier si la facture a déjà cet état
+      const existingEtat = facture.Etats.find(item => item.etat === etat);
+      if(existingEtat){
+          return res.status(400).json({ error: 'La facture est déjà à cet état' });
+      }
       //const completionStatus = Array(etatgraph.length).fill(false);
       //completionStatus[index] = true;
       const etats = await Etat.create({ etat, idF: idF, date: new Date});

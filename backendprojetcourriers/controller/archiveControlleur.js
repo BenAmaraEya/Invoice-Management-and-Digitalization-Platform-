@@ -23,7 +23,7 @@ const archiveController = {
         
         if (clotureEtat) {
           const anneeCloture = new Date(clotureEtat.date).getFullYear();
-
+// créaction des répetoire par année
           if (!archivesByYear[anneeCloture]) {
             archivesByYear[anneeCloture] = {
               annee: anneeCloture,
