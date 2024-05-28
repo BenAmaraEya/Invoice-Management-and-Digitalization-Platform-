@@ -24,6 +24,7 @@ const { Op } = require('sequelize');
 const pdfkit = require('pdfkit');
 const  {sequelize}  = require('../database');
 const synaptic = require('synaptic');
+const Reclamation = require('../models/Reclamation');
 
 
 // définit la configuration de Multer pour le téléchargement de fichiers
@@ -105,16 +106,15 @@ async function collectAndAnalyzeData() {
   try {
     // Example: Fetch all invoices from the database
     const allFactures = await Facture.findAll();
-
+const allReclamation = await Reclamation.findAll();
     // Calculate the total number of invoices
     const totalFactures = allFactures.length;
 
     // Count the number of treated invoices
     const treatedFactures = allFactures.filter(facture => facture.status !== 'Attente').length;
 
-    // Count the number of pending and resolved claims
-    const numReclamationsEnCours = allFactures.filter(facture => facture.status === 'En cours').length;
-    const numReclamationsResolues = allFactures.filter(facture => facture.status === 'Résolu').length;
+    const numReclamations = allReclamation.filter(reclamation => reclamation.lue === false).length;
+    const numReclamationsLue = allReclamation.filter(reclamation => reclamation.lue === true).length;
 
     // Count the number of invoices by their status
     let NBFValide = 0;
@@ -138,8 +138,8 @@ async function collectAndAnalyzeData() {
     return {
       totalFactures,
       treatedFactures,
-      numReclamationsEnCours,
-      numReclamationsResolues,
+      numReclamations,
+      numReclamationsLue,
       NBFValide,
       NBFpaye,
       NBFAttente,
@@ -168,8 +168,8 @@ async function generateReportFromData(analyzedData, neuralNetwork) {
     const {
      
       
-      numReclamationsEnCours,
-      numReclamationsResolues,
+      numReclamations,
+      numReclamationsLue,
       NBFValide,
       NBFpaye,
       NBFAttente,
@@ -191,8 +191,8 @@ Factures Validées : ${NBFValide} : Nombre de factures validées pour le paiemen
 Factures Payées : ${NBFpaye} : Nombre de factures pour lesquelles le paiement a été effectué.
 Factures en Attente : ${NBFAttente} : Nombre de factures en attente de validation ou de paiement.
 Factures Rejetées : ${NBFrejete} : Nombre de factures rejetées en raison d'erreurs ou d'incohérences.
-Réclamations en Cours : ${numReclamationsEnCours} : Nombre total de réclamations actuellement en cours de traitement.
-Réclamations Résolues : ${numReclamationsResolues} : Nombre total de réclamations qui ont été résolues avec succès.
+Réclamations en Cours : ${numReclamations} : Nombre total de réclamations actuellement en cours de traitement.
+Réclamations Résolues : ${numReclamationsLue} : Nombre total de réclamations qui ont été lue par bureau d'ordre.
 La Performance du Personnel : ${personnelPerformance} : Évaluation de la performance du personnel impliqué dans le processus de gestion des factures et des réclamations.
 Analyse des Réclamations :
 Les réclamations en cours représentent un défi majeur pour l'entreprise, nécessitant une intervention immédiate pour éviter les litiges avec les fournisseurs. Un nombre élevé de réclamations en cours peut indiquer des problèmes dans le processus de traitement des factures ou des erreurs dans les transactions.
