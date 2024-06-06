@@ -23,7 +23,7 @@ const Header = () => {
   const [fournisseur, setFournisseur] = useState([]);
   const [user, setUser] = useState({});
   const [iderp,setIdErp]=useState(null);
-  useEffect(() => {
+  /*useEffect(() => {
     const fetchFournisseurById = async () => {
       try {
         const id = localStorage.getItem('userId');
@@ -36,7 +36,7 @@ const Header = () => {
     };
 
     fetchFournisseurById();
-  }, []);
+  }, []);*/
   useEffect(() => {
     const fetchUser = async () => {
         try {
@@ -58,8 +58,7 @@ const Header = () => {
     const socket = io('http://localhost:3006');
     socket.on('newReclamation', async (reclamation) => {
       try {
-        const response = await axios.get('http://localhost:3006/fournisseur/');
-        setFournisseur(response.data);
+       
 
         // Add new notification to the array
         const newNotification = {

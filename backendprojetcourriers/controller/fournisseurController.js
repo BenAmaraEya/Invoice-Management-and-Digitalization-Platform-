@@ -11,7 +11,7 @@ const FournisseurController={
             //récuperer l'id de l'utilisateur associe au fournisseur
             const user = await User.findOne({ where: { id: userId } });
             if (!user) {
-                return res.status(404).json({ error: 'User not found' });
+                return res.status(404).json({ error: 'utilisateur non trouvé' });
             }
 
             //créer un nouveau fournisseur 
@@ -23,10 +23,10 @@ const FournisseurController={
                 UserId: userId
             });
 
-            res.status(201).json({ message: 'Fournisseur added successfully', fournisseur: newFournisseur });
+            res.status(201).json({ message: 'Fournisseur ajouté avec succée', fournisseur: newFournisseur });
         } catch (error) {
-            console.error('Error adding Fournisseur:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
+            console.error('Erreur d ajoute de fournisseur :', error);
+            res.status(500).json({ error: 'Erreur interne du serveur' });
         }
     },
 
@@ -43,16 +43,16 @@ const FournisseurController={
             // Vérifiez si l'ID de l'utilisateur existe
             const user = await User.findOne({ where: { id: userId } });
             if (!user) {
-                return res.status(404).json({ error: 'User not found' });
+                return res.status(404).json({ error: 'utilisateur non trouvé' });
             }
     
             // Mettez à jour les données de l'utilisateur
             await User.update(req.body, { where: { id: userId } });
     
-            res.json({ message: 'Fournisseur updated successfully' });
+            res.json({ message: 'Fournisseur mise a jour avec succée' });
         } catch (error) {
-            console.error('Error updating fournisseur:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
+            console.error('Error de mettre a jour de fournisseur :', error);
+            res.status(500).json({ error: 'Erreur interne du serveur' });
         }
     },
     getAll: async (req, res, next) => {
@@ -92,13 +92,13 @@ getfournisseurbyid: async (req, res) => {
         });
 
         if (!fournisseur) {
-            return res.status(404).json({ error: 'Fournisseur not found' });
+            return res.status(404).json({ error: 'Fournisseur non trouvé' });
         }
 
         res.json({ fournisseur });
     } catch (error) {
-        console.error('Error fetching fournisseur:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Erreur de recuperation de fournisseur:', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 },
 
@@ -112,7 +112,7 @@ deletefournisseur: async (req, res, next) => {
             include: User 
         });
         if (!fournisseur) {
-            return res.status(404).json({ error: 'Fournisseur not found' });
+            return res.status(404).json({ error: 'Fournisseur non trouvé' });
         }
 
         // acceder au utilisateur associe au fournisseur
@@ -122,14 +122,14 @@ deletefournisseur: async (req, res, next) => {
         if (user) {
             await user.destroy();
         } else {
-            console.error('Associated user not found');
+            console.error('utilisateur non trouvé');
         }
         await fournisseur.destroy();
 
-        res.json({ message: 'Fournisseur and associated User deleted successfully' });
+        res.json({ message: 'fournisseur et utilisateur associe supprimer avec succée' });
     } catch (error) {
-        console.error('Error deleting fournisseur:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Erreur de suppression de fournisseur :', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 },
   //get fournisseur by UserID  
@@ -141,13 +141,13 @@ deletefournisseur: async (req, res, next) => {
         });
 
         if (!fournisseur) {
-            return res.status(404).json({ error: 'Fournisseur not found' });
+            return res.status(404).json({ error: 'Fournisseur non trouvé' });
         }
 
         res.json({ fournisseur });
     } catch (error) {
-        console.error('Error fetching fournisseur:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Erreur de recuperation de fournisseur:', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 },
 rechercheParIdentifiant: async (req, res) => {
@@ -167,7 +167,7 @@ rechercheParIdentifiant: async (req, res) => {
         res.json(fournisseurs);
     } catch (error) {
         console.error(error);
-        res.status(500).send('Erreur de serveur');
+        res.status(500).send('Erreur interne du serveur');
     }
 },
 };

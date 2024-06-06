@@ -112,7 +112,7 @@ const UpdateFacture = () => {
     }
   };
 
-  const pickFile = async () => {
+  /*const pickFile = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: 'application/pdf',
@@ -127,6 +127,26 @@ const UpdateFacture = () => {
     } catch (error) {
       console.error('Error picking document:', error);
       Alert.alert('Erreur', 'Erreur lors du choix du document');
+    }
+  };*/
+  const pickFile = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'application/pdf',
+      });
+  
+      console.log('DocumentPicker Result:', result);
+  
+      if (result.type === 'success') {
+        setFileUri(result.uri);
+        setFileName(result.name);
+        setError(null);  
+      } else {
+        setError('Aucun fichier sélectionné');
+      }
+    } catch (error) {
+      console.log('Error picking document:', error);
+      setError('Error picking document');
     }
   };
 

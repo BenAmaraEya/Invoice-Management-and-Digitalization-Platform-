@@ -73,50 +73,62 @@ const generateExcel = async (factures) => {
 
   // Génération du tampon (buffer) du fichier Excel
   const buffer = await workbook.xlsx.writeBuffer();
-
   return buffer;
 };
 
-
+//créer et entrainer un reseau de neurons pour  
 async function trainNeuralNetwork() {
   try {
-    // Step 1: Define neural network architecture
+    // definir l'architecture 
     const perceptron = new synaptic.Architect.Perceptron(1, 3, 1);
 
-    // Step 2: Define training data and labels
+    //Definir les données a entrainer
     const trainingData = [
       { input: [0], output: [0] },
       { input: [0.5], output: [0.5] },
       { input: [1], output: [1] }
     ];
 
-    // Step 3: Train neural network
+    // entaine le reseau de neurons
     const trainer = new synaptic.Trainer(perceptron);
     trainer.train(trainingData);
 
-    // Step 4: Return trained neural network
+    
     return perceptron;
   } catch (error) {
-    console.error('Error training neural network:', error);
+    console.error('erreur lors de entrainement de reseau des neurons', error);
     throw error;
   }
 }
 
 async function collectAndAnalyzeData() {
   try {
-    // Example: Fetch all invoices from the database
+    //recuper tous les factures
     const allFactures = await Facture.findAll();
+
+    //recuper les reclamations
+   
+ 
+
 const allReclamation = await Reclamation.findAll();
     // Calculate the total number of invoices
+
     const totalFactures = allFactures.length;
 
-    // Count the number of treated invoices
+    // compter le nombre des factures traiter
     const treatedFactures = allFactures.filter(facture => facture.status !== 'Attente').length;
-
+    
+    // compter les reclamations en attente et lue 
     const numReclamations = allReclamation.filter(reclamation => reclamation.lue === false).length;
-    const numReclamationsLue = allReclamation.filter(reclamation => reclamation.lue === true).length;
+    const numReclamationsLue = allReclamation.filter(reclamation => reclamation.lue === true).length;
+
+
+   
+
+   
 
     // Count the number of invoices by their status
+
     let NBFValide = 0;
     let NBFpaye = 0;
     let NBFAttente = 0;
@@ -134,7 +146,7 @@ const allReclamation = await Reclamation.findAll();
       }
     });
 
-    // Return the analyzed data
+    // Retorne les donnée analyser
     return {
       totalFactures,
       treatedFactures,
@@ -146,7 +158,7 @@ const allReclamation = await Reclamation.findAll();
       NBFrejete
     };
   } catch (error) {
-    console.error('Error collecting and analyzing data:', error);
+    console.error('erruer de collection et analyse de données:', error);
     throw error;
   }
 }
@@ -156,13 +168,13 @@ const allReclamation = await Reclamation.findAll();
 async function generateReportFromData(analyzedData, neuralNetwork) {
   try {
     const allFactures = await Facture.findAll();
-    // Extract necessary data from the analyzed data
+   
     const treatedFactures = allFactures.filter(facture => facture.status !== 'Attente').length;
 
-    // Calculate the percentage of treated invoices
+   
     const totalFactures = allFactures.length;
     const percentageTreated = treatedFactures / totalFactures;
-    // Use the neural network to predict personnel performance based on the percentage of treated invoices
+    // utilisation de reseau de neurones pour la prediction de la perfermance de personnel 
     const prediction = neuralNetwork.activate([percentageTreated])[0];
     const personnelPerformance = prediction > 0.5 ? 'Bien' : 'Besoin amélioration';
     const {
@@ -173,10 +185,10 @@ async function generateReportFromData(analyzedData, neuralNetwork) {
       NBFValide,
       NBFpaye,
       NBFAttente,
-      NBFrejete
+      NBFrejete
     } = await collectAndAnalyzeData();
    
-    // Generate the report content
+    // genérer le contenue de rapport
     const reportContent = `
                                                         Rapport 
 
@@ -192,7 +204,11 @@ Factures Payées : ${NBFpaye} : Nombre de factures pour lesquelles le paiement a
 Factures en Attente : ${NBFAttente} : Nombre de factures en attente de validation ou de paiement.
 Factures Rejetées : ${NBFrejete} : Nombre de factures rejetées en raison d'erreurs ou d'incohérences.
 Réclamations en Cours : ${numReclamations} : Nombre total de réclamations actuellement en cours de traitement.
+
+Réclamations Résolues : ${numReclamationsLue} : Nombre total de réclamations qui ont été lue par bureau d'ordre.
+
 Réclamations Résolues : ${numReclamationsLue} : Nombre total de réclamations qui ont été lue par bureau d'ordre.
+
 La Performance du Personnel : ${personnelPerformance} : Évaluation de la performance du personnel impliqué dans le processus de gestion des factures et des réclamations.
 Analyse des Réclamations :
 Les réclamations en cours représentent un défi majeur pour l'entreprise, nécessitant une intervention immédiate pour éviter les litiges avec les fournisseurs. Un nombre élevé de réclamations en cours peut indiquer des problèmes dans le processus de traitement des factures ou des erreurs dans les transactions.
@@ -206,35 +222,35 @@ En résumé, ce rapport met en évidence les principaux défis rencontrés par l
 
     return reportContent;
   } catch (error) {
-    console.error('Error generating report from analyzed data:', error);
+    console.error('Erreur de generation de rapport :', error);
     throw error;
   }
 }
 async function generatePDF(reportContent) {
   try {
     return new Promise((resolve, reject) => {
-      // Create a new PDF document
+      // Crée un document pdf 
       const doc = new pdfkit();
 
-      // Store PDF content in memory
+      // Stocker le pdf dans le memoire 
       const buffers = [];
       doc.on('data', buffers.push.bind(buffers));
       doc.on('end', () => {
         const pdfData = Buffer.concat(buffers);
-        console.log('PDF generation successful.');
-        // Resolve with the PDF data
+        console.log('PDF generer avec succée');
+        
         resolve(pdfData);
       });
 
-      // Add the report content to the PDF
+      
       doc.fontSize(12);
       doc.text(reportContent);
 
-      // Finalize the PDF
+     
       doc.end();
     });
   } catch (error) {
-    console.error('Error generating PDF:', error);
+    console.error('Erreur de generation de rapport', error);
     throw error;
   }
 }
@@ -243,10 +259,10 @@ const factureController = {
     // Appel de l'upload qui est l'instance de multer
     upload(req, res, err => {
       if (err) {
-        return res.status(400).json({ message: 'Error uploading file', error: err });
+        return res.status(400).json({ message: 'erreur de telechargement ', error: err });
       }
       if (!req.file) {
-        return res.status(400).json({ message: 'No file uploaded' });
+        return res.status(400).json({ message: 'aucun fichier téléchargé' });
       }
       console.log(req.file);
       console.log(req.file.originalname);
@@ -261,25 +277,26 @@ const factureController = {
           }).then(({ data: { text } }) => {
             // Extraire les informations nécessaires de l'OCR
             const extractedInfo = extractInfoFromOCR(text);
+
             Facture.findOne({ where: { num_fact: extractedInfo.num_fact } }).then(facture => {
               if (!facture) {
                 // Renvoyer les informations au client pour leur validation
                 res.json({ success: true, extractedInfo });
               } else {
                 // Le numéro de facture existe déjà, afficher un message d'erreur
-                res.status(400).json({ message: 'Invoice already exists' });
+                res.status(400).json({ message: 'facture deja existe' });
               }
             }).catch(err => {
               console.error(err);
-              res.status(500).json({ message: 'Error retrieving invoice', error: err });
+              res.status(500).json({ message: 'erreur de recuperation de facture', error: err });
             });
           }).catch(err => {
             console.error(err);
-            res.status(500).json({ message: 'Error performing OCR', error: err });
+            res.status(500).json({ message: 'Erreur ORC', error: err });
           });
         }).catch(err => {
           console.error(err);
-          res.status(500).json({ message: 'Error converting PDF to image', error: err });
+          res.status(500).json({ message: 'Erreur de conversion de pdf a image ', error: err });
         });
     });
   }],
@@ -290,7 +307,7 @@ const factureController = {
     const iderp = req.params.iderp;
 
     try {
-        console.log('Received request to save facture:', req.body);
+       
 
         // Créer une facture
         const facture = await Facture.create({
@@ -317,45 +334,30 @@ const factureController = {
         const { idF } = facture;
         await Etat.create({idF: idF,date:new Date() });
         res.json({ success: true, facture: { ...facture.toJSON(), idF } });
-        console.log('Facture saved successfully.');
+        console.log('facture enregistrer avec succée.');
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error saving facture', error: error });
+        res.status(500).json({ message: 'Erreur denregistrement ', error: error });
     }
 }],
 
-
- /* displayFacture: [authorizeSupplier,async (req, res) => {
-    try {
-      const { id } = req.params;
-      const facture = await Facture.findByPk(id);
-
-      if (!facture) {
-        return res.status(404).json({ message: 'Facture not found' });
-      }
-      res.json({ success: true, facture });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error displaying facture', error: error });
-    }
-  }],*/
 
   deleteFacture:[authorize,async (req, res) => {
     try {
         const { fournisseurId, factureId } = req.params;
         const facture = await Facture.findOne({ where: { idF: factureId, iderp: fournisseurId } });
         if (!facture) {
-            return res.status(404).json({ message: 'Facture not found for this Fournisseur' });
+            return res.status(404).json({ message: 'facture non existante ' });
         } 
-        if (!facture.pathpdf) {
+        if (facture.pathpdf) {
             fs.unlinkSync(facture.pathpdf);
            
         }
         await facture.destroy();
-        res.json({ success: true, message: 'Facture deleted successfully' });
+        res.json({ success: true, message: 'Facture supprimer avec succée' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error deleting facture', error: error });
+        res.status(500).json({ message: 'Erreur de suppression', error: error });
     }
 },
   ],
@@ -364,16 +366,17 @@ const factureController = {
 getFactureById: async (req, res) => {
     try {
       const { idF } = req.params;
-      const facture = await Facture.findOne({ where: { idF: idF }, include: [{ model: Pieces_jointe, as: 'Pieces_jointes'} , {model:Etat}] });
+      const facture = await Facture.findOne({ where: { idF: idF },
+         include: [{ model: Pieces_jointe, as: 'Pieces_jointes'} , {model:Etat}] });
 
       if (!facture) {
-        return res.status(404).json({ message: 'Facture not found' });
+        return res.status(404).json({ message: 'Facture non trouvé ' });
       }
 
       res.json({ success: true, facture });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Error fetching facture by ID', error: error });
+      res.status(500).json({ message: 'Erreur de recuperation de facture par id', error: error });
     }
   },
 
@@ -384,7 +387,7 @@ getAllFacture: async (req, res) => {
       res.json({ success: true, factures });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Error fetching facture', error: error });
+      res.status(500).json({ message: 'Erreur de recuperation de facture', error: error });
     }
   },
    
@@ -394,13 +397,13 @@ getFactureBySupplierId: async (req, res) => {
         const factures = await Facture.findAll({ where: { iderp } , include: [{ model: Pieces_jointe, as: 'Pieces_jointes'} , {model:Etat}] });
 
         if (!factures || factures.length === 0) {
-            return res.status(404).json({ message: 'No factures found for the supplier ID' });
+            return res.status(404).json({ message: 'non facture trouvé avec ce fournisseurid' });
         }
 
         res.json({ success: true, factures });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error fetching factures by supplier ID', error: error });
+        res.status(500).json({ message: 'Erreur de recuperation de facture par fournisseurid', error: error });
     }
 },
 
@@ -419,17 +422,17 @@ ExportFacturetoExcel:[authorizeSupplier,async (req, res) => {
           .send(excelBuffer);
   } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Error generating Excel file', error: error });
+      res.status(500).json({ message: 'Erreur de generation de fichier excel', error: error });
   }
 }],
 
 
-getFacturesCountByStatus: async (req, res) => {
+getNbrFacturesByStatus: async (req, res) => {
   try {
     // Récupérer les données des factures de fournisseur
     const { iderp } = req.params;
     const factures = await Facture.findAll({ where: { iderp } });
-    console.log("Factures found:", factures);
+    
     
     // Initialiser les compteurs pour chaque catégorie de factures
     let NBFValide = 0;
@@ -458,8 +461,8 @@ getFacturesCountByStatus: async (req, res) => {
       NBFrejete
     });
   } catch (error) {
-    console.error('Error fetching factures:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error('erreur de recuperation des factures:', error);
+    return res.status(500).json({ error: 'erreur interne de serveur' });
   }
 },
 
@@ -473,8 +476,8 @@ viewFacturePDF: async (req, res) => {
     res.setHeader('Content-Type', 'application/pdf');
     res.sendFile(filePath);
   } catch (error) {
-    console.error('Error viewing facture PDF:', error);
-    res.status(500).json({ message: 'Error viewing facture PDF', error: error });
+    console.error('erreur d overture de fichier pdf :', error);
+    res.status(500).json({ message: 'erreur d overture de fichier pdf :', error: error });
   }
 },
 
@@ -485,7 +488,7 @@ updateFacture :[authorize, async (req, res) => {
 
     const facture = await Facture.findOne({ where: { idF } });
     if (!facture) {
-      return res.status(404).json({ message: 'Facture not found' });
+      return res.status(404).json({ message: 'Facture non trouvé' });
     }
     const { pathpdf: newFilePath, ...factureData } = req.body;
 
@@ -499,32 +502,32 @@ updateFacture :[authorize, async (req, res) => {
         fs.unlinkSync(oldFilePath); // Supprimez l'ancien fichier PDF
       }
 
-    res.json({ message: 'Facture updated successfully' });
+    res.json({ message: 'Facture mise a jour avec succée' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 }],
 
 
-statfacture: async (req, res) => {
+getFacturesStatistique: async (req, res) => {
   try {
-    // Interroger la base de données pour obtenir les statistiques requises
+    //compter le facture par nature 
     const  nbFactureParNature = await Facture.count({
-      attributes: ['nature'], // Group by the 'nature' field
-      group: ['nature'] // Count by distinct 'nature' values
+      attributes: ['nature'], 
+      group: ['nature'] 
     });
     const nbFactureParType=await Facture.count();
     // Compter toutes les factures
     const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1); // Set the date to yesterday
+    yesterday.setDate(yesterday.getDate() - 1); 
     
-    const startOfYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 0, 0, 0); // Start of yesterday
-    const endOfYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59); // End of yesterday
+    const startOfYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 0, 0, 0); 
+    const endOfYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59); 
     
     const nbFactureRecuHier = await Facture.count({ 
       where: { 
         createdAt: { 
-          [Sequelize.Op.between]: [startOfYesterday, endOfYesterday] // Fetch records between start and end of yesterday
+          [Sequelize.Op.between]: [startOfYesterday, endOfYesterday] 
         } 
       } 
     }); // Compter les factures reçues au cours des dernières 24 heures
@@ -556,7 +559,7 @@ validerDocument:[authorizePersonnelbof, async (req,res) =>{
 const {idF} = req.params;
 const facture = await Facture.findByPk(idF);
 if(!facture){
-  return res.status(404).json({ message: 'Facture not found' });
+  return res.status(404).json({ message: 'Facture non existante' });
 }
 if(facture.status== 'Attente'){
   const dateVerifi = new Date().toISOString().slice(0, 10);
@@ -570,7 +573,7 @@ else {
   console.log("Le courrier a déjà été examiné.")
 }
 } catch(error){
-  res.status(500).json({ message: 'Internal server error' });
+  res.status(500).json({ message: 'Erreur interne du serveur' });
 }
 }],
 
@@ -580,7 +583,7 @@ validerFiscalité:[authorizePersonnelFiscaliste, async (req,res) =>{
   const {idF} = req.params;
   const facture = await Facture.findByPk(idF);
   if(!facture){
-    return res.status(404).json({ message: 'Facture not found' });}
+    return res.status(404).json({ message: 'Facture non existante' });}
     const dateVerifi = new Date().toISOString().slice(0, 10);
   const validStatut = `courrier validé par Personnel fiscalité, date de vérification : ${dateVerifi}`;
   await Facture.update({ status: validStatut,}, { where: { idF } });
@@ -588,7 +591,7 @@ validerFiscalité:[authorizePersonnelFiscaliste, async (req,res) =>{
   factureController.sendNotificationToSupplier(validStatut,facture.num_fact);
 
 } catch(error){
-  res.status(500).json({ message: 'Internal server error' });
+  res.status(500).json({ message: 'Erreur interne du serveur' });
 }
   }],
 
@@ -598,7 +601,7 @@ validerBudget:[authorizeAgent,async (req,res) =>{
     const {idF} = req.params;
     const facture = await Facture.findByPk(idF);
     if(!facture){
-      return res.status(404).json({ message: 'Facture not found' });}
+      return res.status(404).json({ message: 'Facture non existante' });}
       const dateVerifi = new Date().toISOString().slice(0, 10);
     const validStatut = `courrier validé par Agent Trésorerie, date de vérification : ${dateVerifi}`;
     await Facture.update({ status: validStatut,}, { where: { idF } });
@@ -606,7 +609,7 @@ validerBudget:[authorizeAgent,async (req,res) =>{
     factureController.sendNotificationToSupplier(validStatut,facture.num_fact);
 
   } catch(error){
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Erreur interne du serveur' });
   }
     }],
 
@@ -615,25 +618,25 @@ validerBudget:[authorizeAgent,async (req,res) =>{
       try {
         const { idF } = req.params;
         const { motifRejete } = req.body;
-        // Find the facture by its ID
+       
         const facture = await Facture.findByPk(idF);
-        // If the facture is not found, return a 404 error
+        
         if (!facture) {
-          return res.status(404).json({ message: 'Facture not found' });
+          return res.status(404).json({ message: 'Facture non existante' });
         }
     
-        // Update the facture status with the rejection motif and verification date
+        
         const dateVerifi = new Date().toISOString().slice(0, 10);
         const motifRejeteAvecDate = `rejeté ${motifRejete}, date de vérification : ${dateVerifi}`;
         await facture.update({ status: motifRejeteAvecDate });
         await Etat.create({ etat:motifRejete, idF: idF, date: dateVerifi });
         factureController.sendNotificationToSupplier(motifRejeteAvecDate,facture.num_fact);
-        // Return a success message
-        res.json({ message: 'Facture status updated successfully' });
+       
+        res.json({ message: 'la status est mis a jour avec succée' });
       } catch (error) {
         // If an error occurs, return a 500 internal server error
-        console.error('Error in rejeterCourriers:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        console.error('Erreur dans rejeterCourriers:', error);
+        res.status(500).json({ message: 'Erreur interne du serveur' });
       }
     }],
 
@@ -675,18 +678,18 @@ rechercheFacture: async (req, res) => {
   try {
       const { num_fact, datereception } = req.query;
       let whereClause = {};
-
+      // filter les resultats des parametres fournir
       if (num_fact && datereception) {
-          // If both invoice number and date of receipt are provided
+           
           whereClause = {
               num_fact: num_fact,
               datereception: datereception
           };
       } else if (num_fact) {
-          // If only invoice number is provided
+          
           whereClause = { num_fact: num_fact };
       } else if (datereception) {
-          // If only date of receipt is provided
+          
           whereClause = { datereception: datereception };
       }
 
@@ -695,34 +698,34 @@ rechercheFacture: async (req, res) => {
           include: { model: Pieces_jointe, as: 'Pieces_jointes' }
       });
 
-      console.log(facture);
+     
       res.json(facture);
   } catch (error) {
       console.error(error);
-      res.status(500).send('Erreur de serveur');
+      res.status(500).send('Erreur interne du serveur');
   }
 },
-
+//compte les factures traiter chaque jour de mois courrant
 FactureTraiteParMois: async (req, res) => {
   try {
-    // Get the current date
+    
     const today = new Date();
     const currentYear = today.getFullYear();
     const currentMonth = today.getMonth();
 
-    // Determine the start and end date of the current month
-    const startOfMonth = new Date(currentYear, currentMonth, 1);
-    const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59, 999);
+    // Determine le debut et la fin de mois courrant 
+    const debutdeMois = new Date(currentYear, currentMonth, 1);
+    const finduMois = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59, 999);
 
-    // Query the database to count processed invoices for each day of the current month
-    const processedInvoicesByDay = await Facture.findAll({
+    // compter les factures traitées pour chaque jour du mois en cours
+    const facturetraiterparjour = await Facture.findAll({
       attributes: [
         [sequelize.fn('date', sequelize.col('updatedAt')), 'date'],
         [sequelize.fn('count', sequelize.col('*')), 'count']
       ],
       where: {
         updatedAt: {
-          [Sequelize.Op.between]: [startOfMonth, endOfMonth]
+          [Sequelize.Op.between]: [debutdeMois, finduMois]
         },
         status: {
           [Sequelize.Op.not]: 'Attente'
@@ -731,48 +734,47 @@ FactureTraiteParMois: async (req, res) => {
       group: [sequelize.fn('date', sequelize.col('updatedAt'))]
     });
 
-    // Prepare the response data
-    const processedInvoicesData = processedInvoicesByDay.map(item => ({
+   
+    const factures = facturetraiterparjour.map(item => ({
       date: item.get('date'),
       count: item.get('count')
     }));
 
-    // Return the processed invoice counts for each day of the current month in the response
-    res.json({ processedInvoicesData });
+    
+    res.json({ factures });
   } catch (error) {
     console.error('Error calculating processed invoices for the current month:', error);
     res.status(500).json({ error: 'An error occurred while calculating processed invoices for the current month.' });
   }
 },
 
-generateReports: async (req, res) => {
+genererRapports: async (req, res) => {
   try {
-    // Step 1: Train neural network
-    console.log('Training neural network...');
+    // entrainement de reseau de neurones
+    console.log('entrainement de reseau de neurones...');
     const neuralNetwork = await trainNeuralNetwork();
 
-    // Step 2: Collect and analyze data
-    console.log('Collecting and analyzing data...');
+    // collection et analyse de donnée
+    console.log(' collection et analyse de donnée..');
     const analyzedData = await collectAndAnalyzeData();
-    console.log('Analyzed data:', analyzedData);
+    console.log('donnée analysé:', analyzedData);
 
-    // Step 3: Generate report from analyzed data
-    console.log('Generating report...');
+    // generation de rapport 
+    console.log('generation de rapport ...');
     const reportContent = await generateReportFromData(analyzedData, neuralNetwork);
 
-    // Step 4: Generate PDF from report content
-    console.log('Generating PDF...');
+    
     const pdfData = await generatePDF(reportContent);
 
-    console.log('Report generated successfully.');
+    console.log('rapport generer avec succée.');
 
-    // Set appropriate headers for PDF download
+   
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=report.pdf');
-    res.send(pdfData); // Send the PDF data as response
+    res.send(pdfData); 
   } catch (error) {
     console.error('Error generating reports:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Erreur interne du serveur' });
   }
 },
 

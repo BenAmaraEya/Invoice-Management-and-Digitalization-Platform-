@@ -8,7 +8,6 @@ import '../styles/factureform.css';
 function FactureForm() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { iderp ,nature} = useParams();
   const id = localStorage.getItem("userId");
   const [formData, setFormData] = useState({
     num_fact: '',
@@ -97,7 +96,7 @@ function FactureForm() {
     event.preventDefault(); 
 
     try {
-      console.log('Form data before submission:', formData);
+      
       const id = localStorage.getItem("userId");
       const token =localStorage.getItem('accessToken');
       const result = await axios.get(`http://localhost:3006/fournisseur/userId/` + id);
@@ -116,12 +115,12 @@ function FactureForm() {
         }
       });
       
-      console.log('Facture data added successfully.');
+      console.log('données de facture ajouté avec succée.');
       alert('Facture data added successfully.');
-      const factureId = response.data.facture.idF; // Extract the facture ID from the response
+      const factureId = response.data.facture.idF; 
     console.log('Facture ID:', factureId);
 
-    // Create an object containing the piece name and the facture ID
+    
     const requestData = {
       piece_name: formData.piece_name,
       idFacture: factureId,

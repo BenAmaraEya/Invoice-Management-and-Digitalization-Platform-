@@ -36,12 +36,12 @@ const ListeFactures = () => {
         const iderpFromResponse = response.data.fournisseur.iderp;
         setIdErp(iderpFromResponse);
       } catch (error) {
-        console.error('Error fetching fournisseur:', error);
+        console.error('Erreur de récuperation de fournisseur:', error);
       }
     };
 
     fetchFournisseurByUserId();
-  }, [userId, localIp]);
+  }, [userId]);
 
   useEffect(() => {
     const fetchFactures = async () => {
@@ -56,17 +56,18 @@ const ListeFactures = () => {
     };
 
     fetchFactures();
-  }, [iderp, localIp]);
+  }, [iderp]);
 
   const viewFacturePDF = async (pathpdf) => {
     try {
       const pdfUrl = `http://192.168.0.5:3006/facture/view-pdf/${pathpdf}`;
       const localUri = FileSystem.documentDirectory + 'facture.pdf';
   
-      const downloadObject = FileSystem.createDownloadResumable(pdfUrl, localUri, {}, (downloadProgress) => {
+     /* const downloadObject = FileSystem.createDownloadResumable(pdfUrl, localUri, {}, (downloadProgress) => {
         const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
         console.log(`Downloading PDF: ${Math.round(progress * 100)}% complete`);
-      });
+      });*/
+      const downloadObject = FileSystem.createDownloadResumable(pdfUrl, localUri);
   
       const { uri } = await downloadObject.downloadAsync();
   
@@ -95,7 +96,7 @@ const ListeFactures = () => {
   };
   
   const deleteFacture = async (iderp, idF) => {
-    // Display a confirmation dialog to the user
+    
     Alert.alert(
       'Confirm Delete',
       'Are you sure you want to delete this facture?',
@@ -117,7 +118,7 @@ const ListeFactures = () => {
               });
               if (response.data.success) {
                 setFactures(factures.filter(facture => facture.idF !== idF));
-                console.log(response.data.message);
+              
                 Alert.alert('Success', 'Facture deleted successfully.');
               }
             } catch (error) {

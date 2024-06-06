@@ -6,17 +6,17 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Footer from '../components/Footer';
 
-const RadioButton = ({ selected, onSelect }) => (
+/*const RadioButton = ({ selected, onSelect }) => (
   <TouchableOpacity onPress={onSelect} style={styles.radio}>
     {selected ? <View style={styles.radioDot} /> : null}
   </TouchableOpacity>
-);
+);*/
 
 const FactureForm = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { id } = route.params;
-
+ const {API}='192.168.0.5';
   const [formData, setFormData] = useState({
     num_fact: '',
     num_po: '',
@@ -53,14 +53,14 @@ const FactureForm = () => {
   const fetchFournisseurIdFiscale = async () => {
     try {
       const id = await AsyncStorage.getItem('userId');
-      const result = await axios.get(`http://192.168.0.5:3006/fournisseur/userId/` + id);
+      const result = await axios.get(`http://${API}:3006/fournisseur/userId/` + id);
       const fournisseurIdFiscale = result.data.fournisseur.idfiscale;
       setFormData(prevData => ({
         ...prevData,
         idfiscale: fournisseurIdFiscale,
       }));
     } catch (error) {
-      console.error('Error fetching fournisseur idfiscale:', error);
+      console.error('Erreur de récuperation de l idfiscale de fournisseur:', error);
     }
   };
 
@@ -76,10 +76,10 @@ const FactureForm = () => {
           fournisseur: fournisseur,
         }));
       } else {
-        console.error('User object not found in the response');
+        console.error('utilisateur non trouvé');
       }
     } catch (error) {
-      console.error('Error fetching fournisseur name:', error);
+      console.error('Erreur de récuperation de nom :', error);
     }
   };
 
@@ -108,8 +108,8 @@ const FactureForm = () => {
         },
       });
 
-      console.log('Facture data added successfully.');
-      alert('Facture data added successfully.');
+      console.log('Données de facture ajouter avec succée.');
+      alert('Données de facture ajouter avec succée.');
       const factureId = response.data.facture.idF;
       console.log('Facture ID:', factureId);
 
@@ -124,12 +124,12 @@ const FactureForm = () => {
         },
       });
 
-      console.log('Piece joint added successfully.');
-      alert('Piece joint added successfully.');
+      console.log('Piece joint ajouté avec succée.');
+      alert('Piece joint ajouté avec succée .');
 
       navigation.navigate('Factures',{ userId: id });
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('Erreur lors de la soumission du formulaire:', error);
     }
   };
 

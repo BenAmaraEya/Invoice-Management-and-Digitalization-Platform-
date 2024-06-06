@@ -63,7 +63,7 @@ const UserController = {
             await UserController.sendLoginAlertEmail(user, location);
         } catch (error) {
             console.error('Error logging in:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
+            res.status(500).json({ error: 'erreur interne de serveur' });
         }
     },
    
@@ -116,7 +116,7 @@ const UserController = {
             return res.json({ isAdmin: true });
         } catch (error) {
             console.error('Error checking admin password:', error);
-            return res.status(500).json({ error: 'Internal server error' });
+            return res.status(500).json({ error: 'erreur interne de serveur' });
         }
     },
     getUserById: async (req, res, next) => {
@@ -156,7 +156,7 @@ const UserController = {
             res.status(201).json({ message: 'User added successfully', user: newUser });
         } catch (error) {
             console.error('Error adding user:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
+            res.status(500).json({ error: 'erreur interne de serveur' });
         }
     },
 
@@ -170,7 +170,7 @@ const UserController = {
             res.json({ message: 'User updated successfully' });
         } catch (error) {
             console.error('Error updating user:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
+            res.status(500).json({ error: 'erreur interne de serveur' });
         }
     },
     deleteUser: async (req, res) => {
@@ -185,7 +185,7 @@ const UserController = {
 
         }catch (error) {
             console.error('Error delete user:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
+            res.status(500).json({ error: 'erreur interne de serveur' });
         }
     },
 
@@ -203,7 +203,7 @@ const UserController = {
             res.status(200).json({ message: 'User logged out successfully' });
         } catch (error) {
             console.error('Error logging out:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
+            res.status(500).json({ error: 'erreur interne de serveur' });
         }
     },
 
@@ -234,7 +234,7 @@ const UserController = {
             res.status(200).json({ message: 'Login credentials sent successfully' });
         } catch (error) {
             console.error('Error:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            res.status(500).json({ message: 'erreur interne de serveur' });
         }
     },
 recherche: async (req, res, next) => {
@@ -266,7 +266,7 @@ recherche: async (req, res, next) => {
             res.json({ message: ' updated successfully' });
         } catch (error) {
             console.error('Error updating :', error);
-            res.status(500).json({ error: 'Internal Server Error' });
+            res.status(500).json({ error: 'erreur interne de serveur' });
         }
     },*/
     
@@ -297,7 +297,7 @@ recherche: async (req, res, next) => {
         res.json({ message: 'Password updated successfully' });
     } catch (error) {
         console.error('Error updating password:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'erreur interne de serveur' });
     }
 },
 

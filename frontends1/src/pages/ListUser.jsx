@@ -55,7 +55,7 @@ function ListUser() {
             console.log(filteredResults);
         } catch (error) {
             setError(error);
-            console.error('Error fetching search results:', error);
+            console.error('Erreur de recuperation de resultat:', error);
         }
     };
     const filteredList = searchResults.length > 0 ? searchResults : user;

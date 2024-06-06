@@ -5,7 +5,7 @@ const reclamationController = require('../controller/reclamationController');
 module.exports = (io) => {
  
   router.post('/envoyer/:iderp', reclamationController.envoyer);
-  //router.get('/new/count', reclamationController.getNewReclamationsCount); // Corrected method name
+ 
   router.get('/', reclamationController.getAll);
 router.get('/:id',reclamationController.getbyid);
 router.delete('/:id', reclamationController.deleteReclamation);

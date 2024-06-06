@@ -22,7 +22,7 @@ const Historique = () => {
                 const iderpFromResponse = response.data.fournisseur.iderp;
                 setIdErp(iderpFromResponse);
             } catch (error) {
-                console.error('Error fetching fournisseur:', error);
+                console.error('Erreur de récuperation de fournisseur :', error);
             }
         };
 
@@ -37,7 +37,7 @@ const Historique = () => {
                     setFactures(response.data.factures);
                 }
             } catch (error) {
-                console.error('Error fetching factures:', error);
+                console.error('Erreur de récuperation de factures:', error);
             }
         };
 
@@ -62,13 +62,13 @@ const Historique = () => {
             const response = await axios.get('http://localhost:3006/facture/recherche/ParDATEetNUM', {
                 params: searchParams
             });
-            // Handle the response data here, update state accordingly
+            
             if (response.data) {
-                // Update the factures state with the filtered facture data
+                
                 setFactures([response.data]);
             }
         } catch (error) {
-            console.error('Error searching for facture:', error);
+            console.error('Erreur recherche facture:', error);
         }
     };
 
@@ -80,7 +80,7 @@ const Historique = () => {
         }));
     };
 
-    // Function to group factures by year
+    
     const groupFacturesByYear = () => {
         const groupedFactures = {};
         factures.forEach(facture => {

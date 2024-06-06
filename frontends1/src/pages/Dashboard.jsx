@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Chart from 'react-apexcharts';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckDouble } from '@fortawesome/free-solid-svg-icons';
 import './../styles/dashboard.css';
 
 const Dashboard = () => {
-  const [reclamations, setReclamations] = useState([]);
   const [iderp, setIdErp] = useState(null);
 
   const [factureCounts, setFactureCounts] = useState({
@@ -24,7 +21,7 @@ const Dashboard = () => {
         const iderpFromResponse = response.data.fournisseur.iderp;
         setIdErp(iderpFromResponse);
       } catch (error) {
-        console.error('Error fetching fournisseur:', error);
+        console.error('Erreur de récuperation de fournisseur:', error);
       }
     };
 
@@ -40,7 +37,7 @@ const Dashboard = () => {
           setFactureCounts({ NBFValide, NBFpaye, NBFAttente, NBFrejete });
         }
       } catch (error) {
-        console.error('Error fetching facture counts:', error);
+        console.error('Erreur de :', error);
       }
     };
 

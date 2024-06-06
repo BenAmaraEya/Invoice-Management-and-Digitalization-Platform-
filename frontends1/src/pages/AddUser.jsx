@@ -36,7 +36,7 @@ function AddUser() {
         }));
     };
 
-    const handleSubmit = async (e) => {
+    const Submit = async (e) => {
         e.preventDefault();
 
         try {
@@ -60,7 +60,7 @@ function AddUser() {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="add-user-form">
+        <form onSubmit={Submit} className="add-user-form">
             <h2>Ajouter Utilisateur</h2>
             <div>
                 <label htmlFor="name">Nom</label>

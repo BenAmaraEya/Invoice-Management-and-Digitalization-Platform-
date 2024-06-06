@@ -25,18 +25,19 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-const server = http.createServer(app); // Create HTTP server using Express app
+const server = http.createServer(app); // cree un serveur http en utilisant express app
 const io = socketIo(server, {
+  //configuration de cors
   cors: {
     origin: ["http://localhost:3000",'http://localhost:8081'],
     methods: ["GET", "POST"]
   }
-}); // Attach socket.io to the server
+}); 
 
 const publicPath = path.join(__dirname, 'C:\Users\pc\Desktop\PFE\PFE_Project\frontends1');
 app.use(express.static(publicPath));
 
-// Define routes
+
 app.use('/auth', authRoute);
 app.use('/user', userRoute);
 app.use('/fournisseur', fournisseurRoute);

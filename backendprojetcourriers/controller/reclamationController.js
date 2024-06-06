@@ -56,7 +56,7 @@ const reclamationController = {
     res.json(reclamation);
   } catch (error) {
     console.error('Error fetching reclamation by ID:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'erreur interne de serveur' });
   }
 },
 getReclamationBySupplierId:async(req,res)=>{
@@ -86,7 +86,7 @@ deleteReclamation: async (req, res) => {
     res.json({ message: 'Reclamation deleted successfully' });
   } catch (error) {
     console.error('Error deleting reclamation:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'erreur interne de serveur' });
   }
 },
 
@@ -96,7 +96,7 @@ deleteReclamation: async (req, res) => {
       res.json({ count: newReclamationsCount });
     } catch (error) {
       console.error('Error fetching new reclamations count:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      res.status(500).json({ error: 'erreur interne de serveur' });
     }
   },
   */

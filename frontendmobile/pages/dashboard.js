@@ -20,7 +20,7 @@ const Dashboard = () => {
 
   const route = useRoute();
   const { userId } = route.params;
-
+  
   /*useEffect(() => {
     const fetchLocalIpAddress = async () => {
       try {
@@ -37,22 +37,22 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchFournisseurById = async () => {
       try {
-        const response = await axios.get(`http://192.168.0.5:3006/fournisseur/userId/${userId}`);
+        const response = await axios.get(`http://192.168.0.122:3006/fournisseur/userId/${userId}`);
         const iderpFromResponse = response.data.fournisseur.iderp;
         setIderp(iderpFromResponse);
       } catch (error) {
-        console.error('Error fetching fournisseur:', error);
+        console.error('Erreur de récuperation de fournisseur:', error);
       }
     };
 
     fetchFournisseurById();
-  }, [userId, localIp]);
+  }, [userId]);
 
   useEffect(() => {
     const fetchFactureCounts = async () => {
       try {
         if (iderp) {
-          const response = await axios.get(`http://192.168.0.5:3006/facture/status/${iderp}`);
+          const response = await axios.get(`http://192.168.0.122:3006/facture/status/${iderp}`);
           const { NBFValide, NBFpaye, NBFAttente, NBFrejete } = response.data;
           setFactureCounts({ NBFValide, NBFpaye, NBFAttente, NBFrejete });
           setChartData([
@@ -87,12 +87,12 @@ const Dashboard = () => {
           ]);
         }
       } catch (error) {
-        console.error('Error fetching facture counts:', error);
+        console.error('Error de récuperation de statistique de facture:', error);
       }
     };
 
     fetchFactureCounts();
-  }, [iderp, localIp]);
+  }, [iderp]);
 
   return (
     <View style={styles.container}>

@@ -13,7 +13,7 @@ function ListUser() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchFournisseur = async () => {
             try {
                 const response = await axios.get('http://localhost:3006/fournisseur/');
                 setFournisseur(response.data);
@@ -23,7 +23,7 @@ function ListUser() {
             }
         };
     
-        fetchData();
+        fetchFournisseur();
     }, []);
 
     const DeleteFournisseur = async (iderp) => {
@@ -31,7 +31,7 @@ function ListUser() {
             await axios.delete(`http://localhost:3006/fournisseur/${iderp}`);
             setFournisseur(prevFournisseurs => prevFournisseurs.filter(fournisseur => fournisseur.iderp !== iderp));
             console.log('Fournisseur supprimé avec succès');
-            alert(`Fournisseur ${fournisseur.iderp} deleted successfully.`);
+            alert(`Fournisseur ${fournisseur.iderp} supprimé avec succès.`);
 
         } catch (error) {
             console.error('Erreur lors de la suppression du fournisseur:', error);
@@ -59,7 +59,7 @@ function ListUser() {
             }
         } catch (error) {
             setError(error);
-            console.error('Error fetching search results:', error);
+            console.error('Erreur de recuperation de resultat:', error);
         }
     };
 
@@ -76,7 +76,7 @@ function ListUser() {
             console.log(response.data);
         } catch (error) {
             setError(error);
-            console.error('Error fetching search results:', error);
+            console.error('Erreur de recuperation de resultat:', error);
         }
     };
     
@@ -156,7 +156,7 @@ function ListUser() {
                 placeholder="Rechercher par iderp..."
             />
             <button onClick={searchByIderp}>Rechercher par identifiant</button>
-            {/* Rendu des résultats de recherche */}
+           
             {searchResultsIderp && Object.keys(searchResultsIderp).length > 0 && (
     <div>
         <h3>Résultats de la recherche par iderp</h3>

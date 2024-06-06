@@ -28,7 +28,7 @@ const Details = () => {
         const response = await axios.get(`http://localhost:3006/facture/facturebyId/${idF}`);
         setFacture(response.data.facture);
       } catch (error) {
-        console.error('Error fetching facture:', error);
+        console.error('Erreur de récuperation de facture:', error);
       }
     };
 
@@ -46,7 +46,7 @@ const Details = () => {
       const pdfUrl = URL.createObjectURL(pdfBlob);
       window.open(pdfUrl);
     } catch (error) {
-      console.error('Error viewing facture PDF:', error);
+      console.error('Erreur d overture de PDF:', error);
     }
   };
 

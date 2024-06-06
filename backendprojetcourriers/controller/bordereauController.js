@@ -11,8 +11,8 @@ getAllBordereau: async (req, res) => {
         const bordereaux = await Bordereau.findAll();
         res.status(200).json({ bordereaux });
     } catch (error) {
-        console.error('Error fetching bordereaux:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        console.error('Erreur de recupértion de bordereaux:', error);
+        res.status(500).json({ message: 'erreur interne de serveur' });
     }
 },
 getBordereauById:async(req,res)=>{
@@ -22,8 +22,8 @@ try{
     const bordereau =await Bordereau.findByPk(idB);
     return res.status(200).json({ bordereau });
 }catch(error) {
-    console.error('Error fetching associated factures:', error);
-    return res.status(500).json({ message: "Internal server error" });
+    console.error('Erreur de recupération de factures associé:', error);
+    return res.status(500).json({ message: "erreur interne de serveur" });
 }
 },
 getFacturesByBordereauId: async (req, res) => {
@@ -33,7 +33,7 @@ getFacturesByBordereauId: async (req, res) => {
         const bordereau = await Bordereau.findByPk(idB);
 
         if (!bordereau) {
-            return res.status(404).json({ message: "Bordereau not found" });
+            return res.status(404).json({ message: "Bordereau non trouvé" });
         }
 
         // Get the nature and date from the bordereau
@@ -44,8 +44,8 @@ getFacturesByBordereauId: async (req, res) => {
 
         return res.status(200).json({ factures });
     } catch (error) {
-        console.error('Error fetching associated factures:', error);
-        return res.status(500).json({ message: "Internal server error" });
+        console.error('Error de recupération de factures associé:', error);
+        return res.status(500).json({ message: "erreur interne de serveur" });
     }
 }};
 

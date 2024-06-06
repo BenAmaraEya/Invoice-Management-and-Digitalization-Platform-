@@ -20,23 +20,24 @@ const archiveController = {
         //trouver les propieté etat cloturé dans l'objet etat
         const clotureEtat = etats.find(etat => etat.etat === 'cloture');
         
-        
+        //recupere l'année de l'etat cloture de son date 
         if (clotureEtat) {
           const anneeCloture = new Date(clotureEtat.date).getFullYear();
-// créaction des répetoire par année
+
           if (!archivesByYear[anneeCloture]) {
             archivesByYear[anneeCloture] = {
               annee: anneeCloture,
               path: path.join(__dirname, '..', 'archives', `${anneeCloture}`),
             };
           }
-
+        //cree un dossier selon le chemin si le dossier n'existe pas 
           const archiveDir = archivesByYear[anneeCloture].path;
           if (!fs.existsSync(archiveDir)) {
             fs.mkdirSync(archiveDir, { recursive: true });
           }
 
           const oldPath = path.join(__dirname, '..', facture.pathpdf);
+
           const newPath = path.join(archiveDir, `${facture.num_fact}.pdf`);
 
           try {
@@ -54,16 +55,16 @@ const archiveController = {
 
       for (const key in archivesByYear) {
         const archiveData = archivesByYear[key];
-        const facturesArchiver = await Facture.findAll({
+        /*const facturesArchiver = await Facture.findAll({
           include: [{ model: Etat, where: { etat: 'cloture' } }],
-        });
+        });*/
 
         const [archive, created] = await Archive.findOrCreate({
           where: { annee: archiveData.annee },
           defaults: archiveData
         });
 
-        await Promise.all(facturesArchiver.map(async (facture) => {
+        await Promise.all(facturesCloturees.map(async (facture) => {
           facture.id = archive.id;
           await facture.save();
         }));
@@ -76,6 +77,8 @@ const archiveController = {
       res.status(500).send('Erreur lors de l\'archivage des factures.');
     }
   },
+
+  //recuperer l'archive par année
 getArchiveByYear: async (req, res) => {
     try {
       const { annee } = req.params; 

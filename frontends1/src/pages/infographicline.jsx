@@ -11,12 +11,12 @@ const InfographicLine = () => {
             chart: {
                 type: 'line',
                 height: 100,
-                width: 500, // Adjusted height for better visibility
+                width: 500, 
                 zoom: {
                     enabled: false,
                 },
             },
-            color: '#FF5733', // Set the line color
+            color: '#FF5733', 
             dataLabels: {
                 enabled: false,
             },
@@ -45,20 +45,20 @@ const InfographicLine = () => {
             },
         },
     });
-    const [loading, setLoading] = useState(true);
+    
     const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchEtat = async () => {
             if (!idF) {
-                console.error('No idF provided');
-                setError('No idF provided');
-                setLoading(false);
+                console.error('idF non trouvé');
+                setError('idF non trouvé');
+                
                 return;
             }
 
             try {
-                console.log('Fetching etat for idF:', idF);
+              
                 const response = await axios.get(`http://localhost:3006/etat/etatFacture/${idF}`);
                 console.log('Response data:', response.data);
                 const data = response.data;
@@ -73,7 +73,7 @@ const InfographicLine = () => {
                             item.etat === 'cloture'
                         );
                     });
-                    const categories = filteredData.map(item => item.date);
+                    
                     const values = filteredData.map(item => item.etat);
 
                     const completedSteps = [0, 2, 4];
@@ -106,7 +106,7 @@ const InfographicLine = () => {
                             ...chartData.options,
                           
                             xaxis: {
-                                categories: values, // Display categories on the x-axis
+                                categories: values, 
                                 labels: {
                                     style: {
                                         colors: ['#3F51B5', '#E91E63', '#9C27B0', '#673AB7', '#F44336'],
@@ -124,20 +124,18 @@ const InfographicLine = () => {
                     console.error('Unexpected data format:', data);
                     setError('Unexpected data format');
                 }
-                setLoading(false);
+                
             } catch (error) {
-                console.error('Error fetching etat:', error);
-                setError('Error fetching etat. Please try again later.');
-                setLoading(false);
+                console.error('Erreur de recuperation de l etat:', error);
+                setError('Erreur de recuperation de l etat');
+                
             }
         };
 
         fetchEtat();
     }, [idF]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+   
 
     if (error) {
         return <div>{error}</div>;

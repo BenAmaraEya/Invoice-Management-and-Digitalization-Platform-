@@ -5,7 +5,7 @@ import axios from 'axios';
 import { FaFileExcel, FaPlus, FaEye, FaTrashAlt, FaEdit, FaSearch, FaFilePdf } from 'react-icons/fa';
 import { Document, Page, pdfjs } from 'react-pdf';
 import './../styles/listefacture.css';
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+//pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const ListeFactures = () => {
   const [factures, setFactures] = useState([]);
@@ -21,7 +21,7 @@ const ListeFactures = () => {
         const iderpFromResponse = response.data.fournisseur.iderp;
         setIdErp(iderpFromResponse);
       } catch (error) {
-        console.error('Error fetching fournisseur:', error);
+        console.error('Erreur de récuperation de  fournisseur:', error);
       }
     };
 
@@ -38,7 +38,7 @@ const ListeFactures = () => {
           setFactures(facturesNonCloturees);
         }
       } catch (error) {
-        console.error('Error fetching factures:', error);
+        console.error('Erreur de recuperation de factures:', error);
       }
     };
 
@@ -55,10 +55,10 @@ const ListeFactures = () => {
       });
       if (response.data.success) {
         setFactures(factures.filter(facture => facture.idF !== factureId));
-        alert('Facture deleted successfully.');
+        alert('Facture supprimé avec succeé.');
       }
     } catch (error) {
-      console.error('Error deleting facture:', error);
+      console.error('Erreur de suppression:', error);
     }
   };
 
@@ -71,7 +71,7 @@ const ListeFactures = () => {
       const pdfUrl = URL.createObjectURL(pdfBlob);
       window.open(pdfUrl);
     } catch (error) {
-      console.error('Error viewing facture PDF:', error);
+      console.error('Erreur d ouverture de PDF :', error);
     }
   };
 
@@ -96,7 +96,7 @@ const ListeFactures = () => {
       link.click();
       link.parentNode.removeChild(link);
     } catch (error) {
-      console.error('Error exporting factures to Excel:', error);
+      console.error('Erreur d exportation d excel:', error);
     }
   };
 
