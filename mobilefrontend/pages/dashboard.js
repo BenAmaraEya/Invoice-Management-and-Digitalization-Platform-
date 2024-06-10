@@ -20,7 +20,7 @@ const Dashboard = () => {
 
   const route = useRoute();
   const { userId } = route.params;
-  
+  const AdresseIp='192.168.0.5'
   /*useEffect(() => {
     const fetchLocalIpAddress = async () => {
       try {
@@ -37,7 +37,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchFournisseurById = async () => {
       try {
-        const response = await axios.get(`http://192.168.0.122:3006/fournisseur/userId/${userId}`);
+        const response = await axios.get(`http://${AdresseIp}:3006/fournisseur/userId/${userId}`);
         const iderpFromResponse = response.data.fournisseur.iderp;
         setIderp(iderpFromResponse);
       } catch (error) {
@@ -52,7 +52,7 @@ const Dashboard = () => {
     const fetchFactureCounts = async () => {
       try {
         if (iderp) {
-          const response = await axios.get(`http://192.168.0.122:3006/facture/status/${iderp}`);
+          const response = await axios.get(`http://${AdresseIp}:3006/facture/status/${iderp}`);
           const { NBFValide, NBFpaye, NBFAttente, NBFrejete } = response.data;
           setFactureCounts({ NBFValide, NBFpaye, NBFAttente, NBFrejete });
           setChartData([

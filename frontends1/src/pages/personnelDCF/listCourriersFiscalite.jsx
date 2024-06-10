@@ -6,14 +6,14 @@ import { Link, useParams } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import '../../styles/listecourriers.css';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+//pdfjs.GlobalWorkerOptions.workerSrc = `cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const ListeFacturesFiscalité = () => {
     const [pdfPath, setPdfPath] = useState(null);
     const [motifRejete, setMotifRejete] = useState(''); 
     const [motifsRejete, setMotifsRejete] = useState({});
     const [factures, setFactures] = useState([]);
-    const [loading, setLoading] = useState(true);
+    
     const { iderp } = useParams(); 
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
@@ -28,12 +28,12 @@ const ListeFacturesFiscalité = () => {
                 if (response.data && response.data.factures) {
                     setFactures(response.data.factures);
                 } else {
-                    console.error('Invalid response from server:', response);
+                    console.error('reponse invalid de serveur :', response);
                 }
-                setLoading(false);
+                
             } catch (error) {
-                console.error('Error fetching factures:', error);
-                setLoading(false);
+                console.error('Erreur de récuperation de facture:', error);
+                
             }
         };
 
@@ -49,7 +49,7 @@ const ListeFacturesFiscalité = () => {
             const pdfUrl = URL.createObjectURL(pdfBlob);
             window.open(pdfUrl);
         } catch (error) {
-            console.error('Error viewing facture PDF:', error);
+            console.error('Erreur d\'ouverture de PDF:', error);
         }
     };
 
@@ -65,7 +65,7 @@ const ListeFacturesFiscalité = () => {
             window.location.reload();
            // window.location.href = window.location.href;
         } catch (error) {
-            console.error('Error valide document: ', error);
+            console.error('Erreur validé document: ', error);
         }
     };
 
@@ -82,29 +82,29 @@ const ListeFacturesFiscalité = () => {
 
             window.location.reload();
         } catch (error) {
-            console.error('Error rejete document: ', error);
+            console.error('Erreur rejeté document: ', error);
         }
     };
 
     const rechercheFacture = async () => {
         try {
-            console.log("Search Parameters:", searchParams); // Log the search parameters
+            
             const response = await axios.get('http://localhost:3006/facture/recherche/ParDATEetNUM', {
                 params: {
                     ...searchParams,
                     status: ['courrier validé par BOF', 'courrier validé par Personnel fiscalité', 'Id Fiscale Invalide', 'Manque']
                 }
             });
-            console.log("Server Response:", response); // Log the server response
-            // Handle the response data here, update state accordingly
+           
+           
             if (response.data) {
-                // Update the factures state with the facture data from the response
+                
                 setFactures([response.data]);
             } else {
-                console.error('Invalid response from server:', response);
+                console.error('reponse invalide de serveur', response);
             }
         } catch (error) {
-            console.error('Error searching for facture:', error);
+            console.error('Erreur de recherche facture:', error);
         }
     };
 
@@ -117,7 +117,7 @@ const ListeFacturesFiscalité = () => {
     };
 
     const renderFactureTable = (factures) => {
-        // Ensure factures is an array before filtering
+       
         const facturesArray = Array.isArray(factures) ? factures : [];
 
         return (
@@ -155,7 +155,7 @@ const ListeFacturesFiscalité = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {/* Render rows based on filtered facturesArray */}
+                    
                     {facturesArray
                         .filter(facture => facture.status.includes('courrier validé par BOF') || facture.status.includes('courrier validé par Personnel fiscalité') || facture.status.includes('Id Fiscale Invalide') || facture.status.includes('Manque'))
                         .map((facture) => (
@@ -211,7 +211,7 @@ const ListeFacturesFiscalité = () => {
                 <div>
                     {renderFactureTable(factures)}
                     {pdfPath && (
-                        <Document file={pdfPath} error="PDF loading error">
+                        <Document file={pdfPath} error="erreur de rechargement de PDF">
                             <Page pageNumber={1} />
                         </Document>
                     )}

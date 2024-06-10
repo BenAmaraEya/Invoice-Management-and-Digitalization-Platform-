@@ -11,6 +11,9 @@ function ListUser() {
     const [searchResults, setSearchResults] = useState([]);
     const [searchResultsIderp, setSearchResultsIderp] = useState([]);
     const [error, setError] = useState(null);
+    
+
+   
 
     useEffect(() => {
         const fetchFournisseur = async () => {
@@ -25,6 +28,7 @@ function ListUser() {
     
         fetchFournisseur();
     }, []);
+    
 
     const DeleteFournisseur = async (iderp) => {
         try {
@@ -80,7 +84,7 @@ function ListUser() {
         }
     };
     
-
+ const adminpassword=localStorage.getItem('adminPassword');
     const filteredList = searchResults.length > 0 ? searchResults : fournisseur;
 
     const renderSupplierTable = (data) => (
@@ -129,10 +133,10 @@ function ListUser() {
                         <td>{fournisseur.User ? fournisseur.User.phone : fournisseur.phone}</td>
                         <td>
                             <button>
-                                <Link className="update-link" to={`../updateFournisseur/${data.iderp}`}>Modifier</Link>
+                                <Link className="update-link" to={`/updateFournisseur/${fournisseur.iderp}`}>Modifier</Link>
                             </button>
-                            <button onClick={() => DeleteFournisseur(data.iderp)} className="delete-button">Supprimer</button>
-                            <button className="access-button" onClick={() => Acesse(data.id)}>Accès</button>
+                            <button onClick={() => DeleteFournisseur(fournisseur.iderp)} className="delete-button">Supprimer</button>
+                            <button className="access-button" onClick={() => Acesse(fournisseur.User.id)}>Accès</button>
                         </td>
                     </tr>
                 ))}
@@ -142,21 +146,24 @@ function ListUser() {
 
     return (
         <div>
+        <div style={{ position: 'relative', marginLeft:'50%'}}>
             <input
                 type="text"
                 value={searchNameTerm}
                 onChange={(e) => setSearchNameTerm(e.target.value)}
                 placeholder="Rechercher par nom..."
+                className="search-input"
             />
-            <button onClick={searchByName}>Rechercher</button>
+            <button onClick={searchByName}  >Rechercher</button>
             <input
                 type="number"
                 value={searchIderpTerm}
                 onChange={(e) => setSearchIderpTerm(e.target.value)}
                 placeholder="Rechercher par iderp..."
+                className="search-input"
             />
-            <button onClick={searchByIderp}>Rechercher par identifiant</button>
-           
+            <button onClick={searchByIderp}  >Rechercher par identifiant</button>
+           </div>
             {searchResultsIderp && Object.keys(searchResultsIderp).length > 0 && (
     <div>
         <h3>Résultats de la recherche par iderp</h3>
@@ -172,7 +179,7 @@ function ListUser() {
 
             {!searchResults.length > 0 && fournisseur.length > 0 && (
                 <div>
-                    <Link to="/addUser" className="add-user-link">Ajouter Fournisseur</Link>   
+                    <Link to={`/admin/addUser/${adminpassword}`} className="add-user-link">Ajouter Fournisseur</Link>   
                     <h3 className="list-fournisseur">Liste Fournisseurs</h3>    
                     {renderSupplierTable(fournisseur)}
                 </div>

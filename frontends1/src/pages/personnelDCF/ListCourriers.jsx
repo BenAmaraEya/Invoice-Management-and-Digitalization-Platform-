@@ -8,14 +8,14 @@ import '../../styles/listecourriers.css';
 import { FaTrashAlt, FaPen, FaSearch, FaFilePdf,FaEye,FaEdit} from 'react-icons/fa';
 import { BsTrash } from 'react-icons/bs';
 import InfographicLine from '../infographicline';
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+//pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const ListCourriers = () => {
     const [pdfPath, setPdfPath] = useState(null);
     const [motifRejete, setMotifRejete] = useState(''); 
     const [motifsRejete, setMotifsRejete] = useState({});
     const [factures, setFactures] = useState([]);
-    const [loading, setLoading] = useState(true);
+    
     const { iderp } = useParams(); 
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
@@ -29,10 +29,10 @@ const ListCourriers = () => {
             try {
                 const response = await axios.get(`http://localhost:3006/facture/${iderp}`);
                 setFactures(response.data.factures);
-                setLoading(false);
+               
             } catch (error) {
-                console.error('Error fetching factures:', error);
-                setLoading(false);
+                console.error('Erreur de récuperation de facture:', error);
+               
             }
         };
 
@@ -48,7 +48,7 @@ const ListCourriers = () => {
             const pdfUrl = URL.createObjectURL(pdfBlob);
             window.open(pdfUrl);
         } catch (error) {
-            console.error('Error viewing facture PDF:', error);
+            console.error('Erreur d\'ouverture de pdf PDF:', error);
         }
     };
 
@@ -62,7 +62,7 @@ const ListCourriers = () => {
            alert("Validation réussie pour la facture.");
            window.location.reload();
         } catch (error) {
-            console.error('Error valide document: ', error);
+            console.error('Erreur validé document: ', error);
         }
     };
 
@@ -78,7 +78,7 @@ const ListCourriers = () => {
 
             window.location.reload();
         } catch (error) {
-            console.error('Error rejete document: ', error);
+            console.error('Erreur rejecté document: ', error);
         }
     };
     const deleteFacture = async (idF) => {
@@ -94,7 +94,7 @@ const ListCourriers = () => {
                 console.log(response.data.message);
             }
         } catch (error) {
-            console.error('Error deleting facture:', error);
+            console.error('Erreur de suppression de facture:', error);
         }
     };
     const rechercheFacture = async () => {
@@ -102,13 +102,13 @@ const ListCourriers = () => {
             const response = await axios.get('http://localhost:3006/facture/recherche/ParDATEetNUM', {
                 params: searchParams
             });
-            // Handle the response data here, update state accordingly
+           
             if (response.data) {
-                // Update the factures state with the filtered facture data
+               
                 setFactures([response.data]);
             }
         } catch (error) {
-            console.error('Error searching for facture:', error);
+            console.error('Erreur de recherche facture:', error);
         }
     };
 
@@ -250,7 +250,7 @@ const updateProcessus= async (idF, etat) => {
                 <div>
                     {renderFactureTable(factures)}
                     {pdfPath && (
-                        <Document file={pdfPath} error="PDF loading error">
+                        <Document file={pdfPath} error="erreur de rechargement de PDF">
                             <Page pageNumber={1} />
                         </Document>
                     )}

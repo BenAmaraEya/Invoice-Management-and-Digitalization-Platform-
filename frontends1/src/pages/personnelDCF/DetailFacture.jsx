@@ -17,16 +17,16 @@ const DetailFacture = () => {
         datereception: '',
         pathpdf: '',
         piece_name: [],
-        etat:[] // Ajoutez le state pour les pièces jointes sélectionnées
+        etat:[] 
       });
       useEffect(() => {
         const fetchData = async () => {
           try {
             const response = await axios.get(`http://localhost:3006/facture/facturebyId/${idF}`);
             setFacture(response.data.facture); 
-            console.log(response.data);
+            
           } catch (error) {
-            console.error('Error fetching facture:', error);
+            console.error('Erreur de récuperation des factures:', error);
           }
         };
       
@@ -43,7 +43,7 @@ const DetailFacture = () => {
             const pdfUrl = URL.createObjectURL(pdfBlob);
             window.open(pdfUrl);
         } catch (error) {
-            console.error('Error viewing facture PDF:', error);
+            console.error('Erreur d\'ouverture de PDF:', error);
         }
     };
 

@@ -5,7 +5,7 @@ import Dashboard from "./../pages/Dashboard";
 import Home from "./../pages/Home";
 import ListUser from "./../pages/ListUser";
 import AddUser from "./../pages/AddUser";
-import UpdateFournisseur from "./../pages/UpdateFournisseur";
+import UpdateFour from "./../pages/UpdateFournisseur";
 
 import UpdatePasswordForm from "../pages/updatePassword";
 import UploadFacture from "../pages/UploadFacture";
@@ -37,13 +37,11 @@ const Routers = () => {
         <Routes>
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="/home" element={<Home />} />
-            
-           
             <Route path="/dashboard/:id" element={<Dashboard />} />
             <Route path="/listUser" element={<ListUser />} />
             <Route path="/listSupplier" element={<ListSupplier />} />
             <Route path="/admin/addUser/:password" element={<ProtectedAddUser />} />
-            <Route path="/updateFournisseur/:iderp" element={<UpdateFournisseur />} />
+            <Route path="/updateFournisseur/:iderp" element={<UpdateFour />} />
             <Route path="/updatepass/:id" element={<UpdatePasswordForm />} />
             <Route path="/uploadfacture" element={<UploadFacture />} />
             <Route path="/facture-form" element={<FactureForm />} />
@@ -75,17 +73,22 @@ const ProtectedAddUser = () => {
     const navigate = useNavigate();
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
-    const { password } = useParams(); // Import useParams to access route parameters
+    const { password } = useParams(); 
 
     useEffect(() => {
         const fetchAdminPassword = async () => {
             try {
+                localStorage.setItem('adminPassword', password);
                 const response = await fetch(`http://localhost:3006/user/check/${password}?profil=admin`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch admin password");
                 }
                 const data = await response.json();
-                setIsAdmin(data.isAdmin);
+                if (data.isAdmin) {
+                    localStorage.setItem('userProfil', 'admin');
+                } else {
+                    localStorage.removeItem('userProfil');
+                }
                 setLoading(false);
                 if (!data.isAdmin) {
                     navigate('/home');
@@ -93,18 +96,20 @@ const ProtectedAddUser = () => {
             } catch (error) {
                 console.error("Error fetching admin password:", error);
                 setLoading(false);
+                navigate('/home');
             }
         };
 
         fetchAdminPassword();
-    }, [navigate, password]); // Add password to the dependency array
+    }, [navigate, password]); 
 
     if (loading) {
         return <div>Loading...</div>;
     }
 
+    const userProfil = localStorage.getItem('userProfil');
     // Render AddUser component if user is an admin
-    return isAdmin ? <AddUser /> : <Navigate to="/home" />;
+    return userProfil === 'admin' ? <AddUser /> : <Navigate to="/home" />;
 };
 
 export default Routers;

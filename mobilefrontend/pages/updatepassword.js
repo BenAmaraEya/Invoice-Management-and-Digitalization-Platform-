@@ -13,7 +13,7 @@ const UpdatePasswordForm = () => {
   const [loading, setLoading] = useState(false);
   const route = useRoute();
   const { userId } = route.params;
-
+  const AdresseIp='192.168.0.5'
   const handleChange = (name, value) => {
     setFormData(prevState => ({
       ...prevState,
@@ -25,14 +25,14 @@ const UpdatePasswordForm = () => {
     setLoading(true);
 
     try {
-      const response = await axios.put(`http://192.168.0.5:3006/user/updatePass/${userId}`, formData);
+      const response = await axios.put(`http://${AdresseIp}:3006/user/updatePass/${userId}`, formData);
 
       if (response.status !== 200) {
-        throw new Error("Failed to update password");
+        throw new Error("erreur de mettre a jour de mot de passe ");
       }
 
-      // Password updated successfully
-      Alert.alert('Password updated successfully');
+      
+      Alert.alert('mot de passe mise a jour avec succés');
     } catch (error) {
       setError(error.message);
     } finally {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, Table, Form, FormGroup, Label, Input, Container } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import '../../styles/Archive.css'; // Import your CSS file for styling
+import '../../styles/Archive.css'; 
 
 const ArchiveViewer = () => {
   const [archives, setArchives] = useState([]);
@@ -18,17 +18,17 @@ const ArchiveViewer = () => {
     try {
       const response = await axios.get('http://localhost:3006/archive');
       setArchives(response.data);
-      setFilteredArchives(response.data); // Initially, display all archives
+      setFilteredArchives(response.data); 
       const availableYears = response.data.map((archive) => archive.annee);
-      setYears(Array.from(new Set(availableYears))); // Remove duplicate years
+      setYears(Array.from(new Set(availableYears))); 
     } catch (error) {
-      console.error('Error fetching archives:', error);
+      console.error('Erreur de récuperation de l\'archive :', error);
     }
   };
 
   const handleYearFilter = async () => {
     if (!selectedYear) {
-      // If no year selected, display all archives
+     
       setFilteredArchives(archives);
       return;
     }
@@ -38,7 +38,7 @@ const ArchiveViewer = () => {
       const filteredData = response.data?.Factures ? [response.data] : [];
       setFilteredArchives(filteredData);
     } catch (error) {
-      console.error('Error fetching filtered archives:', error);
+      console.error('Erreur de récuperation des archives filtrés :', error);
     }
   };
 

@@ -11,8 +11,8 @@ const FactureUploader = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigation = useNavigation();
-
-  /*const pickDocument = async () => {
+  const AdresseIp='192.168.0.5'
+  const pickDocument = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: 'application/pdf',
@@ -31,8 +31,8 @@ const FactureUploader = () => {
       console.log('Error picking document:', error);
       setError('Error picking document');
     }
-  };*/
-  const pickDocument = async () => {
+  };
+  /*const pickDocument = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: 'application/pdf',
@@ -51,7 +51,7 @@ const FactureUploader = () => {
       console.log('Error picking document:', error);
       setError('Error picking document');
     }
-  };
+  };*/
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -73,7 +73,7 @@ const FactureUploader = () => {
 
     try {
       const token = await AsyncStorage.getItem('accessToken');
-      const response = await fetch(`http://192.168.0.5:3006/facture/upload`, {
+      const response = await fetch(`http://${AdresseIp}:3006/facture/upload`, {
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data',

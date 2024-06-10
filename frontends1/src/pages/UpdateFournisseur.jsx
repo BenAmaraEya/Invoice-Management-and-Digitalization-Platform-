@@ -1,10 +1,10 @@
-// UpdateUser.js
+
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/Update.css";
 
-function UpdateUser() {
+function UpdateFournisseurs() {
     const [formData, setFormData] = useState({
         iderp: "",
         idfiscale: "",
@@ -56,7 +56,7 @@ function UpdateUser() {
         }));
     };
 
-    const updateUser = async (e) => {
+    const UpdateFournisseurs = async (e) => {
         e.preventDefault();
         try {
             await axios.put(`http://localhost:3006/fournisseur/${iderp}`, formData);
@@ -68,7 +68,7 @@ function UpdateUser() {
     };
 
     return (
-        <form onSubmit={updateUser} className="form-container">
+        <form onSubmit={UpdateFournisseurs} className="form-container">
             <h2>Modifier Fournisseur</h2>
             <div>
                 <label htmlFor="iderp">iderp</label>
@@ -94,4 +94,4 @@ function UpdateUser() {
     );
 }
 
-export default UpdateUser;
+export default UpdateFournisseurs;

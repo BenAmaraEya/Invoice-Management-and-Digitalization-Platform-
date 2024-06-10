@@ -16,6 +16,8 @@ const ListeFactures = () => {
   const route = useRoute();
   const { userId } = route.params;
   const navigation = useNavigation();
+
+  const AdresseIp='192.168.0.5'
  /* useEffect(() => {
     const fetchLocalIpAddress = async () => {
       try {
@@ -32,7 +34,7 @@ const ListeFactures = () => {
   useEffect(() => {
     const fetchFournisseurByUserId = async () => {
       try {
-        const response = await axios.get(`http://192.168.0.5:3006/fournisseur/userId/${userId}`);
+        const response = await axios.get(`http://${AdresseIp}:3006/fournisseur/userId/${userId}`);
         const iderpFromResponse = response.data.fournisseur.iderp;
         setIdErp(iderpFromResponse);
       } catch (error) {
@@ -47,7 +49,7 @@ const ListeFactures = () => {
     const fetchFactures = async () => {
       try {
         if (iderp) {
-          const response = await axios.get(`http://192.168.1.123:3006/facture/${iderp}`);
+          const response = await axios.get(`http://${AdresseIp}:3006/facture/${iderp}`);
           setFactures(response.data.factures);
         }
       } catch (error) {
@@ -60,7 +62,7 @@ const ListeFactures = () => {
 
   const viewFacturePDF = async (pathpdf) => {
     try {
-      const pdfUrl = `http://192.168.0.5:3006/facture/view-pdf/${pathpdf}`;
+      const pdfUrl = `http://${AdresseIp}:3006/facture/view-pdf/${pathpdf}`;
       const localUri = FileSystem.documentDirectory + 'facture.pdf';
   
      /* const downloadObject = FileSystem.createDownloadResumable(pdfUrl, localUri, {}, (downloadProgress) => {
@@ -111,7 +113,7 @@ const ListeFactures = () => {
           onPress: async () => {
             try {
               const token = await AsyncStorage.getItem('accessToken');
-              const response = await axios.delete(`http://192.168.1.123:3006/facture/fournisseur/${iderp}/facture/${idF}`, {
+              const response = await axios.delete(`http://${AdresseIp}:3006/facture/fournisseur/${iderp}/facture/${idF}`, {
                 headers: {
                   Authorization: `Bearer ${token}`
                 }

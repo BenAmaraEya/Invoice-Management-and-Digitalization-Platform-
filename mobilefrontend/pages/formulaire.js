@@ -6,17 +6,17 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Footer from '../components/Footer';
 
-/*const RadioButton = ({ selected, onSelect }) => (
+const RadioButton = ({ selected, onSelect }) => (
   <TouchableOpacity onPress={onSelect} style={styles.radio}>
     {selected ? <View style={styles.radioDot} /> : null}
   </TouchableOpacity>
-);*/
+);
 
 const FactureForm = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { id } = route.params;
- const {API}='192.168.0.5';
+ const AdresseIp='192.168.0.5'
   const [formData, setFormData] = useState({
     num_fact: '',
     num_po: '',
@@ -53,7 +53,7 @@ const FactureForm = () => {
   const fetchFournisseurIdFiscale = async () => {
     try {
       const id = await AsyncStorage.getItem('userId');
-      const result = await axios.get(`http://${API}:3006/fournisseur/userId/` + id);
+      const result = await axios.get(`http://${AdresseIp}:3006/fournisseur/userId/` + id);
       const fournisseurIdFiscale = result.data.fournisseur.idfiscale;
       setFormData(prevData => ({
         ...prevData,
@@ -67,7 +67,7 @@ const FactureForm = () => {
   const fetchFournisseurName = async () => {
     try {
       const id = await AsyncStorage.getItem('userId');
-      const result = await axios.get(`http://192.168.0.5:3006/user/` + id);
+      const result = await axios.get(`http://${AdresseIp}:3006/user/` + id);
 
       if (result.data && result.data.name) {
         const fournisseur = result.data.name;
@@ -94,7 +94,7 @@ const FactureForm = () => {
     try {
       const token = await AsyncStorage.getItem('accessToken');
       const id = await AsyncStorage.getItem('userId');
-      const result = await axios.get(`http://192.168.0.5:3006/fournisseur/userId/${id}`);
+      const result = await axios.get(`http://${AdresseIp}:3006/fournisseur/userId/${id}`);
       const fournisseurIdFiscal = result.data.fournisseur.idfiscale;
 
       setFormData(prevData => ({
@@ -102,7 +102,7 @@ const FactureForm = () => {
         idfiscale: fournisseurIdFiscal,
       }));
       let iderp = result.data.fournisseur.iderp;
-      const response = await axios.post(`http://192.168.0.5:3006/facture/save/`+iderp, formData, {
+      const response = await axios.post(`http://${AdresseIp}:3006/facture/save/`+iderp, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -118,7 +118,7 @@ const FactureForm = () => {
         idFacture: factureId,
       };
 
-      await axios.post('http://192.168.0.5:3006/piecejoint/addpiece', requestData, {
+      await axios.post(`http://${AdresseIp}:3006/piecejoint/addpiece`, requestData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

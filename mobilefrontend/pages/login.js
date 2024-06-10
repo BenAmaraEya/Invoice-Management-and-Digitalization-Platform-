@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { getIpAddressAsync } from 'expo-network';
+//import { getIpAddressAsync } from 'expo-network';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
@@ -14,7 +14,7 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [localIp, setLocalIp] = useState(null);
-
+const AdresseIp='192.168.0.5'
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -24,10 +24,10 @@ const Login = () => {
     });
   }, []);
 
-  useEffect(() => {
+ /* useEffect(() => {
     const fetchLocalIpAddress = async () => {
       try {
-        const ipAddress = await getIpAddressAsync(); // Get local IP address
+        const ipAddress = await getIpAddressAsync(); 
         setLocalIp(ipAddress);
       } catch (error) {
         console.error('Error fetching local IP address:', error);
@@ -35,7 +35,7 @@ const Login = () => {
     };
 
     fetchLocalIpAddress();
-  }, []);
+  }, []);*/
 
   const handleInputChange = (field, value) => {
     setCredentials({
@@ -48,7 +48,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`http://192.168.1.123:3006/auth/login`, credentials, {
+      const response = await axios.post(`http://${AdresseIp}:3006/auth/login`, credentials, {
         headers: {
           'Content-Type': 'application/json',
         },

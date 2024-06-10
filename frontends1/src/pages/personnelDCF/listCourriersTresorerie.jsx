@@ -28,12 +28,12 @@ const ListeFacturesFiscalité = () => {
                 if (response.data && response.data.factures) {
                     setFactures(response.data.factures);
                 } else {
-                    console.error('Invalid response from server:', response);
+                    console.error('response invalid de serveur:', response);
                 }
-                setLoading(false);
+                
             } catch (error) {
-                console.error('Error fetching factures:', error);
-                setLoading(false);
+                console.error('Erreur de récuperation de facture:', error);
+               
             }
         };
 
@@ -49,7 +49,7 @@ const ListeFacturesFiscalité = () => {
             const pdfUrl = URL.createObjectURL(pdfBlob);
             window.open(pdfUrl);
         } catch (error) {
-            console.error('Error viewing facture PDF:', error);
+            console.error('Erreur d\'ouverture de PDF:', error);
         }
     };
 
@@ -65,7 +65,7 @@ const ListeFacturesFiscalité = () => {
             alert('Validation réussie pour la facture.');
             window.location.reload();
         } catch (error) {
-            console.error('Error valide document: ', error);
+            console.error('Erreur validé document: ', error);
         }
     };
 
@@ -82,29 +82,28 @@ const ListeFacturesFiscalité = () => {
 
             window.location.reload();
         } catch (error) {
-            console.error('Error rejete document: ', error);
+            console.error('Erreur rejeté document: ', error);
         }
     };
 
     const rechercheFacture = async () => {
         try {
-            console.log("Search Parameters:", searchParams); // Log the search parameters
+           
             const response = await axios.get('http://localhost:3006/facture/recherche/ParDATEetNUM', {
                 params: {
                     ...searchParams,
                     status: ['courrier validé par Personnel fiscalité', 'courrier validé par Agent Trésorerie', 'Facture sans TVA', 'Montant facture non comforme']
                 }
             });
-            console.log("Server Response:", response); // Log the server response
-            // Handle the response data here, update state accordingly
+           
             if (response.data) {
-                // Update the factures state with the facture data from the response
+                
                 setFactures([response.data]);
             } else {
-                console.error('Invalid response from server:', response);
+                console.error('reponse de serveur invalid', response);
             }
         } catch (error) {
-            console.error('Error searching for facture:', error);
+            console.error('Erreur de recherche facture:', error);
         }
     };
 
@@ -117,7 +116,7 @@ const ListeFacturesFiscalité = () => {
     };
 
     const renderFactureTable = (factures) => {
-        // Ensure factures is an array before filtering
+       
         const facturesArray = Array.isArray(factures) ? factures : [];
 
         return (
@@ -213,7 +212,7 @@ const ListeFacturesFiscalité = () => {
                 <div>
                     {renderFactureTable(factures)}
                     {pdfPath && (
-                        <Document file={pdfPath} error="PDF loading error">
+                        <Document file={pdfPath} error="erreur de rechargement de PDF">
                             <Page pageNumber={1} />
                         </Document>
                     )}

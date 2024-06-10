@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { FaSearch, FaFileAlt } from 'react-icons/fa'; // Import search and file icons
-import '../../styles/ListFournisseurs.css'; // Import the CSS file
+import { FaSearch, FaFileAlt } from 'react-icons/fa'; 
+import '../../styles/ListFournisseurs.css'; 
 
 const ListFournisseur = () => {
     const [fournisseurs, setFournisseurs] = useState([]);
@@ -22,14 +22,14 @@ const ListFournisseur = () => {
                         const statusResponse = await axios.get(`http://localhost:3006/facture/status/${fournisseur.iderp}`);
                         return { ...fournisseur, status: statusResponse.data };
                     } catch (error) {
-                        console.error('Error fetching status for fournisseur:', fournisseur.iderp, error);
+                        console.error('Erreur de récuperation d\'etat pour fournisseur:', fournisseur.iderp, error);
                         return fournisseur;
                     }
                 }));
                 setFournisseurs(fournisseursWithStatus);
                 setLoading(false);
             } catch (error) {
-                console.error('Error fetching fournisseurs:', error);
+                console.error('Erreur de récuperation de fournisseur:', error);
                 setLoading(false);
             }
         };
@@ -47,7 +47,7 @@ const ListFournisseur = () => {
                 alert("Aucun fournisseur trouvé avec cet nom.");
             }
         } catch (error) {
-            console.error('Error fetching search results by name:', error);
+            console.error('Erreur de récuperation de resultat de recherche par nom:', error);
         }
     };
 
@@ -56,12 +56,12 @@ const ListFournisseur = () => {
             const response = await axios.get(`http://localhost:3006/fournisseur?iderp=${searchIderpTerm}`);
             const filteredResultsIderp = response.data.filter(fournisseur => fournisseur.iderp.toString() === searchIderpTerm.toString());
             setSearchResultsIderp(filteredResultsIderp);
-            setSearchResults([]); // Clear search by name results
+            setSearchResults([]); 
             if (filteredResultsIderp.length === 0) {
                 alert("Aucun fournisseur trouvé avec cet identifiant.");
             }
         } catch (error) {
-            console.error('Error fetching search results by iderp:', error);
+            console.error('Erreur de récuperation de resultat de recherche par iderp:', error);
         }
     };
 
@@ -105,7 +105,7 @@ const ListFournisseur = () => {
                 </thead>
                 <tbody>
                     {data.map(fournisseur => (
-                        <tr key={fournisseur.iderp} style={{ backgroundColor: fournisseur.status && fournisseur.status.NBFAttente > 0 ? '#ADD8E6' : 'inherit' }}>
+                        <tr key={fournisseur.iderp} style={{ backgroundColor: fournisseur.status && fournisseur.status === 'Attente' ? '#ADD8E6' : 'inherit' }}>
                             <td>{fournisseur.User ? fournisseur.User.name : fournisseur.name}</td>
                             <td>{fournisseur.User ? fournisseur.User.email : fournisseur.email}</td>
                             <td>{fournisseur.User ? fournisseur.User.phone : fournisseur.phone}</td>

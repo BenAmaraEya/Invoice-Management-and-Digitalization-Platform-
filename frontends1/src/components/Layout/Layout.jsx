@@ -16,7 +16,7 @@ const Layout = () => {
 export default Layout;*/
 
 import React ,{useContext} from "react";
-import HomeHeader from './../Header/HomeHeader';
+import AdminHeader from '../Header/AdminHeader';
 import PersonnelHeader from '../Header/PersonnelHeader';
 import Header from './../Header/Header';
 import Routers from '../../router/Routers';
@@ -38,7 +38,10 @@ const Layout = () => {
            
             if (userProfile === "bof" || userProfile === "personnelfiscalite" || userProfile === "agentTresorerie") {
               return <PersonnelHeader />;
-            } else {
+            }else if(userProfile==="admin"){
+                return <AdminHeader/>
+            } 
+             else {
               return <Header />;
             }
           }

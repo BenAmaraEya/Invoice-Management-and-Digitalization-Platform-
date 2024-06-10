@@ -1,162 +1,72 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import Chart from 'react-apexcharts';
+import '../styles/infographicLine.css';
 
 const InfographicLine = () => {
     const { idF } = useParams();
-    const [chartData, setChartData] = useState({
-        series: [],
-        options: {
-            chart: {
-                type: 'line',
-                height: 100,
-                width: 500, 
-                zoom: {
-                    enabled: false,
-                },
-            },
-            color: '#FF5733', 
-            dataLabels: {
-                enabled: false,
-            },
-            stroke: {
-                curve: 'smooth',
-                width: 10,
-            },
-            yaxis: {
-                min: 0,
-                max: 2,
-                labels: {
-                    show: false,
-                },
-            },
-            tooltip: {
-                enabled: false,
-            },
-            grid: {
-                show: false,
-            },
-            xaxis: {
-                categories: [],
-                
-               
-                
-            },
-        },
+    const [statuses, setStatuses] = useState({
+        "Attente": false,
+        "Envoye Finanace": false,
+        "Envoye Fiscalité": false,
+        "paiement": false,
+        "cloture": false,
     });
-    
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchEtat = async () => {
             if (!idF) {
-                console.error('idF non trouvé');
-                setError('idF non trouvé');
-                
+                console.error('No idF provided');
+                setError('No idF provided');
+                setLoading(false);
                 return;
             }
 
             try {
-              
+                console.log('Fetching etat for idF:', idF);
                 const response = await axios.get(`http://localhost:3006/etat/etatFacture/${idF}`);
                 console.log('Response data:', response.data);
                 const data = response.data;
                 if (Array.isArray(data)) {
-                    const filteredData = data.filter(item => {
-                        console.log('Item:', item);
-                        return (
-                            item.etat === 'Attente' ||
-                            item.etat === 'Envoye Finanace' ||
-                            item.etat === 'Envoye Fiscalité' ||
-                            item.etat === 'paiement' ||
-                            item.etat === 'cloture'
-                        );
-                    });
-                    
-                    const values = filteredData.map(item => item.etat);
-
-                    const completedSteps = [0, 2, 4];
-                    const fill = {
-                        type: 'gradient',
-                        gradient: {
-                            shade: 'light',
-                            shadeIntensity: 0.4,
-                            inverseColors: false,
-                            opacityFrom: 0.8,
-                            opacityTo: 0.2,
-                            stops: []
+                    const newStatuses = { ...statuses };
+                    data.forEach(item => {
+                        if (newStatuses.hasOwnProperty(item.etat)) {
+                            newStatuses[item.etat] = true;
                         }
-                    };
-
-                    const totalSteps = values.length - 1;
-                    completedSteps.forEach(stepIndex => {
-                        fill.gradient.stops.push(stepIndex / totalSteps);
                     });
-
-                    setChartData({
-                        series: [
-                            {
-                                name: 'Etat',
-                                data: values,
-                                fill: fill
-                            },
-                        ],
-                        options: {
-                            ...chartData.options,
-                          
-                            xaxis: {
-                                categories: values, 
-                                labels: {
-                                    style: {
-                                        colors: ['#3F51B5', '#E91E63', '#9C27B0', '#673AB7', '#F44336'],
-                                        fontWeight: 'bold',
-                                        fontSize:'14px',
-                                    
-                 
-                                    },
-                                },
-                            },
-                           
-                        },
-                    });
+                    setStatuses(newStatuses);
                 } else {
                     console.error('Unexpected data format:', data);
                     setError('Unexpected data format');
                 }
-                
+                setLoading(false);
             } catch (error) {
-                console.error('Erreur de recuperation de l etat:', error);
-                setError('Erreur de recuperation de l etat');
-                
+                console.error('Error fetching etat:', error);
+                setError('Error fetching etat. Please try again later.');
+                setLoading(false);
             }
         };
 
         fetchEtat();
     }, [idF]);
 
-   
-
-    if (error) {
-        return <div>{error}</div>;
-    }
-
     return (
-        <div >
-            <h2 style={{textAlign:'center',fontSize:'25px',marginTop:'20px',background:'#fae6c3',padding:'20px'}}>Etat for Facture ID: {idF}</h2>
-           
-            <Chart
-                options={chartData.options}
-                series={chartData.series}
-                type="line"
-                height={300}
-               
-                
-               
-               
-            />
-           
-           
+        <div className="progress-bar-container">
+            <h2 className="progress-bar-header">Etat for Facture ID: {idF}</h2>
+            {loading && <div className="loading">Loading...</div>}
+            {error && <div className="error">{error}</div>}
+            {!loading && !error && (
+                <div className="progress-bar">
+                    {Object.keys(statuses).map((status, index) => (
+                        <div key={index} className={`step ${statuses[status] ? 'completed' : ''}`}>
+                            <div className="step-icon">{index + 1}</div>
+                            <div className="step-label">{status}</div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };

@@ -14,7 +14,7 @@ const Header = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { userId } = route.params;
-  
+  const AdresseIp='192.168.0.5'
   const handleUpdatePassword = () => {
     navigation.navigate('UpdatePass', { userId: userId });
     setIsUserMenuOpen(false);
@@ -38,7 +38,7 @@ const Header = () => {
     };
     fetchStoredNotifications();
 
-    const socket = io('http://192.168.0.5:3006');
+    const socket = io(`http:${AdresseIp}//:3006`);
     socket.on('newStatuts', (statut, num) => {
       try {
         const newNotification = { message: { statut, num } };
@@ -67,7 +67,7 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post(`http://192.168.0.5:3006/auth/logout/${userId}`, {}, {
+      const response = await axios.post(`http://${AdresseIp}:3006/auth/logout/${userId}`, {}, {
         headers: {
           "Content-Type": "application/json",
         },

@@ -8,12 +8,12 @@ const ReclamationForm = () => {
   const [contenu, setContenu] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [iderp, setIdErp] = useState('');
-
+  const AdresseIp='192.168.0.5'
   useEffect(() => {
     const fetchFournisseurByUserId = async () => {
       try {
         const id = await AsyncStorage.getItem('userId');
-        const response = await axios.get(`http://192.168.0.5:3006/fournisseur/userId/${id}`);
+        const response = await axios.get(`http://${AdresseIp}:3006/fournisseur/userId/${id}`);
         const iderp = response.data.fournisseur.iderp;
         setIdErp(iderp);
       } catch (error) {
@@ -27,7 +27,7 @@ const ReclamationForm = () => {
   const handleSubmit = async () => {
     try {
       if (iderp) {
-        const response = await axios.post(`http://192.168.0.5:3006/reclamation/envoyer/${iderp}`, { contenu });
+        const response = await axios.post(`http://${AdresseIp}:3006/reclamation/envoyer/${iderp}`, { contenu });
         console.log(response.data); // Assuming you want to log the response
         // Reset the form after successful submission
         setContenu('');

@@ -1,45 +1,74 @@
-.infographic-line {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
-  
-  .step {
-    flex: 1;
-    padding: 10px;
-    text-align: center;
-    position: relative;
-    transition: background-color 0.3s ease;
-  }
-  
-  .step::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 100%;
-    width: 20px;
-    height: 2px;
-    background-color: lightgray;
-    transform: translateY(-50%);
-  }
-  
-  .step.completed {
-    background-color: #4caf50;
-    color: white;
-  }
-  
-  .step.completed::after {
-    background-color: #4caf50;
-  }
-  
-  .step:last-child::after {
-    display: none;
-  }
-  .apexcharts-marker-custom-html {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
+
+.progress-bar-container {
+  padding: 30px;
+  background-color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  margin: 40px auto;
+  max-width: 800px;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
 }
 
-  
+.progress-bar-header {
+  font-size: 28px;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.loading, .error {
+  font-size: 18px;
+  color: #e74c3c;
+  margin-top: 20px;
+}
+
+.progress-bar {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 40px 0;
+}
+
+.step {
+  flex: 1;
+  position: relative;
+  text-align: center;
+}
+
+.step .step-icon {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 50%;
+  background-color: #ecf0f1;
+  margin: 0 auto 10px;
+  color: #fff;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.step .step-label {
+  font-size: 16px;
+  color: #7f8c8d;
+}
+
+.step.completed .step-icon {
+  background-color: #3498db;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  right: -50%;
+  width: 100%;
+  height: 4px;
+  background-color: #ecf0f1;
+  z-index: -1;
+  transition: background-color 0.3s ease;
+}
+
+.step.completed + .step::after {
+  background-color: #3498db;
+}

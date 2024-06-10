@@ -6,7 +6,7 @@ import '../../styles/factureform.css';
 
 const UploadFacture = () => {
   const navigate = useNavigate();
-  const { nature,iderp } = useParams(); // Extract the nature parameter from the URL
+  const { nature,iderp } = useParams(); 
   const id = localStorage.getItem("userId");
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
@@ -17,7 +17,7 @@ const UploadFacture = () => {
     montant: '',
     factname: '',
     devise: 'TND',
-    nature: nature || '', // Set nature to the extracted value, or an empty string if not present
+    nature: nature || '', 
     objet: 'NOUVELLE FACTURE',
     datereception: new Date().toISOString().split('T')[0],
     pathpdf: '',
@@ -61,7 +61,7 @@ const UploadFacture = () => {
         fournisseur: fournisseur,
       }));
     } catch (error) {
-      console.error('Error fetching fournisseur:', error);
+      console.error('Erreur de récuperation de fournisseur:', error);
     }
   };
 
@@ -91,11 +91,11 @@ const UploadFacture = () => {
         }
       }
       );
-      alert('Facture and pieces jointes save successfully');
+      alert('Facture et pieces jointes enregistré avec succés');
       navigate(`/listcourriers/${facture.iderp}`);
     } catch (error) {
-      console.error('Error save facture and pieces jointes:', error);
-      alert('Failed to save facture and pieces jointes');
+      console.error('Erreur d\'enregistrement facture et pieces jointes:', error);
+      alert('Erreur d\'enregistrement facture et pieces jointes:');
     }
   };
 
@@ -104,7 +104,8 @@ const UploadFacture = () => {
     setFileName(event.target.files[0].name);
   };
 
-  const changeDocuments = async () => {
+  const changeDocuments = async (event) => {
+    event.preventDefault();
     try {
       const formData = new FormData();
       formData.append('factureFile', file);
@@ -122,18 +123,18 @@ const UploadFacture = () => {
       setFacture(prevFacture => ({
         ...prevFacture,
         num_fact: extractedInfo.num_fact || '',
-        num_po: extractedInfo.num_po || '',
+       // num_po: extractedInfo.num_po || '',
         date_fact: extractedInfo.date_fact || '',
         montant: extractedInfo.montant || '',
-        factname: extractedInfo.factname || '',
+       /* factname: extractedInfo.factname || '',
         devise: extractedInfo.devise || 'TND',
-        nature: extractedInfo.nature || nature || '', // Set nature to the extracted value, or the default value provided by useParams
+        nature: extractedInfo.nature || nature || '', 
         objet: extractedInfo.objet || 'NOUVELLE FACTURE',
-        datereception: extractedInfo.datereception || '',
+        datereception: extractedInfo.datereception || '',*/
         pathpdf: filePath || '',
       }));
     } catch (error) {
-      console.error('Error uploading facture:', error);
+      console.error('erreur de téléchargement de facture:', error);
     }
   };
 

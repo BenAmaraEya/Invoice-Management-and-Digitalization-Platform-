@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ListFactByB from './ListFactByB';
 import { FaSearch, FaFileAlt } from 'react-icons/fa';
-import '../../styles/BordereauList.css'; // Import your CSS file for styling
+import '../../styles/BordereauList.css'; 
 
 const BordereauList = () => {
     const [bordereaux, setBordereaux] = useState([]);
@@ -18,7 +18,7 @@ const BordereauList = () => {
             const response = await axios.get('http://localhost:3006/bordereaux');
             setBordereaux(response.data.bordereaux);
         } catch (error) {
-            console.error('Error fetching bordereaux:', error);
+            console.error('Erreur de récuperation des bordereaux:', error);
         }
     };
 

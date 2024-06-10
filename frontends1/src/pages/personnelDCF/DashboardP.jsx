@@ -69,11 +69,11 @@ const DashboardP = () => {
         const fetchProcessedInvoices = async () => {
             try {
                 const response = await axios.get('http://localhost:3006/facture/factureTraiteParmois/pourcentage');
-                const { processedInvoicesData } = response.data;
+                const { factures } = response.data;
     
                 // Extract dates and counts from the response data
-                const dates = processedInvoicesData.map(item => item.date);
-                const counts = processedInvoicesData.map(item => item.count);
+                const dates = factures.map(item => item.date);
+                const counts = factures.map(item => item.count);
     
                 // Get the current date
                 const currentDate = new Date();

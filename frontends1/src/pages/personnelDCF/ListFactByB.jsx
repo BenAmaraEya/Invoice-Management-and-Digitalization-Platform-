@@ -16,7 +16,7 @@ const ListFactByB = ({  }) => {
             const response = await axios.get(`http://localhost:3006/bordereaux/${idB}/factures`);
             setFactures(response.data.factures);
         } catch (error) {
-            console.error('Error fetching factures:', error);
+            console.error('Erreur de récuperation des factures:', error);
         }
     };
     return (

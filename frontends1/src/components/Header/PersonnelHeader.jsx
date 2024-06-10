@@ -60,7 +60,7 @@ const Header = () => {
       try {
        
 
-        // Add new notification to the array
+        
         const newNotification = {
           id: reclamation.id,
           message: `Nouvelle réclamation`
@@ -94,12 +94,12 @@ const Header = () => {
 
   const handleNatureSelection = (nature) => {
     navigate('/uploadFact/' + nature, { state: { nature } });
-    setIsBordereauMenuOpen(false); // Close the menu after selecting a nature
+    setIsBordereauMenuOpen(false); 
   };
 
   const handleUpdatePassword = () => {
     navigate(`/updatePass/${userId}`);
-    setIsUserMenuOpen(false); // Close the menu after selecting an option
+    setIsUserMenuOpen(false);
   };
 
   const handleLogout = async () => {
