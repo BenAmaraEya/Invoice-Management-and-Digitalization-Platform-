@@ -17,7 +17,7 @@ const ListeFactures = () => {
   const { userId } = route.params;
   const navigation = useNavigation();
 
-  const AdresseIp='192.168.0.5'
+  const AdresseIp='172.20.10.6'//'192.168.0.5'
  /* useEffect(() => {
     const fetchLocalIpAddress = async () => {
       try {
@@ -65,10 +65,7 @@ const ListeFactures = () => {
       const pdfUrl = `http://${AdresseIp}:3006/facture/view-pdf/${pathpdf}`;
       const localUri = FileSystem.documentDirectory + 'facture.pdf';
   
-     /* const downloadObject = FileSystem.createDownloadResumable(pdfUrl, localUri, {}, (downloadProgress) => {
-        const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
-        console.log(`Downloading PDF: ${Math.round(progress * 100)}% complete`);
-      });*/
+     
       const downloadObject = FileSystem.createDownloadResumable(pdfUrl, localUri);
   
       const { uri } = await downloadObject.downloadAsync();
@@ -122,6 +119,7 @@ const ListeFactures = () => {
                 setFactures(factures.filter(facture => facture.idF !== idF));
               
                 Alert.alert('Success', 'Facture deleted successfully.');
+                fetchFactures();
               }
             } catch (error) {
               console.error('Error deleting facture:', error);

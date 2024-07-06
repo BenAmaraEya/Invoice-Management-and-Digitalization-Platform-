@@ -34,11 +34,11 @@
   }
   
   .table-row-b.factures {
-    background-color: #d4edda; /* Light green color for bordereaux with factures */
+    background-color: #d4edda; 
   }
   
   .table-row-b.no-factures {
-    background-color: #f8d7da; /* Light red color for bordereaux with no factures */
+    background-color: #f8d7da; 
   }
   
   .action-cell {

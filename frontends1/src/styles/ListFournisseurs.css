@@ -60,7 +60,7 @@
     cursor: pointer;
   }
   button.view-invoices-btn {
-    background-color: #6495ed; /* Cornflower Blue */
+    background-color: #6495ed;
     color: white;
     border: none;
     border-radius: 5px;
@@ -69,5 +69,5 @@
   }
   
   button.view-invoices-btn:hover {
-    background-color: #4169e1; /* Slightly darker blue for hover effect */
+    background-color: #4169e1;
   }

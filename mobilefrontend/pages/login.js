@@ -14,7 +14,7 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [localIp, setLocalIp] = useState(null);
-const AdresseIp='192.168.0.5'
+const AdresseIp='172.20.10.6'//'192.168.0.5'
   const navigation = useNavigation();
 
   useEffect(() => {

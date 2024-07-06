@@ -21,7 +21,7 @@ const ListCourriers = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [searchDateTerm, setSearchDateTerm] = useState('');
     const [searchResultsDate, setSearchResultsDate] = useState([]);
-    const [searchParams, setSearchParams] = useState({ num_fact: '', datereception: '' }); // Define searchParams state
+    const [searchParams, setSearchParams] = useState({ num_fact: '', datereception: '' });
     const [etat, setEtat] = useState({});
 
     useEffect(() => {

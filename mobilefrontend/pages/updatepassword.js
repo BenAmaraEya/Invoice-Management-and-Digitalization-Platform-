@@ -13,7 +13,7 @@ const UpdatePasswordForm = () => {
   const [loading, setLoading] = useState(false);
   const route = useRoute();
   const { userId } = route.params;
-  const AdresseIp='192.168.0.5'
+  const AdresseIp='172.20.10.6'//'192.168.0.5'
   const handleChange = (name, value) => {
     setFormData(prevState => ({
       ...prevState,

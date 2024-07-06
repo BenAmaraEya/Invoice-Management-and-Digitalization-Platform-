@@ -20,7 +20,7 @@ const Dashboard = () => {
 
   const route = useRoute();
   const { userId } = route.params;
-  const AdresseIp='192.168.0.5'
+  const AdresseIp='172.20.10.6'//192.168.0.5
   /*useEffect(() => {
     const fetchLocalIpAddress = async () => {
       try {

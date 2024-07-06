@@ -96,13 +96,13 @@
 .gallery {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center; /* Center the cards horizontally */
+    justify-content: center; 
 }
 
 .gallery .partner-card {
-    /* Adjust the width as needed */
-    margin: 10px; /* Adjust the margin as needed */
-    width: 28%; /* Adjust the maximum width of the card */
+    
+    margin: 10px; 
+    width: 28%;
 }
 
 

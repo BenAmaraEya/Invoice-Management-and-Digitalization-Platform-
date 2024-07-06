@@ -11,7 +11,7 @@ const FactureUploader = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigation = useNavigation();
-  const AdresseIp='192.168.0.5'
+  const AdresseIp='172.20.10.6'//'192.168.0.5'
   const pickDocument = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({

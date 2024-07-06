@@ -24,7 +24,7 @@ piecejointController = {
         }
     }],
 
-updatepiecejoint: [/*authorize,*/ async (req, res) => {
+updatepiecejoint: [authorize, async (req, res) => {
     try {
         const { piece_name } = req.body;
         const { idF } = req.params;

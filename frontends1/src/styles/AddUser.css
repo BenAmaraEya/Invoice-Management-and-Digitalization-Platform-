@@ -1,42 +1,40 @@
-/* AddUser.css */
 
-/* Style pour le formulaire */
 .add-user-form {
-    width: 50%; /* largeur du formulaire */
-    margin: auto; /* centrer le formulaire horizontalement */
-    padding: 20px; /* espace intérieur */
-    border: 1px solid #ddd; /* bordure */
-    border-radius: 5px; /* arrondir les coins */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* ombre */
+    width: 50%; 
+    margin: auto;
+    padding: 20px; 
+    border: 1px solid #ddd; 
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
   }
   
-  /* Style pour les labels */
+  
   .add-user-form label {
-    display: block; /* afficher chaque label sur une ligne */
-    margin-bottom: 10px; /* espacement en bas de chaque label */
+    display: block; 
+    margin-bottom: 10px; 
   }
   
-  /* Style pour les champs de saisie */
+  
   .add-user-form input,
   .add-user-form select {
-    width: 100%; /* largeur de 100% */
-    padding: 10px; /* espacement intérieur */
-    margin-bottom: 15px; /* espacement en bas */
-    border: 1px solid #ddd; /* bordure */
-    border-radius: 5px; /* arrondir les coins */
+    width: 100%; 
+    padding: 10px; 
+    margin-bottom: 15px;
+    border: 1px solid #ddd; 
+    border-radius: 5px;
   }
   
-  /* Style pour le bouton de soumission */
+  
   .add-user-form button {
-    padding: 10px 20px; /* espacement intérieur */
-    background-color: #007bff; /* couleur de fond */
-    color: #fff; /* couleur du texte */
-    border: none; /* pas de bordure */
-    border-radius: 5px; /* arrondir les coins */
-    cursor: pointer; /* curseur pointeur */
+    padding: 10px 20px; 
+    background-color: #007bff; 
+    color: #fff; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
   }
   
   .add-user-form button:hover {
-    background-color: #0056b3; /* couleur de fond au survol */
+    background-color: #0056b3; 
   }
   

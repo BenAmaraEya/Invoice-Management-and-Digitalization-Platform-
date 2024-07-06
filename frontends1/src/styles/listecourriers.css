@@ -93,7 +93,7 @@
   }
   .courriers-table tbody tr {
     border-top: 2px solid gainsboro;
-     /* Add a white border-top to each row */
+    
   }
   .courriers-table tbody tr:nth-child(odd) {
       background-color: #f9f9f9;
@@ -124,17 +124,17 @@
     padding: 8px;
     border-radius: 5px;
     border: 1px solid lightgrey;
-    background-color: #f9f9f9; /* Background color */
-    color: #333; /* Text color */
+    background-color: #f9f9f9; 
+    color: #333;
   }
   
   select:focus {
-    outline: none; /* Remove focus outline */
-    border-color: #007bff; /* Change border color on focus */
+    outline: none; 
+    border-color: #007bff; 
   }
   
   option {
-    background-color: white; /* Background color of options */
-    color: #333; /* Text color of options */
+    background-color: white;
+    color: #333;
   }
   

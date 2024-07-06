@@ -1,4 +1,4 @@
-/* styles/Home.css */
+
 
 .full-page-background {
   background: linear-gradient(to right, #4367c4, #fae6c3);
@@ -18,7 +18,7 @@
 }
 
 .login__container {
-  background-color: rgba(255, 255, 255, 0.2); /* Set opacity */
+  background-color: rgba(255, 255, 255, 0.2); 
   padding: 20px !important;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -55,19 +55,19 @@
 }
 
 .auth__btn {
-  background-color: #4367c4 !important; /* Blue background */
+  background-color: #4367c4 !important; 
   color: white;
   width: 100%;
   padding: 10px;
   border: none;
   border-radius: 5px;
   margin-bottom: 20px;
-  cursor: pointer; /* Add cursor pointer */
-  transition: background-color 0.3s ease; /* Add transition for hover effect */
+  cursor: pointer;
+  transition: background-color 0.3s ease; 
 }
 
 .auth__btn:hover {
-  background-color: #4169e1 !important; /* Darker blue on hover */
+  background-color: #4169e1 !important;
 }
 
 .login__options {

@@ -44,7 +44,7 @@ describe('deleteFacture function', () => {
     AsyncStorage.getItem.mockResolvedValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJ1c2VyUHJvZmlsIjoiZm91cm5pc3NldXIiLCJpYXQiOjE3MTQ0NjczMzV9.lqbvUwkHhl7P_LmyiCVuIGzymqL7OKoK4cknlK_qvyY');
     axios.delete.mockRejectedValue(new Error('Facture not found'));
 
-    await deleteFacture(4455, 999); // Incorrect facture ID
+    await deleteFacture(4455, 999);
 
     expect(AsyncStorage.getItem).toHaveBeenCalledWith('accessToken');
     expect(axios.delete).toHaveBeenCalledWith('http://192.168.1.123:3006/facture/fournisseur/4455/facture/999', {

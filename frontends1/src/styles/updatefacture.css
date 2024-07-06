@@ -1,10 +1,10 @@
 
   
  .facture-update-container {
-  background-color: #f0f4f8; /* Light background color for the container */
-  padding: 30px; /* Increased padding for better spacing */
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important; /* Subtle shadow for depth */
+  background-color: #f0f4f8; 
+  padding: 30px; 
+  border-radius: 10px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important; 
   margin-top: 20px;
 }
   
@@ -23,7 +23,7 @@
    
   }
   .facture-update-form button[type='submit']:hover {
-    background-color: #0056b3; /* Darker shade on hover */
+    background-color: #0056b3; 
   }
   .facture-update-form input[type='text'],
   .facture-update-form input[type='number'],
@@ -32,9 +32,9 @@
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
-    border: 1px solid #cfd8dc; /* Light blue-gray border color */
+    border: 1px solid #cfd8dc; 
   border-radius: 5px;
-  color: #142e44; /* Dark blue color */
+  color: #142e44; 
   background-color: #ffffff;
    
    
@@ -45,13 +45,13 @@
   }
   
   .facture-update-form button[type='submit'] {
-    background-color: #4367c4; /* Primary button color */
+    background-color: #4367c4; 
     color: #fff;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s; /* Smooth transition for hover effect */
+    transition: background-color 0.3s; 
   }
   
   .facture-update-form button[type='submit']:hover {
@@ -60,17 +60,17 @@
   }
 
   .upload-btn {
-    background-color: #4367c4; /* Consistent button color */
+    background-color: #4367c4; 
     color: #fff;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s; /* Smooth transition for hover effect */
-    margin-top: 10px; /* Spacing above the button */
+    transition: background-color 0.3s; 
+    margin-top: 10px; 
   }
   .upload-btn:hover {
-    background-color: #007bff; /* Darker shade on hover */
+    background-color: #007bff; 
   }
  
   

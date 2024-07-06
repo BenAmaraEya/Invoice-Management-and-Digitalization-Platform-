@@ -14,7 +14,7 @@ const Header = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { userId } = route.params;
-  const AdresseIp='192.168.0.5'
+  const AdresseIp='172.20.10.6'//'192.168.0.5'
   const handleUpdatePassword = () => {
     navigation.navigate('UpdatePass', { userId: userId });
     setIsUserMenuOpen(false);

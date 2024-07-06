@@ -185,7 +185,7 @@ async function generateReportFromData(analyzedData, neuralNetwork) {
       NBFValide,
       NBFpaye,
       NBFAttente,
-      NBFrejete
+      NBFrejete
     } = await collectAndAnalyzeData();
    
     // genérer le contenue de rapport
@@ -205,7 +205,7 @@ Factures en Attente : ${NBFAttente} : Nombre de factures en attente de validatio
 Factures Rejetées : ${NBFrejete} : Nombre de factures rejetées en raison d'erreurs ou d'incohérences.
 Réclamations en Cours : ${numReclamations} : Nombre total de réclamations actuellement en cours de traitement.
 
-Réclamations Résolues : ${numReclamationsLue} : Nombre total de réclamations qui ont été lue par bureau d'ordre.
+Réclamations Résolues : ${numReclamationsLue} : Nombre total de réclamations qui ont été lue par bureau d'ordre.
 
 Réclamations Résolues : ${numReclamationsLue} : Nombre total de réclamations qui ont été lue par bureau d'ordre.
 
@@ -531,7 +531,7 @@ getFacturesStatistique: async (req, res) => {
         } 
       } 
     }); // Compter les factures reçues au cours des dernières 24 heures
-    // Ajuster la requête suivante en fonction de votre modèle de données
+ 
     const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     const nbFactureMoisEnCours = await Facture.count({ 
       where: { 
@@ -634,7 +634,7 @@ validerBudget:[authorizeAgent,async (req,res) =>{
        
         res.json({ message: 'la status est mis a jour avec succée' });
       } catch (error) {
-        // If an error occurs, return a 500 internal server error
+      
         console.error('Erreur dans rejeterCourriers:', error);
         res.status(500).json({ message: 'Erreur interne du serveur' });
       }
@@ -762,7 +762,7 @@ genererRapports: async (req, res) => {
     // generation de rapport 
     console.log('generation de rapport ...');
     const reportContent = await generateReportFromData(analyzedData, neuralNetwork);
-
+ 
     
     const pdfData = await generatePDF(reportContent);
 

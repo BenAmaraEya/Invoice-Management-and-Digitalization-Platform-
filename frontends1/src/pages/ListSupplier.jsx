@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from "react-router-dom";
 import "../styles/ListUser.css";
 import '@fortawesome/fontawesome-free/css/all.css';
+import { FaTrashAlt, FaEdit } from 'react-icons/fa';
 
 function ListUser() {
     const [fournisseur, setFournisseur] = useState([]);
@@ -11,9 +12,6 @@ function ListUser() {
     const [searchResults, setSearchResults] = useState([]);
     const [searchResultsIderp, setSearchResultsIderp] = useState([]);
     const [error, setError] = useState(null);
-    
-
-   
 
     useEffect(() => {
         const fetchFournisseur = async () => {
@@ -25,18 +23,16 @@ function ListUser() {
                 console.error('Error fetching fournisseurs:', error);
             }
         };
-    
+
         fetchFournisseur();
     }, []);
-    
 
     const DeleteFournisseur = async (iderp) => {
         try {
             await axios.delete(`http://localhost:3006/fournisseur/${iderp}`);
             setFournisseur(prevFournisseurs => prevFournisseurs.filter(fournisseur => fournisseur.iderp !== iderp));
             console.log('Fournisseur supprimé avec succès');
-            alert(`Fournisseur ${fournisseur.iderp} supprimé avec succès.`);
-
+            alert(`Fournisseur supprimé avec succès.`);
         } catch (error) {
             console.error('Erreur lors de la suppression du fournisseur:', error);
         }
@@ -55,7 +51,7 @@ function ListUser() {
     const searchByName = async () => {
         try {
             const response = await axios.get(`http://localhost:3006/user/recherche/parnom?name=${searchNameTerm}`);
-            const filteredResults = response.data.filter(user => user.profil == "fournisseur");
+            const filteredResults = response.data.filter(user => user.profil === "fournisseur");
             setSearchResults(filteredResults);
             console.log(filteredResults);
             if (filteredResults.length === 0) {
@@ -71,9 +67,9 @@ function ListUser() {
         try {
             const response = await axios.get(`http://localhost:3006/fournisseur/recherche/ParIdentifiant?iderp=${searchIderpTerm}`);
             if (response.data.length > 0) {
-                const userData = response.data[0].User; // Accéder aux données de l'utilisateur du premier fournisseur trouvé
+                const userData = response.data[0].User; 
                 setSearchResultsIderp(userData);
-                console.log(userData); // Assurez-vous que les données de l'utilisateur sont correctement renvoyées ici
+                console.log(userData);
             } else {
                 alert("Aucun fournisseur trouvé avec cet iderp.");
             }
@@ -83,12 +79,12 @@ function ListUser() {
             console.error('Erreur de recuperation de resultat:', error);
         }
     };
-    
- const adminpassword=localStorage.getItem('adminPassword');
+
+    const adminpassword = localStorage.getItem('adminPassword');
     const filteredList = searchResults.length > 0 ? searchResults : fournisseur;
 
     const renderSupplierTable = (data) => (
-        <table>
+        <table className="supplier-table">
             <thead>
                 <tr>
                     <th>Nom</th>
@@ -101,7 +97,7 @@ function ListUser() {
                 </tr>
             </thead>
             <tbody>
-            {data.map((fournisseur, i) => (
+                {data.map((fournisseur, i) => (
                     <tr key={i}>
                         <td>{fournisseur.User ? fournisseur.User.name : fournisseur.name}</td>
                         <td>{fournisseur.User ? fournisseur.User.username : fournisseur.username}</td>
@@ -132,11 +128,13 @@ function ListUser() {
                         <td>{fournisseur.User ? fournisseur.User.last_login : fournisseur.last_login}</td>
                         <td>{fournisseur.User ? fournisseur.User.phone : fournisseur.phone}</td>
                         <td>
-                            <button>
-                                <Link className="update-link" to={`/updateFournisseur/${fournisseur.iderp}`}>Modifier</Link>
+                            <button onClick={() => DeleteFournisseur(fournisseur.iderp)} style={{ background: 'none', border: 'none' }}>
+                            <FaTrashAlt className='delete-btn' style={{ fontSize: '20px', backgroundColor: 'transparent', color: 'black' }} />
                             </button>
-                            <button onClick={() => DeleteFournisseur(fournisseur.iderp)} className="delete-button">Supprimer</button>
-                            <button className="access-button" onClick={() => Acesse(fournisseur.User.id)}>Accès</button>
+                            <Link to={`/updateFournisseur/${fournisseur.iderp}`} >
+                            <FaEdit className='edit' color="black" style={{ fontSize: '20px', marginLeft: '5px' }} />
+                            </Link>
+                            <button className="access-btn" onClick={() => Acesse(fournisseur.User.id)}>Accès</button>
                         </td>
                     </tr>
                 ))}
@@ -145,48 +143,47 @@ function ListUser() {
     );
 
     return (
-        <div>
-        <div style={{ position: 'relative', marginLeft:'50%'}}>
-            <input
-                type="text"
-                value={searchNameTerm}
-                onChange={(e) => setSearchNameTerm(e.target.value)}
-                placeholder="Rechercher par nom..."
-                className="search-input"
-            />
-            <button onClick={searchByName}  >Rechercher</button>
-            <input
-                type="number"
-                value={searchIderpTerm}
-                onChange={(e) => setSearchIderpTerm(e.target.value)}
-                placeholder="Rechercher par iderp..."
-                className="search-input"
-            />
-            <button onClick={searchByIderp}  >Rechercher par identifiant</button>
-           </div>
+        <div className="list-user-container">
+            <div className="search-container">
+                <input
+                    type="text"
+                    value={searchNameTerm}
+                    onChange={(e) => setSearchNameTerm(e.target.value)}
+                    placeholder="Rechercher par nom..."
+                    className="search-input"
+                />
+                <button onClick={searchByName} className="search-button">Rechercher</button>
+                <input
+                    type="number"
+                    value={searchIderpTerm}
+                    onChange={(e) => setSearchIderpTerm(e.target.value)}
+                    placeholder="Rechercher par iderp..."
+                    className="search-input"
+                />
+                <button onClick={searchByIderp} className="search-button">Rechercher par identifiant</button>
+            </div>
             {searchResultsIderp && Object.keys(searchResultsIderp).length > 0 && (
-    <div>
-        <h3>Résultats de la recherche par iderp</h3>
-        {renderSupplierTable([searchResultsIderp])} 
-    </div>
-)}
+                <div>
+                    <h3>Résultats de la recherche par iderp</h3>
+                    {renderSupplierTable([searchResultsIderp])}
+                </div>
+            )}
             {searchResults.length > 0 && (
                 <div>
                     <h3>Résultats de la recherche par nom</h3>
                     {renderSupplierTable(searchResults)}
                 </div>
             )}
-
             {!searchResults.length > 0 && fournisseur.length > 0 && (
                 <div>
-                    <Link to={`/admin/addUser/${adminpassword}`} className="add-user-link">Ajouter Fournisseur</Link>   
-                    <h3 className="list-fournisseur">Liste Fournisseurs</h3>    
+                    <Link to={`/admin/addUser/${adminpassword}`} className="add-user-link">Ajouter Fournisseur</Link>
+                    <h3 className="list-fournisseur">Liste Fournisseurs</h3>
                     {renderSupplierTable(fournisseur)}
                 </div>
             )}
-               {searchResults.length == 0 && !fournisseur.length > 0  &&(
+            {searchResults.length === 0 && !fournisseur.length > 0 && (
                 <div>
-                    <h3 className="list-fournisseur">Liste vide</h3>    
+                    <h3 className="list-fournisseur">Liste vide</h3>
                 </div>
             )}
         </div>

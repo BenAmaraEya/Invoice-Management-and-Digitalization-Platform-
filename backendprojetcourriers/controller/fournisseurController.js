@@ -35,7 +35,7 @@ const FournisseurController={
         try {
             const iderp = req.params.iderp;
             const { idfiscale, adresse, nationnalite, userId, ...fournisseurData } = req.body;
-    
+              
                 const [updatedFournisseurRows] = await Fournisseur.update(fournisseurData, {
                 where: { iderp }
             });

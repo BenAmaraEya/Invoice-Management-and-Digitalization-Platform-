@@ -48,7 +48,7 @@ const UpdateFacture = () => {
   const [selectedPieces, setSelectedPieces] = useState([]);
   const [fileUri, setFileUri] = useState(null);
   const [fileName, setFileName] = useState('');
-  const AdresseIp='192.168.0.5'
+  const AdresseIp='172.20.10.6'//'192.168.0.5'
   useEffect(() => {
     const fetchFactureDetails = async () => {
       try {

@@ -27,13 +27,13 @@ const Layout = () => {
     const { userId } = useAuth();
     const location = useLocation();
 
-    // Define a function to determine which header component to render based on the current route
+   
     const renderHeader = () => {
         if (location.pathname === "/home") {
             return null;
         
         }else {
-            // Check the user's profile from localStorage
+          
             const userProfile = localStorage.getItem("userProfil");
            
             if (userProfile === "bof" || userProfile === "personnelfiscalite" || userProfile === "agentTresorerie") {

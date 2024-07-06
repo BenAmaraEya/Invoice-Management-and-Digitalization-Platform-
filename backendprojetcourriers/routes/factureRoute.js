@@ -12,7 +12,6 @@ router.post('/export',factureController.ExportFacturetoExcel);
 router.get('/view-pdf/uploads/:filename', factureController.viewFacturePDF);
 router.get('/status/:iderp',factureController.getNbrFacturesByStatus);
 router.put('/updateFacture/:idF',factureController.updateFacture);
-// get facture BY Id
 router.get('/facturebyId/:idF',factureController.getFactureById);
 router.get('/stat/all',factureController.getFacturesStatistique);
 router.put('/validerCourriers/:idF',factureController.validerDocument);

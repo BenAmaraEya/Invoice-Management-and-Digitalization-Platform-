@@ -6,7 +6,7 @@ import { useRoute,useNavigation } from '@react-navigation/native';
 
 
 
-// Function to fetch fournisseur by userId
+
 const fetchFournisseurByUserId = async (userId, setIdeRp) => {
   try {
     const response = await axios.get(`http://192.168.0.5:3006/fournisseur/userId/${userId}`);
@@ -17,7 +17,7 @@ const fetchFournisseurByUserId = async (userId, setIdeRp) => {
   }
 };
 
-// Function to fetch factures
+
 const fetchFactures = async (iderp, setFactures) => {
   try {
     if (iderp) {
@@ -29,7 +29,7 @@ const fetchFactures = async (iderp, setFactures) => {
   }
 };
 
-// Function to delete a facture
+
 export const deleteFacture = async (iderp, idF) => {
   try {
     const token = await AsyncStorage.getItem('accessToken');
@@ -53,7 +53,7 @@ export const deleteFacture = async (iderp, idF) => {
   }
 };
 
-// Usage in your component
+
 const YourComponent = ({ userId }) => {
     const [iderp, setIdeRp] = useState(null);
     const [factures, setFactures] = useState([]);
@@ -67,10 +67,10 @@ const YourComponent = ({ userId }) => {
     }, [iderp]);
   
     const handleDeleteFacture = async (idF) => {
-      // Make sure iderp and idF are set or updated correctly before calling deleteFacture
+      
       if (iderp && idF) {
         await deleteFacture(iderp, idF);
-        // Optionally, update the factures list after deleting the facture
+        
         fetchFactures(iderp, setFactures);
       } else {
         console.error('iderp or idF is missing.');

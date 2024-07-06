@@ -16,7 +16,7 @@ const FactureForm = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { id } = route.params;
- const AdresseIp='192.168.0.5'
+ const AdresseIp='172.20.10.6'//'192.168.0.5'
   const [formData, setFormData] = useState({
     num_fact: '',
     num_po: '',

@@ -57,7 +57,7 @@ const DashboardP = () => {
                 setReclamations(reclamationsResponse.data);
                 setLoading(false);
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('erreur de recuperation de données:', error);
                 setLoading(false);
             }
         };
@@ -71,30 +71,30 @@ const DashboardP = () => {
                 const response = await axios.get('http://localhost:3006/facture/factureTraiteParmois/pourcentage');
                 const { factures } = response.data;
     
-                // Extract dates and counts from the response data
+                
                 const dates = factures.map(item => item.date);
                 const counts = factures.map(item => item.count);
     
-                // Get the current date
+                
                 const currentDate = new Date();
                 const currentYear = currentDate.getFullYear();
-                const currentMonth = currentDate.getMonth() + 1; // Month starts from 0, so add 1 to get the current month
-                const daysInMonth = new Date(currentYear, currentMonth, 0).getDate(); // Get the number of days in the current month
+                const currentMonth = currentDate.getMonth() + 1;
+                const daysInMonth = new Date(currentYear, currentMonth, 0).getDate(); 
     
-                // Generate an array of days from 1 to the number of days in the current month
+                
                 const daysOfMonth = Array.from({ length: daysInMonth }, (_, index) => index + 1);
     
-                // Initialize data array with zeros for each day of the month
+                
                 const data = Array(daysInMonth).fill(0);
     
-                // Map counts to the corresponding dates in the data array
+                
                 dates.forEach((date, index) => {
                     const day = new Date(date).getDate();
                     const count = counts[index];
-                    data[day - 1] = count; // Subtract 1 because days are 1-indexed
+                    data[day - 1] = count; 
                 });
     
-                // Set x-axis categories as days of the month
+                
                 const categories = daysOfMonth.map(day => `${currentYear}-${currentMonth}-${day}`);
     
                 setLineChartData(prevState => ({
@@ -166,22 +166,22 @@ const DashboardP = () => {
         try {
             setLoading(true);
             const response = await axios.post('http://localhost:3006/facture/generaterapports', {}, {
-                responseType: 'blob' // Set response type to blob
+                responseType: 'blob' 
             });
     
-            const blob = new Blob([response.data], { type: 'application/pdf' }); // Create a Blob from the response data
-            console.log('Received PDF blob:', blob);
+            const blob = new Blob([response.data], { type: 'application/pdf' }); 
+            
     
-            const url = window.URL.createObjectURL(blob); // Create a URL for the Blob
-            console.log('Blob URL:', url);
+            const url = window.URL.createObjectURL(blob); 
+            
     
-            const link = document.createElement('a'); // Create a link element
+            const link = document.createElement('a'); 
             link.href = url;
-            link.setAttribute('download', 'report.pdf'); // Set the download attribute
-            document.body.appendChild(link); // Append the link to the document body
-            link.click(); // Simulate a click event to download the file
-            document.body.removeChild(link); // Remove the link from the document body after download
-            window.URL.revokeObjectURL(url); // Revoke the URL object to release the memory
+            link.setAttribute('download', 'report.pdf'); 
+            document.body.appendChild(link); 
+            link.click(); 
+            document.body.removeChild(link); 
+            window.URL.revokeObjectURL(url); 
             setLoading(false);
         } catch (error) {
             console.error('Error generating report:', error);
@@ -191,7 +191,7 @@ const DashboardP = () => {
     return (
         <div className="dashboardp-container">
              <div className="top-container">
-                <button onClick={generateReport} style={{background:'#4367c4',color:'white',border:'none',marginRight:'30px',borderRadius:'5px',padding:'8px',marginTop:'20px'}}>  Generé Repport <FaDownload style={{ marginLeft: '8px' }} /></button>
+                <button onClick={generateReport} style={{background:'#4367c4',color:'white',border:'none',marginRight:'30px',borderRadius:'5px',padding:'8px',marginTop:'20px'}}>  Generé Rapport <FaDownload style={{ marginLeft: '8px' }} /></button>
             </div>
             <div className="middle-container">
                 <div className="boxes-container">

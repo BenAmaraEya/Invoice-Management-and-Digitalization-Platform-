@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from "react-router-dom";
 import "../styles/ListUser.css";
 import '@fortawesome/fontawesome-free/css/all.css';
+import { FaTrashAlt, FaEdit } from 'react-icons/fa';
 
 function ListUser() {
     const [users, setUsers] = useState([]);
@@ -59,7 +60,7 @@ function ListUser() {
     };
 
     const renderUserTable = (users) => (
-        <table>
+        <table className="user-table">
             <thead>
                 <tr>
                     <th>Nom</th>
@@ -91,11 +92,13 @@ function ListUser() {
                         <td>{user.last_login}</td>
                         <td>{user.phone}</td>
                         <td>
-                            <button onClick={() => DeleteUser(user.id)} className="delete-button">Supprimer</button>
-                            <button onClick={() => Acesse(user.id)} className="access">Access</button>
-                            <button>
-                                <Link className="update-link" to={`../updateUser/${user.id}`}>Modifier</Link>
+                            <button onClick={() => DeleteUser(user.id)} style={{ background: 'none', border: 'none' }}>
+                            <FaTrashAlt className='delete-btn' style={{ fontSize: '20px', backgroundColor: 'transparent', color: 'black' }} />
                             </button>
+                            <Link  to={`../updateUser/${user.id}`}>
+                            <FaEdit className='edit' color="black" style={{ fontSize: '20px', marginLeft: '5px' }} />
+                            </Link>
+                            <button onClick={() => Acesse(user.id)} className="access-button">Access</button>
                         </td>
                     </tr>
                 ))}
@@ -111,24 +114,27 @@ function ListUser() {
     const agentTresorerieUsers = filteredList.filter(user => user.profil === "agentTresorerie");
 
     return (
-        <div>
-            <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Rechercher par nom..."
-            />
-            <button onClick={SearchName}>Rechercher</button>
+        <div className="list-user-container">
+            <div className="search-container">
+                <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Rechercher par nom..."
+                    className="search-input"
+                />
+                <button onClick={SearchName} className="search-button">Rechercher</button>
+            </div>
 
-            <Link to={`/admin/addUser/${adminPassword}`} className="add-user-link">Ajouter Utilisateur</Link>   
+            <Link to={`/admin/addUser/${adminPassword}`} className="add-user-link">Ajouter Utilisateur</Link>
 
-            <h3 className="list-fournisseur">Liste BOF</h3>    
+            <h3 className="list-title">Liste BOF</h3>
             {renderUserTable(bofUsers)}
 
-            <h3 className="list-fournisseur">Liste Personnel Fiscalité</h3>    
+            <h3 className="list-title">Liste Personnel Fiscalité</h3>
             {renderUserTable(personnelfiscaliteUsers)}
 
-            <h3 className="list-fournisseur">Liste Agent Trésorerie</h3>    
+            <h3 className="list-title">Liste Agent Trésorerie</h3>
             {renderUserTable(agentTresorerieUsers)}
         </div>
     );
